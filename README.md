@@ -15,6 +15,10 @@ A comprehensive healthcare management system for maternal and newborn health ser
 - **Real-time Notifications** - In-app, email, and SMS notification support
 - **Role-Based Access** - Admin, Healthcare Provider, Patient, and Receptionist roles
 - **Responsive Design** - Mobile-first UI for healthcare workers in the field
+- **Analytics Dashboard** - Health metrics charts and statistics visualization
+- **PWA Support** - Install as app with offline access capabilities
+- **Internationalization** - English and Swahili language support
+- **API Documentation** - OpenAPI/Swagger spec at `/api/docs`
 
 ## 🛠️ Tech Stack
 
