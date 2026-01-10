@@ -1,4 +1,9 @@
 {
+  "name": "mamamtu",
+  "version": "1.0.0",
+  "description": "Maternal & Newborn Health Support System - A comprehensive healthcare dashboard for managing maternal and newborn health services",
+  "author": "Kadioko",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
