@@ -1,0 +1,102 @@
+// Notification System Schema Extension
+// This file documents the notification models to be added to schema.prisma
+
+enum NotificationType {
+  APPOINTMENT_REMINDER
+  APPOINTMENT_CANCELLED
+  APPOINTMENT_RESCHEDULED
+  LAB_RESULT_READY
+  MEDICATION_REMINDER
+  FOLLOW_UP_REQUIRED
+  HIGH_RISK_ALERT
+  SYSTEM_ANNOUNCEMENT
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+model Notification {
+  id          String              @id @default(uuid())
+  type        NotificationType
+  title       String
+  message     String
+  channel     NotificationChannel
+  status      NotificationStatus  @default(PENDING)
+  
+  // Recipient
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Related entities
+  appointmentId String?
+  appointment   Appointment?      @relation(fields: [appointmentId], references: [id])
+  patientId     String?
+  patient       Patient?          @relation(fields: [patientId], references: [id])
+  
+  // Scheduling
+  scheduledFor  DateTime?
+  sentAt        DateTime?
+  readAt        DateTime?
+  
+  // Metadata
+  metadata      String?           // JSON string for additional data
+  priority      Int               @default(0) // 0=normal, 1=high, 2=urgent
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  @@index([userId, status])
+  @@index([scheduledFor])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model NotificationPreference {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Channel preferences
+  enableInApp           Boolean  @default(true)
+  enableEmail           Boolean  @default(true)
+  enableSMS             Boolean  @default(false)
+  enablePush            Boolean  @default(true)
+  
+  // Notification type preferences
+  appointmentReminders  Boolean  @default(true)
+  labResults            Boolean  @default(true)
+  medicationReminders   Boolean  @default(true)
+  followUpAlerts        Boolean  @default(true)
+  highRiskAlerts        Boolean  @default(true)
+  systemAnnouncements   Boolean  @default(true)
+  
+  // Timing preferences
+  reminderHoursBefore   Int      @default(24) // Hours before appointment
+  quietHoursStart       Int?     // Hour (0-23)
+  quietHoursEnd         Int?     // Hour (0-23)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// Add to User model:
+// notifications         Notification[]
+// notificationPreference NotificationPreference?
+
+// Add to Appointment model:
+// notifications         Notification[]
+
+// Add to Patient model:
+// notifications         Notification[]
