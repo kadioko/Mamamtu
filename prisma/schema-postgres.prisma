@@ -1,0 +1,429 @@
+// PostgreSQL Schema for Production
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id                String    @id @default(uuid())
+  patientId         String    @unique
+  firstName         String
+  lastName          String
+  dateOfBirth       DateTime
+  gender            String
+  phone             String?
+  email             String?   @unique
+  address           String?
+  city              String?
+  state             String?
+  postalCode        String?
+  country           String?   @default("Kenya")
+  bloodType         String?
+  // PostgreSQL supports arrays
+  allergies         String[]
+  medicalHistory    String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  insuranceProvider String?
+  insuranceNumber   String?
+  notes             String?
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  appointments Appointment[]
+  medicalRecords MedicalRecord[]
+  notifications Notification[]
+
+  @@index([patientId])
+  @@index([lastName, firstName])
+  @@index([phone])
+  @@index([email])
+}
+
+enum ContentType {
+  ARTICLE
+  VIDEO
+  PDF
+  PRESENTATION
+  QUIZ
+}
+
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model ContentCategory {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  slug        String    @unique
+  parentId    String?   @map("parentId")
+  parent      ContentCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    ContentCategory[] @relation("CategoryHierarchy")
+  contents    Content[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([name])
+  @@index([slug])
+}
+
+model Content {
+  id              String      @id @default(uuid())
+  title           String
+  slug            String      @unique
+  description     String?
+  content         String
+  type            ContentType
+  difficulty      DifficultyLevel
+  duration        Int?        // in minutes
+  thumbnailUrl    String?
+  videoUrl        String?
+  fileUrl         String?
+  isPublished     Boolean     @default(false)
+  publishedAt     DateTime?
+  authorId        String
+  author          User        @relation(fields: [authorId], references: [id])
+  categoryId      String
+  category        ContentCategory @relation(fields: [categoryId], references: [id])
+  // PostgreSQL supports arrays
+  tags            String[]
+  viewCount       Int         @default(0)
+  averageRating   Float?      @default(0)
+  ratingsCount    Int         @default(0)
+  isFeatured      Boolean     @default(false)
+  // Self many-to-many relation definition for Prisma: both sides share the same relation name
+  relatedContents Content[]   @relation("RelatedContents")
+  relatedTo       Content[]   @relation("RelatedContents")
+  userProgress    UserContentProgress[]
+  comments        ContentComment[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([title])
+  @@index([slug])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([isPublished])
+  @@index([isFeatured])
+}
+
+model UserContentProgress {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  contentId   String
+  content     Content   @relation(fields: [contentId], references: [id])
+  isCompleted Boolean   @default(false)
+  completedAt DateTime?
+  progress    Int       @default(0) // 0-100 percentage
+  lastAccessedAt DateTime @default(now())
+  notes       String?
+  rating      Int?
+  feedback    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, contentId])
+  @@index([userId])
+  @@index([contentId])
+  @@index([isCompleted])
+}
+
+model ContentComment {
+  id        String    @id @default(uuid())
+  body      String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  contentId String
+  content   Content   @relation(fields: [contentId], references: [id])
+  parentId  String?
+  parent    ContentComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   ContentComment[] @relation("CommentReplies")
+  isEdited  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([contentId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum AppointmentType {
+  CONSULTATION
+  FOLLOW_UP
+  LAB_TEST
+  ULTRASOUND
+  VACCINATION
+  OTHER
+}
+
+model Appointment {
+  id              String          @id @default(uuid())
+  title           String
+  description     String?
+  startTime       DateTime
+  endTime         DateTime
+  status          AppointmentStatus @default(SCHEDULED)
+  type            AppointmentType
+  location        String?
+  notes           String?
+  
+  // Relationships
+  patient         Patient         @relation(fields: [patientId], references: [id])
+  patientId       String
+  medicalRecords  MedicalRecord[]
+  notifications   Notification[]
+
+  // Metadata
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  createdById     String?
+  createdBy       User?           @relation("CreatedAppointments", fields: [createdById], references: [id])
+  
+  @@index([patientId])
+  @@index([startTime, endTime])
+  @@index([status])
+  @@index([createdById])
+}
+
+enum UserRole {
+  ADMIN
+  HEALTHCARE_PROVIDER
+  PATIENT
+  RECEPTIONIST
+}
+
+enum AccountProvider {
+  CREDENTIALS
+  GOOGLE
+  GITHUB
+}
+
+enum RecordType {
+  CONSULTATION
+  LAB_RESULT
+  PRESCRIPTION
+  PROCEDURE
+  ADMISSION
+  DISCHARGE
+  VACCINATION
+  PRENATAL_VISIT
+  APGAR_SCORE
+  GENERAL
+}
+
+enum LabResultStatus {
+  NORMAL
+  HIGH
+  LOW
+  CRITICAL
+}
+
+model MedicalRecord {
+  id                String      @id @default(uuid())
+  patientId         String
+  patient           Patient     @relation(fields: [patientId], references: [id])
+
+  recordType        RecordType
+  title             String
+  description       String?
+  diagnosis         String?
+  // PostgreSQL supports arrays
+  symptoms          String[]
+  treatment         String?
+  medications       String[]
+  labResults        String[]
+  // PostgreSQL supports JSON
+  vitals            Json?
+
+  appointmentId     String?
+  appointment       Appointment? @relation(fields: [appointmentId], references: [id])
+
+  healthcareProvider String?
+  facility          String?
+  notes             String?
+  // PostgreSQL supports arrays
+  attachments       String[]
+
+  recordedBy        String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([patientId])
+  @@index([recordType])
+  @@index([recordedBy])
+  @@index([createdAt])
+}
+
+model User {
+  id                     String    @id @default(uuid())
+  name                   String?
+  email                  String?   @unique
+  emailVerified          DateTime?
+  emailVerificationToken String?
+  emailVerificationExpires DateTime?
+  passwordResetToken     String?
+  passwordResetExpires   DateTime?
+  image                  String?
+  role                   UserRole  @default(PATIENT)
+  hashedPassword         String?
+  salt                   String?
+  isActive               Boolean   @default(true)
+  lastLogin              DateTime?
+  failedLoginAttempts    Int       @default(0)
+  accountLockedUntil     DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  patients          Patient[]
+  authoredContents  Content[]
+  contentProgress   UserContentProgress[]
+  comments          ContentComment[]
+  appointments      Appointment[] @relation("CreatedAppointments")
+  notifications     Notification[]
+  notificationPreference NotificationPreference?
+  
+  @@index([email])
+}
+
+model Account {
+  id                String    @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Notification System Enums
+enum NotificationType {
+  APPOINTMENT_REMINDER
+  APPOINTMENT_CANCELLED
+  APPOINTMENT_RESCHEDULED
+  LAB_RESULT_READY
+  MEDICATION_REMINDER
+  FOLLOW_UP_REQUIRED
+  HIGH_RISK_ALERT
+  SYSTEM_ANNOUNCEMENT
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+// Notification Models
+model Notification {
+  id          String              @id @default(uuid())
+  type        NotificationType
+  title       String
+  message     String
+  channel     NotificationChannel
+  status      NotificationStatus  @default(PENDING)
+  
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  appointmentId String?
+  appointment   Appointment?      @relation(fields: [appointmentId], references: [id])
+  patientId     String?
+  patient       Patient?          @relation(fields: [patientId], references: [id])
+  
+  scheduledFor  DateTime?
+  sentAt        DateTime?
+  readAt        DateTime?
+  
+  metadata      Json?
+  priority      Int               @default(0)
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  @@index([userId, status])
+  @@index([scheduledFor])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model NotificationPreference {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  enableInApp           Boolean  @default(true)
+  enableEmail           Boolean  @default(true)
+  enableSMS             Boolean  @default(false)
+  enablePush            Boolean  @default(true)
+  
+  appointmentReminders  Boolean  @default(true)
+  labResults            Boolean  @default(true)
+  medicationReminders   Boolean  @default(true)
+  followUpAlerts        Boolean  @default(true)
+  highRiskAlerts        Boolean  @default(true)
+  systemAnnouncements   Boolean  @default(true)
+  
+  reminderHoursBefore   Int      @default(24)
+  quietHoursStart       Int?
+  quietHoursEnd         Int?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

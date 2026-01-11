@@ -9,7 +9,7 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '@apollo/client/testing': '<rootDir>/src/test/mocks/apolloClientTesting.tsx',
+    '^@/test/(.*)$': '<rootDir>/src/test/$1',
   },
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
@@ -20,22 +20,36 @@ const customJestConfig = {
     '<rootDir>/src/**/*.{ts,tsx}',
     '!<rootDir>/src/**/__tests__/**',
     '!<rootDir>/src/**/*.d.ts',
+    '!<rootDir>/src/**/*.stories.{ts,tsx}',
   ],
   coverageThreshold: {
     global: {
-      // Global coverage floor (kept modest but non-trivial).
-      // These should always be <= actual coverage so the suite stays green.
-      statements: 21,
-      branches: 15,
-      functions: 17,
-      lines: 21,
+      statements: 70,
+      branches: 65,
+      functions: 70,
+      lines: 70,
     },
-    'src/lib/security.ts': {
-      statements: 80,
-      branches: 70,
-      functions: 80,
-      lines: 80,
+    'src/lib/logger.ts': {
+      statements: 90,
+      branches: 85,
+      functions: 90,
+      lines: 90,
     },
+    'src/components/error/ErrorBoundary.tsx': {
+      statements: 85,
+      branches: 80,
+      functions: 85,
+      lines: 85,
+    },
+  },
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.{ts,tsx}',
+    '<rootDir>/src/**/*.{test,spec}.{ts,tsx}',
+  ],
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: 'tsconfig.json',
+    }],
   },
 }
 
