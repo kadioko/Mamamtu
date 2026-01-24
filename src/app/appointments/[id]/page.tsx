@@ -33,8 +33,9 @@ export default async function AppointmentPage({
     'use server';
     
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/appointments/${id}/status`,
+        `${baseUrl}/api/appointments/${id}/status`,
         {
           method: 'PATCH',
           headers: {
