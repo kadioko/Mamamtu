@@ -126,12 +126,10 @@ async function searchPatients(filters: SearchFilters) {
     prisma.patient.count({ where: query.where }),
   ]);
 
-  // Normalize allergies field
+  // Normalize allergies field - already an array in PostgreSQL
   const normalizedPatients = patients.map(patient => ({
     ...patient,
-    allergies: patient.allergies ? 
-      (typeof patient.allergies === 'string' ? patient.allergies.split(',').map(a => a.trim()).filter(Boolean) : patient.allergies)
-      : [],
+    allergies: patient.allergies || [],
   }));
 
   return {

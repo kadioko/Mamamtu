@@ -39,10 +39,9 @@ const parseStringArray = (value: unknown): string[] => {
   return [];
 };
 
-const serializeStringArray = (value: unknown): string | null => {
+const serializeStringArray = (value: unknown): string[] | undefined => {
   const parsed = parseStringArray(value);
-  if (parsed.length === 0) return null;
-  return parsed.join(', ');
+  return parsed.length === 0 ? undefined : parsed;
 };
 
 type PatientApi = Omit<PrismaPatient, 'allergies'> & { allergies: string[] };

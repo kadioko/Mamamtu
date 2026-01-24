@@ -197,12 +197,10 @@ async function getPatientsData(filters?: Record<string, any>) {
     orderBy: { createdAt: 'desc' },
   });
 
-  // Normalize allergies field
+  // Normalize allergies field - already an array in PostgreSQL
   return patients.map(patient => ({
     ...patient,
-    allergies: patient.allergies ? 
-      (typeof patient.allergies === 'string' ? patient.allergies.split(',').map(a => a.trim()).filter(Boolean) : patient.allergies)
-      : [],
+    allergies: patient.allergies || [],
   }));
 }
 

@@ -61,9 +61,9 @@ export async function GET(req: Request) {
       ...(isFeatured && { isFeatured: true }),
       ...(search && {
         OR: [
-          { title: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-          { tags: { contains: search, mode: 'insensitive' } },
+          { title: { contains: search } },
+          { description: { contains: search } },
+          { tags: { hasSome: [search] } },
         ],
       }),
     };
