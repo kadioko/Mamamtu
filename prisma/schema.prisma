@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -25,8 +25,7 @@ model Patient {
   postalCode        String?
   country           String?   @default("Kenya")
   bloodType         String?
-  // SQLite does not support scalar lists; store as comma-separated string for demo
-  allergies         String?
+  allergies         String[] // PostgreSQL supports scalar arrays
   medicalHistory    String?
   emergencyContactName  String?
   emergencyContactPhone String?
@@ -98,8 +97,7 @@ model Content {
   author          User        @relation(fields: [authorId], references: [id])
   categoryId      String
   category        ContentCategory @relation(fields: [categoryId], references: [id])
-  // SQLite does not support scalar lists; store as comma-separated string for demo
-  tags            String?
+  tags            String[] // PostgreSQL supports scalar arrays
   viewCount       Int         @default(0)
   averageRating   Float?      @default(0)
   ratingsCount    Int         @default(0)
@@ -252,11 +250,11 @@ model MedicalRecord {
   title             String
   description       String?
   diagnosis         String?
-  symptoms          String?     // JSON array as string
+  symptoms          String[] // PostgreSQL supports scalar arrays
   treatment         String?
-  medications       String?     // JSON array as string
-  labResults        String?     // JSON array as string
-  vitals            String?     // JSON object as string
+  medications       String[] // PostgreSQL supports scalar arrays
+  labResults        Json?    // PostgreSQL JSONB for lab results
+  vitals            Json?    // PostgreSQL JSONB for vitals data
 
   appointmentId     String?
   appointment       Appointment? @relation(fields: [appointmentId], references: [id])
@@ -392,7 +390,7 @@ model Notification {
   sentAt        DateTime?
   readAt        DateTime?
   
-  metadata      String?
+  metadata      Json?    // PostgreSQL JSONB for metadata
   priority      Int               @default(0)
   
   createdAt     DateTime          @default(now())

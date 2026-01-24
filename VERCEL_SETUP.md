@@ -1,60 +1,91 @@
 # Vercel Deployment Setup Guide
 
 ## Overview
-This guide explains how to configure your Mamamtu application for deployment on Vercel with SQLite database support.
+This guide explains how to configure your Mamamtu application for deployment on Vercel with PostgreSQL database support (Supabase/Neon recommended).
 
-## Important: Vercel + SQLite Limitations
+## Important: Vercel + PostgreSQL
 
 Vercel is a **Serverless platform** with the following constraints:
 
-1. **Read-Only Filesystem at Runtime**: You can read the `dev.db` file to display data, but you cannot save new data (user sign-ups, form submissions) to it once the site is live.
+1. **Read-Only Filesystem at Runtime**: You can read the database to display data, but you cannot save new data (user sign-ups, form submissions) to it once the site is live.
 
 2. **Data Reset**: Every time your function "sleeps" and wakes up, the database resets to the version you deployed.
 
 3. **Recommendation**: For a professional health platform like Mamamtu, consider migrating to a hosted PostgreSQL database (e.g., Supabase, Railway, or Neon).
 
-## Step 1: Add Environment Variables to Vercel
+## Step 1: Set Up PostgreSQL Database
 
-### Via Vercel Dashboard:
+### Option A: Supabase (Recommended)
+1. Go to [Supabase](https://supabase.com)
+2. Create a new project
+3. Note down your connection string from Settings > Database
 
-1. Go to [Vercel Dashboard](https://vercel.com)
-2. Select your **Mamamtu** project
-3. Navigate to **Settings > Environment Variables**
-4. Add the following variables:
+### Option B: Neon
+1. Go to [Neon](https://neon.tech)
+2. Create a new project
+3. Get your connection string
+
+### Option C: Railway or Other Providers
+Use any PostgreSQL-compatible provider.
+
+## Step 2: Update Environment Variables in Vercel
+
+Add these to your Vercel project settings (Settings > Environment Variables):
 
 | Key | Value | Environment |
 |-----|-------|-------------|
-| `DATABASE_URL` | `file:./prisma/dev.db` | Production, Preview, Development |
+| `DATABASE_URL` | `postgresql://username:password@hostname:5432/database_name?schema=public` | Production, Preview, Development |
 | `NEXTAUTH_SECRET` | `[generate-a-strong-secret]` | Production, Preview, Development |
 | `NEXTAUTH_URL` | `https://mamamtu-[hash].vercel.app` | Production |
 | `NEXT_PUBLIC_APP_URL` | `https://mamamtu-[hash].vercel.app` | Production |
+
+**Replace the placeholders:**
+- `username`: Your database username
+- `password`: Your database password
+- `hostname`: Your database host (e.g., `db.xxxx.supabase.co` for Supabase)
+- `database_name`: Your database name
+- `[hash]`: Your actual Vercel deployment URL hash
 
 ### Generate NEXTAUTH_SECRET:
 ```bash
 openssl rand -base64 32
 ```
 
-## Step 2: Database File in Git
-
-✅ **Already Done**: The `prisma/dev.db` file has been added to your Git repository.
-
-This ensures:
-- Vercel can access the database during the build process
-- The database is available at runtime for read operations
-- The `.gitignore` has been updated to allow the `.db` file
-
 ## Step 3: Verify Prisma Configuration
 
-Your `prisma/schema.prisma` should have:
+Your `prisma/schema.prisma` has been updated to use PostgreSQL:
 
 ```prisma
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 ```
 
-This is already configured in your project.
+The schema has been optimized for PostgreSQL with:
+- Proper array support for `allergies`, `tags`, `symptoms`, `medications`
+- JSONB support for complex data like `labResults`, `vitals`, `metadata`
+- All data types are PostgreSQL-compatible
+
+## Step 4: Database Migration
+
+### For Existing SQLite Data:
+If you have existing data in SQLite, you'll need to export and import it to PostgreSQL. Prisma provides tools for this:
+
+```bash
+# Export SQLite data (if needed)
+npx prisma db push --force-reset
+
+# Then import to PostgreSQL after setting up the database
+npx prisma db push
+```
+
+### For Fresh PostgreSQL Setup:
+```bash
+# After setting DATABASE_URL to PostgreSQL connection string
+npx prisma db push
+npx prisma db seed  # If you have seed data
+```
 
 ## Step 4: Deploy to Vercel
 
