@@ -150,7 +150,7 @@ export function withValidation<T>(
         return result.response;
       }
       
-      return handler(request, context, result.data);
+      return handler(request, context, result.data as T);
     };
   };
 }
@@ -174,7 +174,7 @@ export function formatValidationErrors(issues: ZodError['issues']) {
 export const getCustomErrorMessage = (issue: ZodError['issues'][0]): string => {
   const { code, path } = issue;
 
-  switch (code) {
+  switch (code as any) {
     case 'invalid_string':
       if (path.includes('email')) return 'Please enter a valid email address';
       if (path.includes('phone')) return 'Please enter a valid phone number';

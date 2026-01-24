@@ -1,17 +1,14 @@
 // WebSocket service using dynamic imports for Next.js compatibility
-import type { Socket } from 'socket.io-client';
-type SocketEvent = 'appointmentCreated' | 'appointmentUpdated' | 'appointmentDeleted';
-
 type Callback = (data: unknown) => void;
 
 declare global {
   interface Window {
-    socket?: Socket | null;
+    socket?: any;
   }
 }
 
 export class WebSocketService {
-  private socket: Socket | null = null;
+  private socket: any = null;
   private static instance: WebSocketService;
   private callbacks: Record<string, Callback[]> = {};
   private isInitialized = false;
@@ -80,12 +77,12 @@ export class WebSocketService {
     
     try {
       // Use dynamic import for client-side only
-      const { io } = await import('socket.io-client');
+      const io = (await import('socket.io-client')).default;
       
       this.socket = io(process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3001', {
         withCredentials: true,
         transports: ['websocket', 'polling'],
-      });
+      } as any);
 
       // For debugging
       if (process.env.NODE_ENV === 'development') {

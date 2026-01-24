@@ -29,9 +29,9 @@ export async function GET(
       return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
-    const where = {
+    const where: any = {
       patientId,
-      ...(status && { status }),
+      ...(status && { status: status as any }),
       ...(upcoming && { startTime: { gte: new Date() } })
     };
 

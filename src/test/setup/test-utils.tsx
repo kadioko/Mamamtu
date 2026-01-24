@@ -1,14 +1,14 @@
 import '@testing-library/jest-dom';
-import { server } from './msw-server';
+// import { server } from './msw-server';
 
 // Start MSW server before all tests
-beforeAll(() => server.listen());
+// beforeAll(() => server.listen());
 
 // Reset request handlers after each test
-afterEach(() => server.resetHandlers());
+// afterEach(() => server.resetHandlers());
 
 // Close MSW server after all tests
-afterAll(() => server.close());
+// afterAll(() => server.close());
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -125,14 +125,14 @@ jest.mock('@/lib/logger', () => ({
 }));
 
 // Mock i18n
-jest.mock('@/lib/i18n', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    changeLanguage: jest.fn(),
-    language: 'en',
-  },
-  TranslationProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
+// jest.mock('@/lib/i18n', () => ({
+//   useTranslation: () => ({
+//     t: (key: string) => key,
+//     changeLanguage: jest.fn(),
+//     language: 'en',
+//   },
+//   TranslationProvider: ({ children }: { children: React.ReactNode }) => children,
+// }));
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

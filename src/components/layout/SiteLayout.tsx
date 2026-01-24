@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { MainNav } from './MainNav';
+import { MainNav } from './main-nav';
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   return (

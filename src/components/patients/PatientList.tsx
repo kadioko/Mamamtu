@@ -149,7 +149,7 @@ export function PatientList({
             className="w-full"
           />
         </div>
-        <Link href={`${basePath}/new`}>
+        <Link href={`${basePath}/new` as any}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             New Patient
@@ -164,7 +164,7 @@ export function PatientList({
       ) : patients.length === 0 ? (
         <div className="text-center py-8">
           <p>No patients found</p>
-          <Link href={`${basePath}/new`}>
+          <Link href={`${basePath}/new` as any}>
             <Button variant="link">Add your first patient</Button>
           </Link>
         </div>
@@ -186,7 +186,7 @@ export function PatientList({
                   <TableRow key={patient.id}>
                     <TableCell className="font-medium">
                       <Link 
-                        href={`${basePath}/${patient.id}`}
+                        href={`${basePath}/${patient.id}` as any}
                         className="hover:underline hover:text-primary"
                       >
                         {`${patient.firstName} ${patient.lastName}`}
@@ -199,7 +199,7 @@ export function PatientList({
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Link href={`${basePath}/${patient.id}`}>
+                        <Link href={`${basePath}/${patient.id}` as any}>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -208,7 +208,7 @@ export function PatientList({
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Link href={`${basePath}/${patient.id}/edit`}>
+                        <Link href={`${basePath}/${patient.id}/edit` as any}>
                           <Button
                             variant="ghost"
                             size="icon"

@@ -427,39 +427,39 @@ export default function PatientDetailPage() {
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-3">Latest Vitals</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {vitals.latest.temperature && (
+                      {(vitals.latest as any).temperature && (
                         <div className="text-center p-4 bg-blue-50 rounded">
-                          <p className="text-lg font-bold text-blue-700">{vitals.latest.temperature}°C</p>
+                          <p className="text-lg font-bold text-blue-700">{(vitals.latest as any).temperature}°C</p>
                           <p className="text-sm text-blue-600">Temperature</p>
                         </div>
                       )}
-                      {vitals.latest.bloodPressureSystolic && vitals.latest.bloodPressureDiastolic && (
+                      {(vitals.latest as any).bloodPressureSystolic && (vitals.latest as any).bloodPressureDiastolic && (
                         <div className="text-center p-4 bg-red-50 rounded">
                           <p className="text-lg font-bold text-red-700">
-                            {vitals.latest.bloodPressureSystolic}/{vitals.latest.bloodPressureDiastolic}
+                            {(vitals.latest as any).bloodPressureSystolic}/{(vitals.latest as any).bloodPressureDiastolic}
                           </p>
                           <p className="text-sm text-red-600">Blood Pressure</p>
                         </div>
                       )}
-                      {vitals.latest.heartRate && (
+                      {(vitals.latest as any).heartRate && (
                         <div className="text-center p-4 bg-green-50 rounded">
-                          <p className="text-lg font-bold text-green-700">{vitals.latest.heartRate}</p>
+                          <p className="text-lg font-bold text-green-700">{(vitals.latest as any).heartRate}</p>
                           <p className="text-sm text-green-600">Heart Rate (BPM)</p>
                         </div>
                       )}
-                      {vitals.latest.weight && (
+                      {(vitals.latest as any).weight && (
                         <div className="text-center p-4 bg-yellow-50 rounded">
-                          <p className="text-lg font-bold text-yellow-700">{vitals.latest.weight}</p>
+                          <p className="text-lg font-bold text-yellow-700">{(vitals.latest as any).weight}</p>
                           <p className="text-sm text-yellow-600">Weight (kg)</p>
                         </div>
                       )}
                     </div>
                   </div>
-                  {vitals.history && vitals.history.length > 1 && (
+                  {(vitals as any).history && (vitals as any).history.length > 1 && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 mb-3">History</h4>
                       <div className="space-y-2">
-                        {vitals.history.slice(1, 6).map((record: Record<string, unknown>, idx: number) => (
+                        {(vitals as any).history.slice(1, 6).map((record: any, idx: number) => (
                           <div key={idx} className="border rounded p-3 text-sm">
                             <div className="flex justify-between items-center mb-2">
                               <span className="font-medium">{record.title}</span>
@@ -468,12 +468,12 @@ export default function PatientDetailPage() {
                               </span>
                             </div>
                             <div className="flex gap-4 text-xs text-gray-600">
-                              {record.vitals.temperature && <span>Temp: {record.vitals.temperature}°C</span>}
-                              {record.vitals.bloodPressureSystolic && (
-                                <span>BP: {record.vitals.bloodPressureSystolic}/{record.vitals.bloodPressureDiastolic}</span>
+                              {(record.vitals as any).temperature && <span>Temp: {(record.vitals as any).temperature}°C</span>}
+                              {(record.vitals as any).bloodPressureSystolic && (
+                                <span>BP: {(record.vitals as any).bloodPressureSystolic}/{(record.vitals as any).bloodPressureDiastolic}</span>
                               )}
-                              {record.vitals.heartRate && <span>HR: {record.vitals.heartRate} BPM</span>}
-                              {record.vitals.weight && <span>Weight: {record.vitals.weight} kg</span>}
+                              {(record.vitals as any).heartRate && <span>HR: {(record.vitals as any).heartRate} BPM</span>}
+                              {(record.vitals as any).weight && <span>Weight: {(record.vitals as any).weight} kg</span>}
                             </div>
                           </div>
                         ))}

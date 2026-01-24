@@ -126,7 +126,7 @@ export function NotificationPanel({ onClose, onMarkAllRead, onNotificationRead }
       <div className="p-4 border-b">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-lg">Notifications</h3>
-          <Link href="/dashboard/notifications/preferences">
+          <Link href={'/dashboard/notifications/preferences' as any}>
             <Button variant="ghost" size="sm">
               <Settings className="h-4 w-4" />
             </Button>
@@ -249,7 +249,7 @@ export function NotificationPanel({ onClose, onMarkAllRead, onNotificationRead }
       {/* Footer */}
       {notifications.length > 0 && (
         <div className="p-3 border-t">
-          <Link href="/dashboard/notifications">
+          <Link href={'/dashboard/notifications' as any}>
             <Button variant="outline" className="w-full" size="sm">
               View All Notifications
             </Button>

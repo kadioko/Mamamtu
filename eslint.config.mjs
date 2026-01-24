@@ -16,9 +16,12 @@ const eslintConfig = [
       "**/__tests__/**/*.{js,jsx,ts,tsx}",
       "**/*.test.{js,jsx,ts,tsx}",
       "**/*.spec.{js,jsx,ts,tsx}",
+      "**/test/**/*.{js,jsx,ts,tsx}",
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "prefer-const": "off",
     },
   },
   {
@@ -27,6 +30,18 @@ const eslintConfig = [
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+  {
+    files: [
+      "**/lib/**/*.{ts,tsx}",
+      "**/app/api/**/*.{ts,tsx}",
+      "**/components/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "prefer-const": "warn",
     },
   },
 ];

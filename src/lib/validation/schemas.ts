@@ -10,9 +10,7 @@ export const createPatientSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(50, 'First name too long'),
   lastName: z.string().min(1, 'Last name is required').max(50, 'Last name too long'),
   dateOfBirth: dateSchema.refine((date) => date < new Date(), 'Date of birth must be in the past'),
-  gender: z.enum(['MALE', 'FEMALE', 'OTHER'], {
-    errorMap: () => ({ message: 'Gender must be MALE, FEMALE, or OTHER' }),
-  }),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER']).catch('MALE'),
   phone: phoneSchema.optional(),
   email: emailSchema.optional(),
   address: z.string().max(200, 'Address too long').optional(),
@@ -47,9 +45,7 @@ export const createAppointmentSchema = z.object({
   description: z.string().max(1000, 'Description too long').optional(),
   startTime: dateSchema.refine((date) => date >= new Date(), 'Start time must be in the future'),
   endTime: dateSchema.refine((date) => date >= new Date(), 'End time must be in the future'),
-  type: z.enum(['CONSULTATION', 'FOLLOW_UP', 'LAB_TEST', 'ULTRASOUND', 'VACCINATION', 'OTHER'], {
-    errorMap: () => ({ message: 'Invalid appointment type' }),
-  }),
+  type: z.enum(['CONSULTATION', 'FOLLOW_UP', 'LAB_TEST', 'ULTRASOUND', 'VACCINATION', 'OTHER']),
   location: z.string().max(200, 'Location too long').optional(),
   notes: z.string().max(1000, 'Notes too long').optional(),
   patientId: z.string().uuid('Invalid patient ID'),
@@ -92,9 +88,7 @@ export const createMedicalRecordSchema = z.object({
     'PRENATAL_VISIT',
     'APGAR_SCORE',
     'GENERAL',
-  ], {
-    errorMap: () => ({ message: 'Invalid record type' }),
-  }),
+  ]),
   title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
   description: z.string().max(2000, 'Description too long').optional(),
   diagnosis: z.string().max(1000, 'Diagnosis too long').optional(),
@@ -154,12 +148,8 @@ export const createContentSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens'),
   description: z.string().max(500, 'Description too long').optional(),
   content: z.string().min(1, 'Content is required'),
-  type: z.enum(['ARTICLE', 'VIDEO', 'PDF', 'PRESENTATION', 'QUIZ'], {
-    errorMap: () => ({ message: 'Invalid content type' }),
-  }),
-  difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'], {
-    errorMap: () => ({ message: 'Invalid difficulty level' }),
-  }),
+  type: z.enum(['ARTICLE', 'VIDEO', 'PDF', 'PRESENTATION', 'QUIZ']),
+  difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
   duration: z.number().min(0, 'Duration must be positive').optional(),
   thumbnailUrl: z.string().url('Invalid thumbnail URL').optional(),
   videoUrl: z.string().url('Invalid video URL').optional(),
@@ -194,20 +184,16 @@ export const createNotificationSchema = z.object({
     'FOLLOW_UP_REQUIRED',
     'HIGH_RISK_ALERT',
     'SYSTEM_ANNOUNCEMENT',
-  ], {
-    errorMap: () => ({ message: 'Invalid notification type' }),
-  }),
+  ]),
   title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
   message: z.string().min(1, 'Message is required').max(1000, 'Message too long'),
-  channel: z.enum(['IN_APP', 'EMAIL', 'SMS', 'PUSH'], {
-    errorMap: () => ({ message: 'Invalid notification channel' }),
-  }),
+  channel: z.enum(['IN_APP', 'EMAIL', 'SMS', 'PUSH']),
   userId: z.string().uuid('Invalid user ID').optional(),
   appointmentId: z.string().uuid('Invalid appointment ID').optional(),
   patientId: z.string().uuid('Invalid patient ID').optional(),
   scheduledFor: dateSchema.optional(),
   priority: z.number().min(0).max(10, 'Priority must be between 0 and 10').default(0),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const updateNotificationSchema = createNotificationSchema.partial();

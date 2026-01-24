@@ -10,7 +10,7 @@ const exportSchema = z.object({
   format: z.enum(['csv', 'pdf']),
   patientId: z.string().uuid().optional(),
   recordId: z.string().uuid().optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function POST(request: NextRequest) {

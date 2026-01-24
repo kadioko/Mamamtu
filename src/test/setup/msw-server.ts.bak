@@ -1,10 +1,10 @@
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
+import { http } from 'msw';
 
 // Mock API handlers
 const handlers = [
   // Auth endpoints
-  rest.post('/api/auth/signin', (req, res, ctx) => {
+  http.post('/api/auth/signin', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface DataPoint {
@@ -75,7 +75,7 @@ export function HealthMetricsChart({
           <div className="flex items-center justify-center" style={{ height }}>
             <div className="relative">
               <svg width={height} height={height} viewBox="0 0 100 100">
-                {data.reduce<{ offset: number; elements: JSX.Element[] }>(
+                {data.reduce<{ offset: number; elements: React.ReactNode[] }>(
                   (acc, item, index) => {
                     const percentage = total > 0 ? (item.value / total) * 100 : 0;
                     const strokeDasharray = `${percentage} ${100 - percentage}`;

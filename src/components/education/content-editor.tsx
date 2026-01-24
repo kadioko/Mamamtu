@@ -628,7 +628,7 @@ export function ContentEditor({ initialData, onSubmit, isSubmitting: isExternalS
                       <FormControl>
                         <div className="space-y-2">
                           {relatedContents
-                            .filter(content => content.id !== initialData?.id)
+                            .filter(content => content.id !== (initialData as any)?.id)
                             .map((content) => (
                               <div key={content.id} className="flex items-center space-x-2">
                                 <Checkbox

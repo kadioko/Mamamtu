@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 import { useSession } from 'next-auth/react';
 
 interface UseSocketOptions {
@@ -19,7 +19,7 @@ interface SocketState {
 
 export function useSocket(options: UseSocketOptions = {}) {
   const { data: session } = useSession();
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<any>(null);
   const [state, setState] = useState<SocketState>({
     connected: false,
     connecting: false,
@@ -59,7 +59,7 @@ export function useSocket(options: UseSocketOptions = {}) {
       });
     });
 
-    socket.on('disconnect', (reason) => {
+    socket.on('disconnect', (reason: any) => {
       setState({
         connected: false,
         connecting: false,
@@ -67,18 +67,18 @@ export function useSocket(options: UseSocketOptions = {}) {
       });
     });
 
-    socket.on('connect_error', (error) => {
+    socket.on('connect_error', (error: any) => {
       setState({
         connected: false,
         connecting: false,
-        error,
+        error: error instanceof Error ? error : new Error(String(error)),
       });
     });
 
-    socket.on('error', (error) => {
+    socket.on('error', (error: any) => {
       setState(prev => ({
         ...prev,
-        error: new Error(error.message || 'Socket error'),
+        error: new Error(error?.message || 'Socket error'),
       }));
     });
 

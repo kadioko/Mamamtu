@@ -51,15 +51,15 @@ export class AdvancedSearchService {
     // Text search
     if (filters.query) {
       where.OR = [
-        { firstName: { contains: filters.query, mode: 'insensitive' } },
-        { lastName: { contains: filters.query, mode: 'insensitive' } },
-        { patientId: { contains: filters.query, mode: 'insensitive' } },
-        { email: { contains: filters.query, mode: 'insensitive' } },
-        { phone: { contains: filters.query, mode: 'insensitive' } },
-        { address: { contains: filters.query, mode: 'insensitive' } },
-        { city: { contains: filters.query, mode: 'insensitive' } },
-        { notes: { contains: filters.query, mode: 'insensitive' } },
-      ];
+        { firstName: { contains: filters.query } },
+        { lastName: { contains: filters.query } },
+        { patientId: { contains: filters.query } },
+        { email: { contains: filters.query } },
+        { phone: { contains: filters.query } },
+        { address: { contains: filters.query } },
+        { city: { contains: filters.query } },
+        { notes: { contains: filters.query } },
+      ] as any;
     }
 
     // Gender filter
@@ -113,14 +113,14 @@ export class AdvancedSearchService {
     // Text search
     if (filters.query) {
       where.OR = [
-        { title: { contains: filters.query, mode: 'insensitive' } },
-        { description: { contains: filters.query, mode: 'insensitive' } },
-        { location: { contains: filters.query, mode: 'insensitive' } },
-        { notes: { contains: filters.query, mode: 'insensitive' } },
-        { patient: { firstName: { contains: filters.query, mode: 'insensitive' } } },
-        { patient: { lastName: { contains: filters.query, mode: 'insensitive' } } },
-        { patient: { patientId: { contains: filters.query, mode: 'insensitive' } } },
-      ];
+        { title: { contains: filters.query } },
+        { description: { contains: filters.query } },
+        { location: { contains: filters.query } },
+        { notes: { contains: filters.query } },
+        { patient: { firstName: { contains: filters.query } } },
+        { patient: { lastName: { contains: filters.query } } },
+        { patient: { patientId: { contains: filters.query } } },
+      ] as any;
     }
 
     // Patient filter
@@ -174,17 +174,17 @@ export class AdvancedSearchService {
 
   // Build search query for medical records
   buildMedicalRecordSearchQuery(filters: SearchFilters): Prisma.MedicalRecordFindManyArgs {
-    const where: Prisma.MedicalRecordWhereInput = {};
+    const where: any = {};
     const orderBy: Prisma.MedicalRecordOrderByWithRelationInput = {};
 
     // Text search
     if (filters.query) {
       where.OR = [
-        { title: { contains: filters.query, mode: 'insensitive' } },
-        { description: { contains: filters.query, mode: 'insensitive' } },
-        { diagnosis: { contains: filters.query, mode: 'insensitive' } },
-        { treatment: { contains: filters.query, mode: 'insensitive' } },
-        { notes: { contains: filters.query, mode: 'insensitive' } },
+        { title: { contains: filters.query } },
+        { description: { contains: filters.query } },
+        { diagnosis: { contains: filters.query } },
+        { treatment: { contains: filters.query } },
+        { notes: { contains: filters.query } },
         { symptoms: { hasSome: [filters.query] } },
         { medications: { hasSome: [filters.query] } },
         { labResults: { hasSome: [filters.query] } },
@@ -237,16 +237,16 @@ export class AdvancedSearchService {
 
   // Build search query for content
   buildContentSearchQuery(filters: SearchFilters): Prisma.ContentFindManyArgs {
-    const where: Prisma.ContentWhereInput = {};
+    const where: any = {};
     const orderBy: Prisma.ContentOrderByWithRelationInput = {};
 
     // Text search
     if (filters.query) {
       where.OR = [
-        { title: { contains: filters.query, mode: 'insensitive' } },
-        { description: { contains: filters.query, mode: 'insensitive' } },
-        { content: { contains: filters.query, mode: 'insensitive' } },
-        { slug: { contains: filters.query, mode: 'insensitive' } },
+        { title: { contains: filters.query } },
+        { description: { contains: filters.query } },
+        { content: { contains: filters.query } },
+        { slug: { contains: filters.query } },
       ];
     }
 
