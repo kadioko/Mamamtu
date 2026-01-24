@@ -7,6 +7,9 @@ import { MainNav } from '@/components/layout/main-nav';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui';
 
+// Force dynamic rendering for all pages to avoid build-time database access
+export const dynamic = 'force-dynamic';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
