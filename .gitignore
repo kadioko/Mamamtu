@@ -38,7 +38,7 @@ yarn-error.log*
 .vercel
 
 # database
-*.db
+# *.db  # Uncommenting to allow dev.db for Vercel
 *.db-journal
 
 # typescript
