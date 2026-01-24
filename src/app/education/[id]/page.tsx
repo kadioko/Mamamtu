@@ -118,17 +118,6 @@ export default async function ContentPage({
   );
 }
 
-// Generate static params for SSG
-// This will pre-render the most popular content at build time
-export async function generateStaticParams() {
-  const contents = await prisma.content.findMany({
-    where: { isPublished: true },
-    orderBy: { viewCount: 'desc' },
-    take: 10, // Pre-render the top 10 most viewed contents
-    select: { id: true },
-  });
-
-  return contents.map((content) => ({
-    id: content.id,
-  }));
-}
+// Disable static generation for dynamic content
+// Use dynamic rendering instead to avoid database access during build
+export const dynamic = 'force-dynamic';
