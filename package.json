@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -17,7 +17,8 @@
     "docker:postgres": "docker-compose -f docker-compose.postgres.yml up",
     "docker:postgres:down": "docker-compose -f docker-compose.postgres.yml down",
     "db:backup": "node scripts/backup-database.js",
-    "db:restore": "node scripts/restore-database.js"
+    "db:restore": "node scripts/restore-database.js",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.0.0",
