@@ -5,12 +5,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Disable static generation to avoid database access during Vercel build
-  staticPageGenerationTimeout: 0,
-  // Skip static optimization for all routes
-  experimental: {
-    isrMemoryCacheSize: 0,
-  },
 };
 
 module.exports = nextConfig;
