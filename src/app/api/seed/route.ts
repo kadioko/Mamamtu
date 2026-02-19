@@ -63,8 +63,9 @@ export async function POST() {
         patientId: 'PT-0001',
         firstName: 'Fatima',
         lastName: 'Al-Zahra',
+        dateOfBirth: new Date('1995-03-15'),
         gender: 'FEMALE',
-        phone: '+255700000001', // Tanzania country code
+        phone: '+255700000001',
         email: 'fatima@mama-tu.demo',
         bloodType: 'O+',
         medicalHistory: 'Pregnancy care, routine checkups',
@@ -75,8 +76,9 @@ export async function POST() {
         patientId: 'PT-0002',
         firstName: 'Ahmed',
         lastName: 'Hassan',
+        dateOfBirth: new Date('1988-07-22'),
         gender: 'MALE',
-        phone: '+255700000002', // Tanzania country code
+        phone: '+255700000002',
         email: 'ahmed@mama-tu.demo',
         bloodType: 'A+',
         medicalHistory: 'Hypertension, routine screenings',
@@ -87,8 +89,9 @@ export async function POST() {
         patientId: 'PT-0003',
         firstName: 'Grace',
         lastName: 'Njoroge',
+        dateOfBirth: new Date('1992-11-08'),
         gender: 'FEMALE',
-        phone: '+255700000003', // Tanzania country code
+        phone: '+255700000003',
         email: 'grace@mama-tu.demo',
         bloodType: 'B+',
         medicalHistory: 'Postnatal care, vaccination schedule',
