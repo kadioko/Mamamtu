@@ -9,13 +9,13 @@ export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="max-w-lg w-full">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
-            <FileQuestion className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <FileQuestion className="h-8 w-8 text-primary" />
           </div>
-          <CardTitle className="text-6xl font-bold text-gray-300 dark:text-gray-700">
+          <CardTitle className="text-6xl font-bold text-muted-foreground/30">
             404
           </CardTitle>
           <CardTitle className="text-2xl mt-2">Page Not Found</CardTitle>

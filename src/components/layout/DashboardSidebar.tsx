@@ -72,6 +72,16 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const toggleCollapse = () => {
+    const next = !isCollapsed;
+    setIsCollapsed(next);
+    const main = document.getElementById('dashboard-main');
+    if (main) {
+      main.classList.toggle('lg:ml-16', next);
+      main.classList.toggle('lg:ml-64', !next);
+    }
+  };
+
   return (
     <aside
       className={cn(
@@ -109,7 +119,7 @@ export function DashboardSidebar() {
             variant="ghost"
             size="sm"
             className="w-full justify-center"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={toggleCollapse}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (

@@ -106,6 +106,7 @@ src/
 ├── components/       # React components
 │   ├── ui/          # Base UI components (shadcn/ui)
 │   ├── layout/      # Layout components
+│   ├── providers/   # React context providers (Theme, Session, WebSocket)
 │   ├── patients/    # Patient-related components
 │   ├── appointments/# Appointment components
 │   └── education/   # Education content components
@@ -120,6 +121,9 @@ src/
 - Follow existing patterns and conventions
 - Use Prettier for formatting
 - Use ESLint for linting
+- Use `react-hook-form` + `zod` for all form validation
+- Use `next-themes` `useTheme()` hook for theme-aware components (never access `localStorage` directly for theme)
+- Use `lucide-react` for all icons (no raw inline SVGs)
 
 ## 📄 License
 

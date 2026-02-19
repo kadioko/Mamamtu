@@ -18,11 +18,11 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="max-w-lg w-full">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-            <AlertTriangle className="h-8 w-8 text-red-600 dark:text-red-400" />
+          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
+            <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
           <CardTitle className="text-2xl">Something went wrong</CardTitle>
           <CardDescription>
@@ -31,12 +31,12 @@ export default function Error({
         </CardHeader>
         <CardContent className="space-y-4">
           {process.env.NODE_ENV === 'development' && (
-            <div className="rounded-md bg-gray-100 dark:bg-gray-800 p-4 overflow-auto max-h-48">
-              <p className="text-sm font-mono text-red-600 dark:text-red-400">
+            <div className="rounded-md bg-muted p-4 overflow-auto max-h-48">
+              <p className="text-sm font-mono text-destructive">
                 {error.message}
               </p>
               {error.digest && (
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Error ID: {error.digest}
                 </p>
               )}

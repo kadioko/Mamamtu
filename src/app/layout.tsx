@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { WebSocketProvider } from '@/components/providers/WebSocketProvider';
 import { SessionProvider } from '@/components/providers/SessionProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { MainNav } from '@/components/layout/main-nav';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui';
@@ -44,18 +45,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
       >
-        <SessionProvider>
-          <WebSocketProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <MainNav />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <Toaster />
-          </WebSocketProvider>
-        </SessionProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <SessionProvider>
+            <WebSocketProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <MainNav />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <Toaster />
+            </WebSocketProvider>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

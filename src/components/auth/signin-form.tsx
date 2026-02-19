@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Route } from 'next';
@@ -10,26 +13,36 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Icons } from '@/components/ui/icons';
 
+const signInSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type SignInValues = z.infer<typeof signInSchema>;
+
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard';
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+  });
+
+  const onSubmit = async (values: SignInValues) => {
     setIsLoading(true);
 
     try {
-      // First, check if the email exists and is verified
       const userCheck = await fetch('/api/auth/check-user', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: values.email }),
       });
 
       const userData = await userCheck.json();
@@ -39,15 +52,13 @@ export function SignInForm() {
       }
 
       if (userData && !userData.emailVerified) {
-        // If email is not verified, show a specific error
         throw new Error('email-not-verified');
       }
 
-      // If email is verified, proceed with sign in
       const result = await signIn('credentials', {
         redirect: false,
-        email,
-        password,
+        email: values.email,
+        password: values.password,
         callbackUrl,
       });
 
@@ -64,7 +75,7 @@ export function SignInForm() {
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'email-not-verified') {
-          // Show a more helpful message for unverified emails
+          const emailValue = getValues('email');
           toast({
             title: 'Email Not Verified',
             description: (
@@ -78,9 +89,8 @@ export function SignInForm() {
                         const res = await fetch('/api/auth/resend-verification', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ email }),
+                          body: JSON.stringify({ email: emailValue }),
                         });
-                        
                         if (res.ok) {
                           toast({
                             title: 'Verification Email Sent',
@@ -128,7 +138,7 @@ export function SignInForm() {
     setIsLoading(true);
     try {
       await signIn(provider, { callbackUrl });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: `Failed to sign in with ${provider}. Please try again.`,
@@ -141,7 +151,7 @@ export function SignInForm() {
 
   return (
     <div className="grid gap-6">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-1">
             <Label htmlFor="email">Email</Label>
@@ -153,10 +163,12 @@ export function SignInForm() {
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              aria-invalid={!!errors.email}
+              {...register('email')}
             />
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
           <div className="grid gap-1">
             <div className="flex items-center justify-between">
@@ -174,10 +186,12 @@ export function SignInForm() {
               type="password"
               autoComplete="current-password"
               disabled={isLoading}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              aria-invalid={!!errors.password}
+              {...register('password')}
             />
+            {errors.password && (
+              <p className="text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
           <Button type="submit" disabled={isLoading}>
             {isLoading && (

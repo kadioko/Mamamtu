@@ -1,10 +1,10 @@
 # MamaMtu – Maternal & Newborn Health Support
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
 
-A comprehensive healthcare management system for maternal and newborn health services, built with Next.js 15, Prisma, and Tailwind CSS.
+A comprehensive healthcare management system for maternal and newborn health services, built with Next.js 16, Prisma, and Tailwind CSS.
 
 ## ✨ Features
 
@@ -14,6 +14,7 @@ A comprehensive healthcare management system for maternal and newborn health ser
 - **Education Portal** - Health education content for patients and staff
 - **Real-time Notifications** - In-app, email, and SMS notification support
 - **Role-Based Access** - Admin, Healthcare Provider, Patient, and Receptionist roles
+- **Dark Mode** - System-aware dark/light mode via `next-themes` with SSR-safe toggle
 - **Responsive Design** - Mobile-first UI for healthcare workers in the field
 - **Analytics Dashboard** - Health metrics charts and statistics visualization
 - **PWA Support** - Install as app with offline access capabilities
@@ -24,13 +25,14 @@ A comprehensive healthcare management system for maternal and newborn health ser
 
 | Category | Technology |
 |----------|------------|
-| **Framework** | [Next.js 15](https://nextjs.org/) (App Router) |
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router) |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) |
 | **Database** | [Prisma](https://www.prisma.io/) + SQLite |
 | **Authentication** | [NextAuth.js](https://next-auth.js.org/) |
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **UI Components** | [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) |
 | **Forms** | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) |
+| **Theming** | [next-themes](https://github.com/pacocoursey/next-themes) |
 | **Email** | [Resend](https://resend.com/) |
 | **Testing** | [Jest](https://jestjs.io/) + [Testing Library](https://testing-library.com/) |
 
@@ -97,13 +99,14 @@ src/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes
 │   ├── appointments/      # Appointment pages
-│   ├── auth/              # Authentication pages
-│   ├── dashboard/         # Dashboard pages
+│   ├── auth/              # Authentication pages (+ loading.tsx skeleton)
+│   ├── dashboard/         # Dashboard pages (+ loading.tsx skeleton)
 │   ├── education/         # Education content pages
 │   └── patients/          # Patient management pages
 ├── components/            # React components
 │   ├── ui/               # Base UI components (shadcn/ui)
 │   ├── layout/           # Layout components
+│   ├── providers/        # React context providers (Theme, Session, WebSocket)
 │   ├── patients/         # Patient components
 │   ├── appointments/     # Appointment components
 │   ├── education/        # Education components

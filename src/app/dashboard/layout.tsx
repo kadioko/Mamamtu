@@ -8,7 +8,10 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       <DashboardSidebar />
-      <div className="flex-1 ml-16 lg:ml-64 transition-all duration-300">
+      <div
+        id="dashboard-main"
+        className="flex-1 transition-[margin] duration-300 ml-16 lg:ml-64"
+      >
         <div className="container py-6">
           {children}
         </div>

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,55 +11,47 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Icons } from '@/components/ui/icons';
 
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+const registerSchema = z
+  .object({
+    name: z.string().min(2, 'Name must be at least 2 characters'),
+    email: z.string().email('Please enter a valid email address'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
+type RegisterValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: 'Error',
-        description: 'Passwords do not match',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  const onSubmit = async (values: RegisterValues) => {
     setIsLoading(true);
 
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
+          name: values.name,
+          email: values.email,
+          password: values.password,
         }),
       });
 
@@ -70,7 +65,6 @@ export function RegisterForm() {
         description: 'Registration successful! Please sign in.',
       });
 
-      // Redirect to sign-in page after successful registration
       router.push('/auth/signin');
     } catch (error) {
       toast({
@@ -85,69 +79,71 @@ export function RegisterForm() {
 
   return (
     <div className="grid gap-6">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-1">
             <Label htmlFor="name">Full Name</Label>
             <Input
               id="name"
-              name="name"
               placeholder="John Doe"
               type="text"
               autoCapitalize="words"
               autoComplete="name"
               autoCorrect="off"
               disabled={isLoading}
-              value={formData.name}
-              onChange={handleChange}
-              required
+              aria-invalid={!!errors.name}
+              {...register('name')}
             />
+            {errors.name && (
+              <p className="text-xs text-destructive">{errors.name.message}</p>
+            )}
           </div>
           <div className="grid gap-1">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              name="email"
               placeholder="name@example.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
-              value={formData.email}
-              onChange={handleChange}
-              required
+              aria-invalid={!!errors.email}
+              {...register('email')}
             />
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
           <div className="grid gap-1">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              name="password"
               placeholder="••••••••"
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
-              value={formData.password}
-              onChange={handleChange}
-              minLength={8}
-              required
+              aria-invalid={!!errors.password}
+              {...register('password')}
             />
+            {errors.password && (
+              <p className="text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
           <div className="grid gap-1">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
               id="confirmPassword"
-              name="confirmPassword"
               placeholder="••••••••"
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              minLength={8}
-              required
+              aria-invalid={!!errors.confirmPassword}
+              {...register('confirmPassword')}
             />
+            {errors.confirmPassword && (
+              <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
+            )}
           </div>
           <Button type="submit" disabled={isLoading}>
             {isLoading && (
