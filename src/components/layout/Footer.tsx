@@ -89,7 +89,7 @@ export function Footer() {
             © {currentYear} MamaMtu. All rights reserved.
           </p>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            Made with <Heart className="h-4 w-4 text-primary mx-1" /> in Kenya
+            Made with <Heart className="h-4 w-4 text-primary mx-1" /> in Tanzania
           </div>
         </div>
       </div>
