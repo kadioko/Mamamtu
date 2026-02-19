@@ -115,7 +115,7 @@ export async function POST() {
         startTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
         endTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000), // 1 hour later
         status: AppointmentStatus.SCHEDULED,
-        type: AppointmentType.PRENATAL_CARE,
+        type: AppointmentType.CONSULTATION,
         location: 'Room 101',
         patientId: patients[0].id,
         createdById: provider.id,
