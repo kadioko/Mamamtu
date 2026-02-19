@@ -74,6 +74,8 @@ export class WebSocketService {
   private async initialize() {
     if (typeof window === 'undefined') return;
     if (this.isInitialized) return;
+    // Skip in production when no WebSocket server is configured
+    if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WS_URL) return;
     
     try {
       // Use dynamic import for client-side only

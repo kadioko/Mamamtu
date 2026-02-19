@@ -6,18 +6,18 @@ export function Footer() {
 
   const footerLinks = {
     product: [
-      { name: 'Features', href: '/features' },
-      { name: 'Pricing', href: '/pricing' },
-      { name: 'About', href: '/about' },
+      { name: 'Dashboard', href: '/dashboard' },
+      { name: 'Patients', href: '/dashboard/patients' },
+      { name: 'Appointments', href: '/dashboard/appointments' },
     ],
     resources: [
       { name: 'Education', href: '/education' },
-      { name: 'Help Center', href: '/help' },
-      { name: 'Contact', href: '/contact' },
+      { name: 'Sign In', href: '/auth/signin' },
+      { name: 'Register', href: '/auth/register' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
+      { name: 'Privacy Policy', href: '#' },
+      { name: 'Terms of Service', href: '#' },
     ],
   };
 
