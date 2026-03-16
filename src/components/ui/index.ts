@@ -10,6 +10,8 @@ export * from './tabs';
 export * from './calendar';
 export * from './switch';
 export * from './popover';
+export * from './glow-menu';
+export * from './glow-menu-demo';
 
 // Export toast components with explicit names
 export { Toast, ToastAction, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport, type ToastActionElement, type ToastProps } from './toast';
