@@ -103,6 +103,15 @@ type Category = {
 
 type ContentItem = Content;
 
+async function getErrorMessage(response: Response, fallback: string) {
+  try {
+    const data = await response.json();
+    return data?.message || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function ContentListWrapper() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -134,7 +143,7 @@ function ContentListWrapper() {
         const response = await fetch(`/api/content?${queryParams}`);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch content');
+          throw new Error(await getErrorMessage(response, 'Failed to fetch content'));
         }
         
         const data = await response.json();
@@ -168,7 +177,7 @@ function ContentListWrapper() {
   }
 
   if (error) {
-    throw error;
+    return <ContentListError error={error} onRetry={() => window.location.reload()} />;
   }
 
   const totalPages = Math.ceil(total / pageSize);
@@ -204,7 +213,7 @@ function EducationContent() {
         const response = await fetch('/api/content/categories');
         
         if (!response.ok) {
-          throw new Error('Failed to fetch categories');
+          throw new Error(await getErrorMessage(response, 'Failed to fetch categories'));
         }
         
         const data = await response.json();

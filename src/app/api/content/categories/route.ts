@@ -2,6 +2,20 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+function categoriesErrorResponse(error: unknown) {
+  console.error('Error fetching categories:', error);
+
+  return NextResponse.json(
+    {
+      message: 'Content categories service unavailable',
+      details: process.env.NODE_ENV === 'production'
+        ? undefined
+        : error instanceof Error ? error.message : 'Unknown error',
+    },
+    { status: 503 }
+  );
+}
+
 export async function GET() {
   try {
     const categories = await prisma.contentCategory.findMany({
@@ -23,11 +37,7 @@ export async function GET() {
 
     return NextResponse.json({ data: categories });
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return categoriesErrorResponse(error);
   }
 }
 

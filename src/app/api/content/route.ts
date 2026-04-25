@@ -3,6 +3,20 @@ import { prisma } from '@/lib/prisma';
 import { ContentType, DifficultyLevel } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
+function contentErrorResponse(error: unknown) {
+  console.error('Error fetching content:', error);
+
+  return NextResponse.json(
+    {
+      message: 'Content service unavailable',
+      details: process.env.NODE_ENV === 'production'
+        ? undefined
+        : error instanceof Error ? error.message : 'Unknown error',
+    },
+    { status: 503 }
+  );
+}
+
 const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value
@@ -95,11 +109,7 @@ export async function GET(req: Request) {
       },
     });
   } catch (error) {
-    console.error('Error fetching content:', error);
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return contentErrorResponse(error);
   }
 }
 
