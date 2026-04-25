@@ -40,7 +40,7 @@ describe('patientService', () => {
         json: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await getPatients({ search: 'Jane', page: 2 as any, filter: '' as any });
+      const result = await getPatients({ search: 'Jane', page: 2, filter: '' } as any);
 
       expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients?search=Jane&page=2', { credentials: 'include' });
       expect(result).toEqual(mockResponse);

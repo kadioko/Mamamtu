@@ -1,9 +1,11 @@
+import React from 'react';
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { MockedProvider } from '@apollo/client/testing';
 import AppointmentsPage from '../page';
-import { getAppointments, getPatients } from '@/services/appointmentService';
+import { getAppointments } from '@/services/appointmentService';
+
+const MockedProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 // Mock the next/navigation module
 jest.mock('next/navigation', () => ({
@@ -24,7 +26,6 @@ jest.mock('next/link', () => ({
 // Mock the appointment service
 jest.mock('@/services/appointmentService', () => ({
   getAppointments: jest.fn(),
-  getPatients: jest.fn(),
 }));
 
 describe('Appointment Flow', () => {
@@ -61,24 +62,6 @@ describe('Appointment Flow', () => {
       },
     });
 
-    // Mock getPatients
-    (getPatients as jest.Mock).mockResolvedValue({
-      data: [
-        {
-          id: 'p1',
-          firstName: 'Jane',
-          lastName: 'Doe',
-          email: 'jane@example.com',
-          phone: '+1234567890',
-        },
-      ],
-      pagination: {
-        total: 1,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-      },
-    });
   });
 
   afterEach(() => {

@@ -30,9 +30,19 @@ const PatientForm = ({ onSubmit, initialData }: any) => {
     }
   );
 
+  const [emailError, setEmailError] = React.useState('');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    if (!formData.firstName || !formData.lastName || !formData.dateOfBirth) {
+      return;
+    }
+    if (formData.email && !/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)) {
+      setEmailError('Invalid email');
+      return;
+    }
+    setEmailError('');
+    Promise.resolve(onSubmit(formData)).catch(() => {});
   };
 
   return (
@@ -72,11 +82,12 @@ const PatientForm = ({ onSubmit, initialData }: any) => {
       />
       <input
         data-testid="email-input"
-        type="email"
+        type="text"
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         placeholder="Email"
       />
+      {emailError && <span data-testid="email-error">{emailError}</span>}
       <button type="submit" data-testid="submit-button">
         Save Patient
       </button>
@@ -92,7 +103,7 @@ const PatientDetail = ({ patient, onUpdate }: any) => {
       <div>
         <PatientForm
           initialData={patient}
-          onSubmit={(data) => {
+          onSubmit={(data: any) => {
             onUpdate(patient.id, data);
             setIsEditing(false);
           }}
@@ -118,8 +129,8 @@ const PatientDetail = ({ patient, onUpdate }: any) => {
 
 describe('Patient Management Workflow', () => {
   const mockPatients = [
-    createMockPatient({ firstName: 'Jane', lastName: 'Doe' }),
-    createMockPatient({ firstName: 'John', lastName: 'Smith' }),
+    createMockPatient({ id: 'Jane Doe', firstName: 'Jane', lastName: 'Doe' }),
+    createMockPatient({ id: 'John Smith', firstName: 'John', lastName: 'Smith' }),
   ];
 
   describe('Patient List', () => {
@@ -144,7 +155,7 @@ describe('Patient Management Workflow', () => {
       render(<PatientList patients={[]} onSelect={() => {}} />);
 
       expect(screen.getByTestId('patient-list')).toBeInTheDocument();
-      expect(screen.queryByTestId(/patient-/)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(/^patient-(?!list$)/)).not.toBeInTheDocument();
     });
   });
 

@@ -2,6 +2,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import DashboardPage from '../page';
 
+jest.mock('next-auth/react', () => ({
+  useSession: jest.fn(() => ({
+    data: { user: { id: 'test-user-id', role: 'ADMIN' } },
+    status: 'authenticated',
+  })),
+}));
+
 const globalAny: any = globalThis as any;
 
 describe('DashboardPage', () => {
@@ -10,7 +17,7 @@ describe('DashboardPage', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('renders metrics and recent appointments from API data', async () => {

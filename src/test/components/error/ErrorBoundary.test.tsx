@@ -40,13 +40,13 @@ describe('ErrorBoundary', () => {
     );
 
     expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
-    expect(screen.getByText(/an unexpected error occurred/i)).toBeInTheDocument();
+    expect(screen.getAllByText((_: string, el: Element | null) => el?.tagName !== 'BODY' && !!el?.textContent?.match(/an unexpected error/i))[0]).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
   });
 
   it('displays error details in development', () => {
     const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'development';
+    (process.env as any).NODE_ENV = 'development';
 
     render(
       <ErrorBoundary>
@@ -57,12 +57,12 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Test error')).toBeInTheDocument();
     expect(screen.getByText(/error details/i)).toBeInTheDocument();
 
-    process.env.NODE_ENV = originalEnv;
+    (process.env as any).NODE_ENV = originalEnv;
   });
 
   it('hides error details in production', () => {
     const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'production';
+    (process.env as any).NODE_ENV = 'production';
 
     render(
       <ErrorBoundary>
@@ -73,7 +73,7 @@ describe('ErrorBoundary', () => {
     expect(screen.queryByText('Test error')).not.toBeInTheDocument();
     expect(screen.queryByText(/error details/i)).not.toBeInTheDocument();
 
-    process.env.NODE_ENV = originalEnv;
+    (process.env as any).NODE_ENV = originalEnv;
   });
 
   it('resets error state when retry button is clicked', async () => {
@@ -145,9 +145,8 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    // Note: React doesn't catch errors in useEffect during initial render
-    // This test documents current behavior
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    // In React 19 with jsdom, errors thrown in useEffect are caught by ErrorBoundary
+    expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
   });
 
   it('works with multiple children', () => {

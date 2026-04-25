@@ -5,9 +5,15 @@ import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+interface FallbackProps {
+  error: Error | null;
+  resetErrorBoundary: () => void;
+}
+
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
+  fallback?: ReactNode | ((props: FallbackProps) => ReactNode);
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -28,13 +34,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
+    this.props.onError?.(error, errorInfo);
     
-    // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV !== 'production') {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
-    
-    // TODO: Send to error tracking service (e.g., Sentry)
   }
 
   handleReset = () => {
@@ -44,6 +48,12 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
+        if (typeof this.props.fallback === 'function') {
+          return (this.props.fallback as (props: FallbackProps) => ReactNode)({
+            error: this.state.error,
+            resetErrorBoundary: this.handleReset,
+          });
+        }
         return this.props.fallback;
       }
 
@@ -60,8 +70,9 @@ export class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {process.env.NODE_ENV !== 'production' && this.state.error && (
                 <div className="rounded-md bg-gray-100 dark:bg-gray-800 p-4 overflow-auto max-h-48">
+                  <p className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Error Details</p>
                   <p className="text-sm font-mono text-red-600 dark:text-red-400">
                     {this.state.error.message}
                   </p>

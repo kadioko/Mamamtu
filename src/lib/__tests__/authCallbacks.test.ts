@@ -74,7 +74,7 @@ describe('authOptions.callbacks.session', () => {
       isActive: true,
     } as any;
 
-    const result = await authOptions.callbacks!.session!({ session, token } as any);
+    const result = await authOptions.callbacks!.session!({ session, token } as any) as any;
 
     expect(result.user.id).toBe('user-1');
     expect(result.user.role).toBe('ADMIN');
@@ -90,7 +90,7 @@ describe('authOptions.callbacks.session', () => {
       },
     } as any;
 
-    const result = await authOptions.callbacks!.session!({ session, token: undefined } as any);
+    const result = await authOptions.callbacks!.session!({ session, token: undefined } as any) as any;
 
     expect(result).toBe(session);
     expect(result.user.id).toBe('original-id');

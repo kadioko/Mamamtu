@@ -7,13 +7,15 @@ describe('ContentCard', () => {
     id: '1',
     title: 'Test Content',
     description: 'This is a test content',
-    type: 'ARTICLE',
+    type: 'ARTICLE' as const,
     category: {
       name: 'Pregnancy',
       slug: 'pregnancy',
     },
-    difficulty: 'BEGINNER',
+    difficulty: 'BEGINNER' as const,
     duration: 5,
+    viewCount: 0,
+    averageRating: null,
     thumbnailUrl: '/test-thumbnail.jpg',
     author: {
       name: 'Test User',
@@ -47,8 +49,8 @@ describe('ContentCard', () => {
       <ContentCard 
         content={{
           ...mockContent,
-          description: undefined,
-          duration: undefined,
+          description: null,
+          duration: null,
         }} 
       />
     );

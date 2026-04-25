@@ -187,7 +187,7 @@ export const createMockPatient = (overrides = {}) => ({
   patientId: 'P001',
   firstName: 'Jane',
   lastName: 'Doe',
-  dateOfBirth: new Date('1990-01-01'),
+  dateOfBirth: '1990-01-01',
   gender: 'FEMALE',
   phone: '+254712345678',
   email: 'jane.doe@example.com',

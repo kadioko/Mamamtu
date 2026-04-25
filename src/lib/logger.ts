@@ -4,118 +4,88 @@ interface LogContext {
   [key: string]: unknown;
 }
 
-interface LogEntry {
-  level: LogLevel;
-  message: string;
-  timestamp: string;
-  context?: LogContext;
-  error?: {
-    name: string;
-    message: string;
-    stack?: string;
-  };
+function contextToStrings(context: LogContext): string[] {
+  return Object.entries(context).map(([k, v]) => `${k}=${v}`);
 }
 
 class Logger {
-  private isDevelopment = process.env.NODE_ENV === 'development';
+  private context: LogContext;
   private serviceName = 'mamamtu';
 
-  private formatLog(entry: LogEntry): string {
-    return JSON.stringify({
-      ...entry,
-      service: this.serviceName,
-      env: process.env.NODE_ENV || 'development',
-    });
+  constructor(context: LogContext = {}) {
+    this.context = context;
   }
 
-  private log(level: LogLevel, message: string, context?: LogContext, error?: Error) {
-    const entry: LogEntry = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      context,
-    };
+  private get isProduction() { return process.env.NODE_ENV === 'production'; }
 
-    if (error) {
-      entry.error = {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
+  private emit(level: LogLevel, message: unknown, ...extra: unknown[]) {
+    const timestamp = new Date().toISOString();
+    const levelStr = level.toUpperCase();
+
+    if (this.isProduction) {
+      const entry: Record<string, unknown> = {
+        level,
+        timestamp,
+        ...this.context,
+        message,
       };
-    }
-
-    const formattedLog = this.formatLog(entry);
-
-    if (this.isDevelopment) {
-      const colors = {
-        debug: '\x1b[36m', // cyan
-        info: '\x1b[32m',  // green
-        warn: '\x1b[33m',  // yellow
-        error: '\x1b[31m', // red
-      };
-      const reset = '\x1b[0m';
-      const color = colors[level];
-      
-      console[level === 'debug' ? 'log' : level](
-        `${color}[${level.toUpperCase()}]${reset} ${message}`,
-        context ? context : '',
-        error ? `\n${error.stack}` : ''
-      );
+      extra.forEach((arg) => {
+        if (arg !== undefined && arg !== null && typeof arg === 'object' && !Array.isArray(arg) && !(arg instanceof Error)) {
+          Object.assign(entry, arg);
+        }
+      });
+      console[level](entry);
     } else {
-      // In production, output structured JSON logs
-      console[level === 'debug' ? 'log' : level](formattedLog);
+      const contextParts = contextToStrings(this.context);
+      const prefix = `[${timestamp}] [${levelStr}]`;
+      const filteredExtra = extra.filter(a => a !== undefined && a !== '');
+      console[level](prefix, ...contextParts, message, ...filteredExtra);
     }
   }
 
-  debug(message: string, context?: LogContext) {
-    if (this.isDevelopment) {
-      this.log('debug', message, context);
+  withContext(ctx: LogContext): Logger {
+    return new Logger({ ...this.context, ...ctx });
+  }
+
+  debug(message: unknown, ...extra: unknown[]) {
+    if (!this.isProduction) {
+      this.emit('debug', message, ...extra);
     }
   }
 
-  info(message: string, context?: LogContext) {
-    this.log('info', message, context);
+  info(message: unknown, ...extra: unknown[]) {
+    this.emit('info', message, ...extra);
   }
 
-  warn(message: string, context?: LogContext) {
-    this.log('warn', message, context);
+  warn(message: unknown, ...extra: unknown[]) {
+    this.emit('warn', message, ...extra);
   }
 
-  error(message: string, error?: Error | unknown, context?: LogContext) {
-    const err = error instanceof Error ? error : undefined;
-    this.log('error', message, context, err);
+  error(message: unknown, ...extra: unknown[]) {
+    this.emit('error', message, ...extra);
   }
 
   // HTTP request logging
   request(method: string, path: string, statusCode: number, duration: number, context?: LogContext) {
-    this.info(`${method} ${path} ${statusCode} ${duration}ms`, {
-      ...context,
-      http: { method, path, statusCode, duration },
-    });
+    this.withContext({ ...context, method, path, statusCode, duration })
+      .info(`${method} ${path} ${statusCode} ${duration}ms`);
   }
 
   // Database query logging
   query(operation: string, model: string, duration: number, context?: LogContext) {
-    this.debug(`DB ${operation} on ${model} (${duration}ms)`, {
-      ...context,
-      db: { operation, model, duration },
-    });
+    this.withContext({ ...context, operation, model, duration })
+      .debug(`DB ${operation} on ${model} (${duration}ms)`);
   }
 
   // Authentication logging
   auth(action: string, userId?: string, context?: LogContext) {
-    this.info(`Auth: ${action}`, {
-      ...context,
-      auth: { action, userId },
-    });
+    this.withContext({ ...context, action, userId }).info(`Auth: ${action}`);
   }
 
   // Audit logging for sensitive operations
   audit(action: string, userId: string, resource: string, resourceId?: string, context?: LogContext) {
-    this.info(`Audit: ${action}`, {
-      ...context,
-      audit: { action, userId, resource, resourceId, timestamp: new Date().toISOString() },
-    });
+    this.withContext({ ...context, action, userId, resource, resourceId })
+      .info(`Audit: ${action}`);
   }
 }
 

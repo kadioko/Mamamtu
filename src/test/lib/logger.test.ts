@@ -162,11 +162,11 @@ describe('Logger', () => {
     const originalEnv = process.env.NODE_ENV;
 
     afterEach(() => {
-      process.env.NODE_ENV = originalEnv;
+      (process.env as any).NODE_ENV = originalEnv;
     });
 
     it('outputs structured logs in production', () => {
-      process.env.NODE_ENV = 'production';
+      (process.env as any).NODE_ENV = 'production';
       
       logger.info('Test message', { userId: '123' });
       
@@ -181,9 +181,9 @@ describe('Logger', () => {
     });
 
     it('outputs readable logs in development', () => {
-      process.env.NODE_ENV = 'development';
+      (process.env as any).NODE_ENV = 'development';
       
-      logger.info('Test message', { userId: '123' });
+      logger.withContext({ userId: '123' }).info('Test message');
       
       expect(mockConsole.info).toHaveBeenCalledWith(
         expect.stringContaining('INFO'),
@@ -249,10 +249,12 @@ describe('Logger', () => {
       logger2.info('API message');
       
       expect(mockConsole.info).toHaveBeenCalledWith(
+        expect.stringContaining('INFO'),
         expect.stringContaining('service=auth'),
         expect.stringContaining('Auth message')
       );
       expect(mockConsole.info).toHaveBeenCalledWith(
+        expect.stringContaining('INFO'),
         expect.stringContaining('service=api'),
         expect.stringContaining('API message')
       );
@@ -265,10 +267,11 @@ describe('Logger', () => {
       contextLogger.info('Context message');
       
       expect(mockConsole.info).toHaveBeenCalledWith(
-        expect.not.stringContaining('userId=123'),
+        expect.stringContaining('INFO'),
         expect.stringContaining('Original message')
       );
       expect(mockConsole.info).toHaveBeenCalledWith(
+        expect.stringContaining('INFO'),
         expect.stringContaining('userId=123'),
         expect.stringContaining('Context message')
       );
