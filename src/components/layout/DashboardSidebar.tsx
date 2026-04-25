@@ -4,7 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
+import type { UserRole } from '@/types/roles';
 import {
   LayoutDashboard,
   Users,
@@ -22,7 +24,16 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const sidebarItems = [
+interface SidebarItem {
+  title: string;
+  href: string;
+  icon: React.ElementType;
+  gradient: string;
+  iconColor: string;
+  allowedRoles?: UserRole[];
+}
+
+const sidebarItems: SidebarItem[] = [
   {
     title: 'Overview',
     href: '/dashboard',
@@ -36,6 +47,7 @@ const sidebarItems = [
     icon: Users,
     gradient: 'radial-gradient(circle, rgba(236,72,153,0.22) 0%, rgba(219,39,119,0.08) 55%, rgba(190,24,93,0) 100%)',
     iconColor: 'text-pink-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
   },
   {
     title: 'Appointments',
@@ -50,6 +62,7 @@ const sidebarItems = [
     icon: FileText,
     gradient: 'radial-gradient(circle, rgba(14,165,233,0.22) 0%, rgba(2,132,199,0.08) 55%, rgba(3,105,161,0) 100%)',
     iconColor: 'text-sky-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
     title: 'Vitals',
@@ -57,6 +70,7 @@ const sidebarItems = [
     icon: Activity,
     gradient: 'radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.08) 55%, rgba(185,28,28,0) 100%)',
     iconColor: 'text-red-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
     title: 'Reports',
@@ -64,6 +78,7 @@ const sidebarItems = [
     icon: ClipboardList,
     gradient: 'radial-gradient(circle, rgba(245,158,11,0.22) 0%, rgba(217,119,6,0.08) 55%, rgba(180,83,9,0) 100%)',
     iconColor: 'text-amber-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
     title: 'Education',
@@ -85,12 +100,19 @@ const sidebarItems = [
     icon: Settings,
     gradient: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(79,70,229,0.08) 55%, rgba(67,56,202,0) 100%)',
     iconColor: 'text-indigo-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
   },
 ];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const userRole = (session?.user as { role?: UserRole } | undefined)?.role;
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const visibleItems = sidebarItems.filter(
+    (item) => !item.allowedRoles || !userRole || item.allowedRoles.includes(userRole)
+  );
 
   const toggleCollapse = () => {
     const next = !isCollapsed;
@@ -125,7 +147,7 @@ export function DashboardSidebar() {
             </div>
           </div>
           <nav className="space-y-2 px-2">
-            {sidebarItems.map((item) => {
+            {visibleItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link

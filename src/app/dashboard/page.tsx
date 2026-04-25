@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import type { UserRole } from '@/types/roles';
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { cn } from "@/lib/utils";
 import {
@@ -249,6 +251,9 @@ const QuickActions = ({ actions, isLoading }: { actions: QuickAction[], isLoadin
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const userRole = (session?.user as { role?: UserRole } | undefined)?.role;
+  const isReceptionist = userRole === 'RECEPTIONIST';
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
@@ -333,11 +338,11 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const quickActions: QuickAction[] = [
+  const allQuickActions: (QuickAction & { receptionistHidden?: boolean })[] = [
     {
       id: 'add-patient',
-      label: 'Add Patient',
-      ariaLabel: 'Add a new patient to the system',
+      label: 'View Patients',
+      ariaLabel: isReceptionist ? 'View patient list' : 'Add a new patient to the system',
       icon: <UserPlus className="h-6 w-6" />,
       onClick: () => router.push('/dashboard/patients' as any),
     },
@@ -354,6 +359,7 @@ export default function DashboardPage() {
       ariaLabel: 'View and manage patient records',
       icon: <FileText className="h-6 w-6" />,
       onClick: () => router.push('/dashboard/records' as any),
+      receptionistHidden: true,
     },
     {
       id: 'health-education',
@@ -363,6 +369,10 @@ export default function DashboardPage() {
       onClick: () => router.push('/dashboard/education' as any),
     },
   ];
+
+  const quickActions = isReceptionist
+    ? allQuickActions.filter((a) => !a.receptionistHidden)
+    : allQuickActions;
 
   if (error) {
     return (
@@ -389,9 +399,18 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold">MamaMtu Dashboard</h1>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-2xl sm:text-3xl font-bold">MamaMtu Dashboard</h1>
+          {isReceptionist && (
+            <span className="inline-flex items-center rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-600/20">
+              Receptionist View
+            </span>
+          )}
+        </div>
         <p className="text-sm sm:text-base text-muted-foreground mt-1">
-          Overview of your maternal health clinic
+          {isReceptionist
+            ? 'Appointments and patient scheduling'
+            : 'Overview of your maternal health clinic'}
         </p>
       </div>
       

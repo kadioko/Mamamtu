@@ -22,6 +22,7 @@ interface PatientListProps {
   loading?: boolean;
   onDataLoaded?: (data: { total: number; totalPages: number }) => void;
   basePath?: string;
+  readOnly?: boolean;
 }
 
 export function PatientList({ 
@@ -33,7 +34,8 @@ export function PatientList({
   totalItems: initialTotalItems = 0,
   loading: propLoading = false,
   onDataLoaded = () => {},
-  basePath = '/patients'
+  basePath = '/patients',
+  readOnly = false,
 }: PatientListProps) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(propLoading);
@@ -149,12 +151,14 @@ export function PatientList({
             className="w-full"
           />
         </div>
-        <Link href={`${basePath}/new` as any}>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Patient
-          </Button>
-        </Link>
+        {!readOnly && (
+          <Link href={`${basePath}/new` as any}>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              New Patient
+            </Button>
+          </Link>
+        )}
       </div>
 
       {loading ? (
@@ -164,9 +168,11 @@ export function PatientList({
       ) : patients.length === 0 ? (
         <div className="text-center py-8">
           <p>No patients found</p>
-          <Link href={`${basePath}/new` as any}>
-            <Button variant="link">Add your first patient</Button>
-          </Link>
+          {!readOnly && (
+            <Link href={`${basePath}/new` as any}>
+              <Button variant="link">Add your first patient</Button>
+            </Link>
+          )}
         </div>
       ) : (
         <>
@@ -208,23 +214,27 @@ export function PatientList({
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Link href={`${basePath}/${patient.id}/edit` as any}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Edit patient"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(patient.id)}
-                          aria-label="Delete patient"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
+                        {!readOnly && (
+                          <>
+                            <Link href={`${basePath}/${patient.id}/edit` as any}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Edit patient"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(patient.id)}
+                              aria-label="Delete patient"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
