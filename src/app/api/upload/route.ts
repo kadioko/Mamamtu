@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/apiAuth';
+import { AuthenticatedRequest, withAuth } from '@/lib/apiAuth';
+import { UserRole } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { medicalDocumentService, avatarService } from '@/lib/storage/fileUpload';
 import { z } from 'zod';
 
@@ -13,7 +15,29 @@ const uploadSchema = z.object({
   studyDate: z.string().datetime().optional(),
 });
 
-export async function POST(request: NextRequest) {
+async function canUploadForPatient(
+  request: AuthenticatedRequest,
+  patientId: string
+): Promise<boolean> {
+  const role = request.user?.role;
+
+  if (role === UserRole.ADMIN || role === UserRole.HEALTHCARE_PROVIDER) {
+    return true;
+  }
+
+  if (role !== UserRole.PATIENT || !request.user?.id) {
+    return false;
+  }
+
+  const patient = await prisma.patient.findUnique({
+    where: { id: patientId },
+    select: { userId: true },
+  });
+
+  return patient?.userId === request.user.id;
+}
+
+const handlePost = async (request: AuthenticatedRequest) => {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -39,6 +63,12 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+        if (!(await canUploadForPatient(request, validatedMetadata.patientId))) {
+          return NextResponse.json(
+            { error: 'Forbidden - Insufficient permissions for this patient' },
+            { status: 403 }
+          );
+        }
         uploadedFile = await medicalDocumentService.uploadMedicalDocument(
           file,
           validatedMetadata.patientId,
@@ -52,6 +82,12 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(
             { error: 'Patient ID, test type, and test date are required for lab results' },
             { status: 400 }
+          );
+        }
+        if (!(await canUploadForPatient(request, validatedMetadata.patientId))) {
+          return NextResponse.json(
+            { error: 'Forbidden - Insufficient permissions for this patient' },
+            { status: 403 }
           );
         }
         uploadedFile = await medicalDocumentService.uploadLabResults(
@@ -69,6 +105,12 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+        if (!(await canUploadForPatient(request, validatedMetadata.patientId))) {
+          return NextResponse.json(
+            { error: 'Forbidden - Insufficient permissions for this patient' },
+            { status: 403 }
+          );
+        }
         uploadedFile = await medicalDocumentService.uploadImaging(
           file,
           validatedMetadata.patientId,
@@ -78,9 +120,13 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'avatar':
-        // For avatar uploads, we'd get the user ID from the session
-        // This is a simplified version - in production, get from auth context
-        const userId = metadata.userId || 'default-user';
+        const userId = request.user?.id;
+        if (!userId) {
+          return NextResponse.json(
+            { error: 'Authenticated user is required for avatar uploads' },
+            { status: 401 }
+          );
+        }
         uploadedFile = await avatarService.uploadAvatar(file, userId);
         break;
 
@@ -124,10 +170,10 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+};
 
 // Handle multiple file uploads
-export async function PUT(request: NextRequest) {
+const handlePut = async (request: AuthenticatedRequest) => {
   try {
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
@@ -147,6 +193,12 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         { error: 'Patient ID is required for multiple uploads' },
         { status: 400 }
+      );
+    }
+    if (!(await canUploadForPatient(request, validatedMetadata.patientId))) {
+      return NextResponse.json(
+        { error: 'Forbidden - Insufficient permissions for this patient' },
+        { status: 403 }
       );
     }
 
@@ -175,4 +227,14 @@ export async function PUT(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+};
+
+export const POST = withAuth(handlePost, {
+  roles: [UserRole.ADMIN, UserRole.HEALTHCARE_PROVIDER, UserRole.PATIENT],
+  requireEmailVerification: true,
+});
+
+export const PUT = withAuth(handlePut, {
+  roles: [UserRole.ADMIN, UserRole.HEALTHCARE_PROVIDER, UserRole.PATIENT],
+  requireEmailVerification: true,
+});

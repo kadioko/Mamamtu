@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AppointmentStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { withAuth } from '@/lib/apiAuth';
 
 // PATCH /api/appointments/[id]/status - Update appointment status
-export async function PATCH(
+const handlePatch = async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
     const { status, notes } = await request.json();
@@ -58,13 +59,13 @@ export async function PATCH(
       { status: 500 }
     );
   }
-}
+};
 
 // GET /api/appointments/[id]/status - Get appointment status
-export async function GET(
+const handleGet = async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
 
@@ -101,4 +102,14 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+};
+
+export const PATCH = withAuth(handlePatch, {
+  roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
+  requireEmailVerification: true,
+});
+
+export const GET = withAuth(handleGet, {
+  roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'PATIENT', 'RECEPTIONIST'],
+  requireEmailVerification: true,
+});

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { 
   getAppointmentById, 
   updateAppointment, 
@@ -6,11 +6,15 @@ import {
   updateAppointmentStatus,
   checkAppointmentConflict
 } from '@/services/appointmentService';
+import { withAuth } from '@/lib/apiAuth';
+import { updateAppointmentSchema, withValidation } from '@/lib/validation';
+import type { UpdateAppointmentInput } from '@/types/appointment';
+import type { AppointmentStatus } from '@prisma/client';
 
-export async function GET(
-  request: Request,
+const handleGet = async (
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
     const appointment = await getAppointmentById(id);
@@ -30,14 +34,15 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+};
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+const handlePatch = withValidation(updateAppointmentSchema, 'body')(
+async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+  data
+) => {
   try {
-    const data = await request.json();
     const { status, ...updateData } = data;
     
     // If updating appointment time, check for conflicts
@@ -70,12 +75,19 @@ export async function PATCH(
     
     // Handle status update separately if needed
     if (status) {
-      updatedAppointment = await updateAppointmentStatus(id, status);
+      updatedAppointment = await updateAppointmentStatus(id, status as AppointmentStatus);
     } 
     
     // Handle other updates
     if (Object.keys(updateData).length > 0) {
-      updatedAppointment = await updateAppointment(id, updateData);
+      updatedAppointment = await updateAppointment(id, updateData as UpdateAppointmentInput);
+    }
+
+    if (!updatedAppointment) {
+      return NextResponse.json(
+        { error: 'No appointment changes provided' },
+        { status: 400 }
+      );
     }
     
     return NextResponse.json(updatedAppointment);
@@ -86,16 +98,16 @@ export async function PATCH(
       { status: 500 }
     );
   }
-}
+});
 
-export async function DELETE(
-  request: Request,
+const handleDelete = async (
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   try {
     const { id } = await params;
     await deleteAppointment(id);
-    return new Response(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error('Error deleting appointment:', error);
     return NextResponse.json(
@@ -103,4 +115,19 @@ export async function DELETE(
       { status: 500 }
     );
   }
-}
+};
+
+export const GET = withAuth(handleGet, {
+  roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'PATIENT', 'RECEPTIONIST'],
+  requireEmailVerification: true,
+});
+
+export const PATCH = withAuth(handlePatch, {
+  roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
+  requireEmailVerification: true,
+});
+
+export const DELETE = withAuth(handleDelete, {
+  roles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
+  requireEmailVerification: true,
+});

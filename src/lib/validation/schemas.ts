@@ -4,6 +4,7 @@ import { z } from 'zod';
 const dateSchema = z.string().transform((str) => new Date(str));
 const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format');
 const emailSchema = z.string().email('Invalid email address');
+const appointmentStatusSchema = z.enum(['SCHEDULED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']);
 
 // Patient schemas
 export const createPatientSchema = z.object({
@@ -54,13 +55,21 @@ export const createAppointmentSchema = z.object({
   path: ['endTime'],
 });
 
-export const updateAppointmentSchema = createAppointmentSchema.partial();
+export const updateAppointmentSchema = createAppointmentSchema.extend({
+  status: appointmentStatusSchema.optional(),
+}).partial();
 
 export const appointmentQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
   patientId: z.string().uuid().optional(),
-  status: z.enum(['SCHEDULED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']).optional(),
+  status: z.preprocess((value) => {
+    if (typeof value === 'string') {
+      const statuses = value.split(',').map((status) => status.trim()).filter(Boolean);
+      return statuses.length > 1 ? statuses : statuses[0];
+    }
+    return value;
+  }, z.union([appointmentStatusSchema, z.array(appointmentStatusSchema)]).optional()),
   type: z.enum(['CONSULTATION', 'FOLLOW_UP', 'LAB_TEST', 'ULTRASOUND', 'VACCINATION', 'OTHER']).optional(),
   startDate: dateSchema.optional(),
   endDate: dateSchema.optional(),

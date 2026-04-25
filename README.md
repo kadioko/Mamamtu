@@ -27,7 +27,7 @@ A comprehensive healthcare management system for maternal and newborn health ser
 |----------|------------|
 | **Framework** | [Next.js 16](https://nextjs.org/) (App Router) |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) |
-| **Database** | [Prisma](https://www.prisma.io/) + SQLite |
+| **Database** | [Prisma](https://www.prisma.io/) + PostgreSQL |
 | **Authentication** | [NextAuth.js](https://next-auth.js.org/) |
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **UI Components** | [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) |
@@ -65,7 +65,9 @@ A comprehensive healthcare management system for maternal and newborn health ser
    ```
 
    Update `.env` with your configuration:
+   - `DATABASE_URL` - PostgreSQL connection string for Supabase, Neon, Docker, or local Postgres
    - `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
+   - `SEED_DATABASE_TOKEN` - Optional guard token for `/api/seed` in deployed environments
    - `RESEND_API_KEY` - Optional, for email functionality
    - `GOOGLE_CLIENT_ID/SECRET` - Optional, for Google OAuth
 

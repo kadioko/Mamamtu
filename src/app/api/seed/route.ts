@@ -1,12 +1,33 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient, UserRole, AppointmentStatus, AppointmentType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
+function isSeedRequestAuthorized(request: NextRequest): boolean {
+  const configuredToken = process.env.SEED_DATABASE_TOKEN;
+
+  if (configuredToken) {
+    return request.headers.get('x-seed-token') === configuredToken;
+  }
+
+  return process.env.NODE_ENV !== 'production';
+}
+
+function unauthorizedSeedResponse() {
+  return NextResponse.json(
+    { error: 'Seed endpoint is disabled. Configure SEED_DATABASE_TOKEN and send it as x-seed-token.' },
+    { status: 403 }
+  );
+}
+
 // One-time seed endpoint for Vercel deployment
 // Call POST /api/seed once to populate the database
-export async function POST() {
+export async function POST(request: NextRequest) {
+  if (!isSeedRequestAuthorized(request)) {
+    return unauthorizedSeedResponse();
+  }
+
   try {
     // Prevent accidental re-seeding
     const existingUsers = await prisma.user.count();
@@ -187,7 +208,11 @@ export async function POST() {
 }
 
 // GET endpoint to check if database is seeded
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!isSeedRequestAuthorized(request)) {
+    return unauthorizedSeedResponse();
+  }
+
   try {
     const userCount = await prisma.user.count();
     const patientCount = await prisma.patient.count();
