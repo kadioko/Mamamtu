@@ -1,4 +1,4 @@
-import { getPatients, getPatient, createPatient, updatePatient, deletePatient } from '@/services/patientService';
+import { getPatients, getPatient, createPatient, updatePatient, deletePatient, searchPatients, getPatientMedicalRecords, exportPatients } from '@/services/patientService';
 
 const globalAny: any = global;
 
@@ -25,7 +25,7 @@ describe('patientService', () => {
 
       const result = await getPatients();
 
-      expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients?');
+      expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients?', { credentials: 'include' });
       expect(result).toEqual(mockResponse);
     });
 
@@ -42,7 +42,7 @@ describe('patientService', () => {
 
       const result = await getPatients({ search: 'Jane', page: 2 as any, filter: '' as any });
 
-      expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients?search=Jane&page=2');
+      expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients?search=Jane&page=2', { credentials: 'include' });
       expect(result).toEqual(mockResponse);
     });
 
@@ -67,7 +67,7 @@ describe('patientService', () => {
 
       const result = await getPatient('p1');
 
-      expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients/p1');
+      expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients/p1', { credentials: 'include' });
       expect(result).toEqual(mockPatient);
     });
 
@@ -98,6 +98,7 @@ describe('patientService', () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(input),
       });
       expect(result).toEqual(mockPatient);
@@ -130,6 +131,7 @@ describe('patientService', () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(input),
       });
       expect(result).toEqual(mockPatient);
@@ -156,6 +158,7 @@ describe('patientService', () => {
 
       expect(globalAny.fetch).toHaveBeenCalledWith('/api/patients/p1', {
         method: 'DELETE',
+        credentials: 'include',
       });
     });
 
@@ -166,6 +169,125 @@ describe('patientService', () => {
       });
 
       await expect(deletePatient('p1')).rejects.toThrow('Delete error');
+    });
+  });
+
+  describe('searchPatients', () => {
+    it('calls /api/patients with search param and returns patient array', async () => {
+      const mockPatients = [{ id: 'p1', firstName: 'Jane' }];
+      const mockResponse = {
+        data: mockPatients,
+        pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
+      };
+
+      (globalAny.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      const result = await searchPatients('Jane');
+
+      expect(globalAny.fetch).toHaveBeenCalledWith(
+        '/api/patients?search=Jane&limit=10',
+        { credentials: 'include' }
+      );
+      expect(result).toEqual(mockPatients);
+    });
+
+    it('respects custom limit', async () => {
+      (globalAny.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({ data: [], pagination: {} }),
+      });
+
+      await searchPatients('test', 5);
+
+      expect(globalAny.fetch).toHaveBeenCalledWith(
+        '/api/patients?search=test&limit=5',
+        { credentials: 'include' }
+      );
+    });
+
+    it('throws when response is not ok', async () => {
+      (globalAny.fetch as jest.Mock).mockResolvedValue({ ok: false });
+      await expect(searchPatients('fail')).rejects.toThrow('Failed to search patients');
+    });
+  });
+
+  describe('getPatientMedicalRecords', () => {
+    it('fetches medical records for a patient', async () => {
+      const mockRecords = { data: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0 } };
+
+      (globalAny.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue(mockRecords),
+      });
+
+      const result = await getPatientMedicalRecords('p1');
+
+      expect(globalAny.fetch).toHaveBeenCalledWith(
+        '/api/patients/p1/records?',
+        { credentials: 'include' }
+      );
+      expect(result).toEqual(mockRecords);
+    });
+
+    it('includes query params when provided', async () => {
+      (globalAny.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({ data: [], pagination: {} }),
+      });
+
+      await getPatientMedicalRecords('p1', { page: 2, limit: 5, recordType: 'LAB_RESULT' });
+
+      expect(globalAny.fetch).toHaveBeenCalledWith(
+        '/api/patients/p1/records?page=2&limit=5&recordType=LAB_RESULT',
+        { credentials: 'include' }
+      );
+    });
+
+    it('throws when response is not ok', async () => {
+      (globalAny.fetch as jest.Mock).mockResolvedValue({ ok: false });
+      await expect(getPatientMedicalRecords('p1')).rejects.toThrow('Failed to fetch patient medical records');
+    });
+  });
+
+  describe('exportPatients', () => {
+    it('fetches CSV export and returns a Blob', async () => {
+      const mockBlob = new Blob(['csv,data'], { type: 'text/csv' });
+
+      (globalAny.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        blob: jest.fn().mockResolvedValue(mockBlob),
+      });
+
+      const result = await exportPatients('csv');
+
+      expect(globalAny.fetch).toHaveBeenCalledWith(
+        '/api/export/patients?format=csv',
+        { credentials: 'include' }
+      );
+      expect(result).toBe(mockBlob);
+    });
+
+    it('defaults to csv format', async () => {
+      const mockBlob = new Blob(['data']);
+      (globalAny.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        blob: jest.fn().mockResolvedValue(mockBlob),
+      });
+
+      await exportPatients();
+
+      expect(globalAny.fetch).toHaveBeenCalledWith(
+        '/api/export/patients?format=csv',
+        { credentials: 'include' }
+      );
+    });
+
+    it('throws when response is not ok', async () => {
+      (globalAny.fetch as jest.Mock).mockResolvedValue({ ok: false });
+      await expect(exportPatients()).rejects.toThrow('Failed to export patients');
     });
   });
 });

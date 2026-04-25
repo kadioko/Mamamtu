@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   try {
     // Rate limiting for registration
     const clientId = getClientIdentifier(req);
-    const rateLimitCheck = checkRateLimit(
+    const rateLimitCheck = await checkRateLimit(
       generalRateLimiter,
       `${clientId}:register`,
       req

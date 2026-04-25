@@ -58,6 +58,14 @@ export async function POST(
       );
     }
 
+    // Validate rating range
+    if (rating !== undefined && (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5)) {
+      return NextResponse.json(
+        { message: 'Rating must be an integer between 1 and 5' },
+        { status: 400 }
+      );
+    }
+
     // Check if content exists
     const { id } = await params;
     const content = await prisma.content.findUnique({

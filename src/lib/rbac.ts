@@ -39,12 +39,12 @@ export const routeConfigs: RouteConfig[] = [
   // Protected patient routes
   { 
     pattern: /^\/appointments(\/.*)?$/, 
-    roles: ['PATIENT', 'HEALTHCARE_PROVIDER', 'ADMIN'],
+    roles: ['PATIENT', 'HEALTHCARE_PROVIDER', 'ADMIN', 'RECEPTIONIST'],
     requireEmailVerification: true
   },
   { 
     pattern: /^\/patients(\/.*)?$/, 
-    roles: ['HEALTHCARE_PROVIDER', 'ADMIN'],
+    roles: ['HEALTHCARE_PROVIDER', 'ADMIN', 'RECEPTIONIST'],
     requireEmailVerification: true
   },
   
@@ -61,14 +61,14 @@ export const routeConfigs: RouteConfig[] = [
   },
   { 
     pattern: /^\/settings(\/.*)?$/, 
-    roles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
+    roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
     requireEmailVerification: true
   },
   
   // Dashboard routes
   { 
     pattern: /^\/dashboard(\/.*)?$/, 
-    roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'PATIENT'],
+    roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'PATIENT', 'RECEPTIONIST'],
     requireEmailVerification: true
   },
 ];

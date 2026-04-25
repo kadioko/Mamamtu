@@ -1,13 +1,13 @@
 import { RateLimiter, authRateLimiter, generalRateLimiter, checkRateLimit, getClientIdentifier, cleanupRateLimitStore } from '@/lib/rateLimiter';
 
 describe('RateLimiter', () => {
-  it('allows up to maxRequests within a window then rate-limits', () => {
+  it('allows up to maxRequests within a window then rate-limits', async () => {
     const limiter = new RateLimiter({ windowMs: 60_000, maxRequests: 2, message: 'Too many' });
     const identifier = `client-${Math.random()}`;
 
-    const first = limiter.isRateLimited(identifier);
-    const second = limiter.isRateLimited(identifier);
-    const third = limiter.isRateLimited(identifier);
+    const first = await limiter.isRateLimited(identifier);
+    const second = await limiter.isRateLimited(identifier);
+    const third = await limiter.isRateLimited(identifier);
 
     expect(first.limited).toBe(false);
     expect(second.limited).toBe(false);
@@ -16,7 +16,7 @@ describe('RateLimiter', () => {
     expect(third.resetIn).toBeGreaterThanOrEqual(0);
   });
 
-  it('resets rate limiting when the window has expired', () => {
+  it('resets rate limiting when the window has expired', async () => {
     const windowMs = 1_000;
     const limiter = new RateLimiter({ windowMs, maxRequests: 1, message: 'Too many' });
     const identifier = `client-${Math.random()}`;
@@ -25,27 +25,27 @@ describe('RateLimiter', () => {
 
     // First request starts a window
     nowSpy.mockReturnValue(baseTime);
-    expect(limiter.isRateLimited(identifier).limited).toBe(false);
+    expect((await limiter.isRateLimited(identifier)).limited).toBe(false);
 
     // Second request in the same window should be limited
     nowSpy.mockReturnValue(baseTime + 100);
-    expect(limiter.isRateLimited(identifier).limited).toBe(true);
+    expect((await limiter.isRateLimited(identifier)).limited).toBe(true);
 
     // After window expires, limiter should allow again
     nowSpy.mockReturnValue(baseTime + windowMs + 1);
-    expect(limiter.isRateLimited(identifier).limited).toBe(false);
+    expect((await limiter.isRateLimited(identifier)).limited).toBe(false);
 
     nowSpy.mockRestore();
   });
 });
 
 describe('checkRateLimit', () => {
-  it('returns limited: false when under the limit', () => {
+  it('returns limited: false when under the limit', async () => {
     const fakeLimiter = {
-      isRateLimited: jest.fn().mockReturnValue({ limited: false }),
+      isRateLimited: jest.fn().mockResolvedValue({ limited: false }),
     } as unknown as RateLimiter;
 
-    const result = checkRateLimit(fakeLimiter, 'id-1', {} as Request);
+    const result = await checkRateLimit(fakeLimiter, 'id-1', {} as Request);
 
     expect(fakeLimiter.isRateLimited).toHaveBeenCalledWith('id-1');
     expect(result.limited).toBe(false);
@@ -79,14 +79,14 @@ describe('checkRateLimit', () => {
     globalAny.Response = MockResponse;
 
     const fakeLimiter = {
-      isRateLimited: jest.fn().mockReturnValue({
+      isRateLimited: jest.fn().mockResolvedValue({
         limited: true,
         resetIn: 42,
         message: 'Too many',
       }),
     } as unknown as RateLimiter;
 
-    const result = checkRateLimit(fakeLimiter, 'id-2', { headers: { get: () => null } } as any);
+    const result = await checkRateLimit(fakeLimiter, 'id-2', { headers: { get: () => null } } as any);
 
     expect(result.limited).toBe(true);
     expect(result.response).toBeInstanceOf(MockResponse);
@@ -148,11 +148,11 @@ describe('getClientIdentifier', () => {
 });
 
 describe('cleanupRateLimitStore', () => {
-  it('delegates cleanup to both auth and general rate limiters', () => {
-    const authSpy = jest.spyOn(authRateLimiter, 'cleanupExpiredEntries');
-    const generalSpy = jest.spyOn(generalRateLimiter, 'cleanupExpiredEntries');
+  it('delegates cleanup to both auth and general rate limiters', async () => {
+    const authSpy = jest.spyOn(authRateLimiter, 'cleanupExpiredEntries').mockResolvedValue();
+    const generalSpy = jest.spyOn(generalRateLimiter, 'cleanupExpiredEntries').mockResolvedValue();
 
-    cleanupRateLimitStore();
+    await cleanupRateLimitStore();
 
     expect(authSpy).toHaveBeenCalled();
     expect(generalSpy).toHaveBeenCalled();

@@ -40,7 +40,7 @@ export interface PatientsResponse {
 }
 
 // Medical Records Types
-export type RecordType = 'CONSULTATION' | 'LAB_RESULT' | 'PRESCRIPTION' | 'PROCEDURE' | 'ADMISSION' | 'DISCHARGE' | 'VACCINATION' | 'PRENATAL_VISIT' | 'APISSCOMA' | 'GENERAL';
+export type RecordType = 'CONSULTATION' | 'LAB_RESULT' | 'PRESCRIPTION' | 'PROCEDURE' | 'ADMISSION' | 'DISCHARGE' | 'VACCINATION' | 'PRENATAL_VISIT' | 'APGAR_SCORE' | 'GENERAL';
 
 export interface MedicalRecord {
   id: string;
