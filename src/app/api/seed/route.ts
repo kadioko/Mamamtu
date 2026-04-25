@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, UserRole, AppointmentStatus, AppointmentType } from '@prisma/client';
+import {
+  PrismaClient,
+  UserRole,
+  AppointmentStatus,
+  AppointmentType,
+  ContentType,
+  DifficultyLevel,
+} from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -21,6 +28,142 @@ function unauthorizedSeedResponse() {
   );
 }
 
+const educationCategories = [
+  { name: 'Pregnancy Basics', description: 'Foundational guidance for pregnancy care and healthy routines.', slug: 'pregnancy-basics' },
+  { name: 'Newborn Care', description: 'Practical newborn health, feeding, and safety education.', slug: 'newborn-care' },
+  { name: 'Warning Signs', description: 'When to seek urgent care during pregnancy and after birth.', slug: 'warning-signs' },
+  { name: 'Nutrition', description: 'Nutrition guidance for pregnancy, breastfeeding, and recovery.', slug: 'nutrition' },
+];
+
+const educationContents = [
+  {
+    title: 'Your First Antenatal Visit',
+    slug: 'your-first-antenatal-visit',
+    description: 'What to expect during the first clinic visit, including screening and care planning.',
+    content: 'Your first antenatal visit helps the care team understand your health, estimate pregnancy dates, screen for risks, and plan follow-up visits. Bring current medicines, previous clinic records, and questions you want answered.',
+    type: ContentType.ARTICLE,
+    difficulty: DifficultyLevel.BEGINNER,
+    duration: 6,
+    categorySlug: 'pregnancy-basics',
+    tags: ['antenatal', 'pregnancy', 'clinic visit'],
+    isFeatured: true,
+  },
+  {
+    title: 'Danger Signs During Pregnancy',
+    slug: 'danger-signs-during-pregnancy',
+    description: 'Symptoms that need urgent medical attention.',
+    content: 'Seek urgent care if you notice heavy bleeding, severe headache, blurred vision, swelling of the face or hands, fever, severe abdominal pain, convulsions, or reduced baby movements. Quick care can protect both mother and baby.',
+    type: ContentType.ARTICLE,
+    difficulty: DifficultyLevel.BEGINNER,
+    duration: 5,
+    categorySlug: 'warning-signs',
+    tags: ['danger signs', 'emergency', 'pregnancy'],
+    isFeatured: true,
+  },
+  {
+    title: 'Eating Well During Pregnancy',
+    slug: 'eating-well-during-pregnancy',
+    description: 'Simple food choices that support maternal health and fetal growth.',
+    content: 'Aim for regular meals with vegetables, fruits, whole grains, beans, eggs, fish, lean meats, milk, and safe drinking water. Take prescribed iron and folic acid, and ask your clinician before using supplements or herbal medicines.',
+    type: ContentType.ARTICLE,
+    difficulty: DifficultyLevel.BEGINNER,
+    duration: 7,
+    categorySlug: 'nutrition',
+    tags: ['nutrition', 'iron', 'folic acid'],
+    isFeatured: false,
+  },
+  {
+    title: 'Breastfeeding in the First Hour',
+    slug: 'breastfeeding-in-the-first-hour',
+    description: 'Why early breastfeeding matters and how caregivers can support it.',
+    content: 'Starting breastfeeding within the first hour helps keep the baby warm, supports bonding, and gives the baby colostrum. Colostrum is the first milk and is rich in protection for the newborn.',
+    type: ContentType.ARTICLE,
+    difficulty: DifficultyLevel.BEGINNER,
+    duration: 4,
+    categorySlug: 'newborn-care',
+    tags: ['breastfeeding', 'newborn', 'colostrum'],
+    isFeatured: true,
+  },
+  {
+    title: 'Newborn Warning Signs',
+    slug: 'newborn-warning-signs',
+    description: 'Signs in a newborn that should prompt immediate clinic or hospital care.',
+    content: 'Get urgent care if a newborn has trouble breathing, fever or low temperature, poor feeding, yellow palms or soles, convulsions, severe weakness, repeated vomiting, or pus around the cord or eyes.',
+    type: ContentType.ARTICLE,
+    difficulty: DifficultyLevel.BEGINNER,
+    duration: 5,
+    categorySlug: 'warning-signs',
+    tags: ['newborn', 'danger signs', 'urgent care'],
+    isFeatured: true,
+  },
+  {
+    title: 'Postnatal Recovery Checklist',
+    slug: 'postnatal-recovery-checklist',
+    description: 'A simple checklist for rest, bleeding, mood, feeding, and follow-up after birth.',
+    content: 'After birth, monitor bleeding, pain, fever, mood, feeding, and wound healing. Attend postnatal visits even when you feel well. Ask for help early if you feel overwhelmed, very sad, or unsafe.',
+    type: ContentType.ARTICLE,
+    difficulty: DifficultyLevel.INTERMEDIATE,
+    duration: 6,
+    categorySlug: 'pregnancy-basics',
+    tags: ['postnatal', 'recovery', 'mental health'],
+    isFeatured: false,
+  },
+];
+
+async function seedEducationContent(authorId: string) {
+  const categoriesBySlug = new Map<string, string>();
+
+  for (const category of educationCategories) {
+    const savedCategory = await prisma.contentCategory.upsert({
+      where: { slug: category.slug },
+      update: {
+        name: category.name,
+        description: category.description,
+      },
+      create: category,
+      select: { id: true, slug: true },
+    });
+    categoriesBySlug.set(savedCategory.slug, savedCategory.id);
+  }
+
+  for (const item of educationContents) {
+    const categoryId = categoriesBySlug.get(item.categorySlug);
+    if (!categoryId) continue;
+
+    await prisma.content.upsert({
+      where: { slug: item.slug },
+      update: {
+        title: item.title,
+        description: item.description,
+        content: item.content,
+        type: item.type,
+        difficulty: item.difficulty,
+        duration: item.duration,
+        categoryId,
+        tags: item.tags,
+        isPublished: true,
+        publishedAt: new Date(),
+        isFeatured: item.isFeatured,
+      },
+      create: {
+        title: item.title,
+        slug: item.slug,
+        description: item.description,
+        content: item.content,
+        type: item.type,
+        difficulty: item.difficulty,
+        duration: item.duration,
+        authorId,
+        categoryId,
+        tags: item.tags,
+        isPublished: true,
+        publishedAt: new Date(),
+        isFeatured: item.isFeatured,
+      },
+    });
+  }
+}
+
 // One-time seed endpoint for Vercel deployment
 // Call POST /api/seed once to populate the database
 export async function POST(request: NextRequest) {
@@ -29,13 +172,43 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Prevent accidental re-seeding
     const existingUsers = await prisma.user.count();
     if (existingUsers > 0) {
-      return NextResponse.json(
-        { error: 'Database already seeded. Delete existing data first.' },
-        { status: 400 }
-      );
+      const author = await prisma.user.findFirst({
+        where: { role: { in: [UserRole.ADMIN, UserRole.HEALTHCARE_PROVIDER] } },
+        select: { id: true },
+      });
+
+      if (!author) {
+        return NextResponse.json(
+          { error: 'Database has users, but no admin or provider author for education content.' },
+          { status: 400 }
+        );
+      }
+
+      await seedEducationContent(author.id);
+
+      const [userCount, patientCount, appointmentCount, categoryCount, contentCount] = await Promise.all([
+        prisma.user.count(),
+        prisma.patient.count(),
+        prisma.appointment.count(),
+        prisma.contentCategory.count(),
+        prisma.content.count(),
+      ]);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Education content seeded successfully',
+        data: {
+          stats: {
+            users: userCount,
+            patients: patientCount,
+            appointments: appointmentCount,
+            educationCategories: categoryCount,
+            educationResources: contentCount,
+          },
+        },
+      });
     }
 
     // Password for all seeded users
@@ -172,9 +345,13 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Appointments created');
 
+    await seedEducationContent(admin.id);
+
     // Demo stats
     const totalPatients = await prisma.patient.count();
     const totalAppointments = await prisma.appointment.count();
+    const totalCategories = await prisma.contentCategory.count();
+    const totalContent = await prisma.content.count();
 
     return NextResponse.json({
       success: true,
@@ -184,6 +361,8 @@ export async function POST(request: NextRequest) {
         stats: {
           patients: totalPatients,
           appointments: totalAppointments,
+          educationCategories: totalCategories,
+          educationResources: totalContent,
         },
         credentials: {
           password: 'Demo2025!',
@@ -217,6 +396,8 @@ export async function GET(request: NextRequest) {
     const userCount = await prisma.user.count();
     const patientCount = await prisma.patient.count();
     const appointmentCount = await prisma.appointment.count();
+    const categoryCount = await prisma.contentCategory.count();
+    const contentCount = await prisma.content.count();
 
     return NextResponse.json({
       isSeeded: userCount > 0,
@@ -224,6 +405,8 @@ export async function GET(request: NextRequest) {
         users: userCount,
         patients: patientCount,
         appointments: appointmentCount,
+        educationCategories: categoryCount,
+        educationResources: contentCount,
       },
     });
   } catch (error) {

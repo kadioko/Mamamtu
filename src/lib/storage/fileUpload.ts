@@ -1,5 +1,5 @@
 import { writeFile, mkdir, unlink } from 'fs/promises';
-import { join } from 'path';
+import { isAbsolute, join, normalize } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/logger';
 
@@ -26,7 +26,7 @@ export class FileUploadService {
   private allowedTypes: Set<string>;
 
   constructor(options: FileUploadOptions = {}) {
-    this.uploadDir = options.directory || 'uploads';
+    this.uploadDir = this.normalizeRelativePath(options.directory || '');
     this.maxSize = options.maxSize || 10 * 1024 * 1024; // 10MB default
     this.allowedTypes = new Set(
       options.allowedTypes || [
@@ -59,9 +59,8 @@ export class FileUploadService {
     const filename = `${fileId}.${fileExtension}`;
     
     // Create upload directory if it doesn't exist
-    const targetDir = subdirectory 
-      ? join(this.uploadDir, subdirectory)
-      : this.uploadDir;
+    const safeSubdirectory = subdirectory ? this.normalizeRelativePath(subdirectory) : '';
+    const targetDir = join(process.cwd(), 'uploads', this.uploadDir, safeSubdirectory);
     
     await mkdir(targetDir, { recursive: true });
 
@@ -77,7 +76,7 @@ export class FileUploadService {
       mimeType: file.type,
       size: file.size,
       path: filePath,
-      url: `/uploads/${subdirectory ? `${subdirectory}/` : ''}${filename}`,
+      url: `/uploads/${[this.uploadDir, safeSubdirectory, filename].filter(Boolean).join('/')}`,
       uploadedAt: new Date(),
     };
 
@@ -109,6 +108,16 @@ export class FileUploadService {
     if (!this.allowedTypes.has(file.type)) {
       throw new Error(`File type ${file.type} is not allowed`);
     }
+  }
+
+  private normalizeRelativePath(path: string): string {
+    const normalized = normalize(path).replace(/\\/g, '/').replace(/^\/+/, '');
+
+    if (isAbsolute(path) || normalized === '..' || normalized.startsWith('../')) {
+      throw new Error('Invalid upload directory');
+    }
+
+    return normalized === '.' ? '' : normalized;
   }
 
   async deleteFile(filePath: string): Promise<void> {
@@ -154,7 +163,7 @@ export class MedicalDocumentService extends FileUploadService {
         'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ],
-      directory: 'uploads/medical-documents',
+      directory: 'medical-documents',
     });
   }
 
@@ -231,7 +240,7 @@ export class AvatarService extends FileUploadService {
     super({
       maxSize: 5 * 1024 * 1024, // 5MB for avatars
       allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-      directory: 'uploads/avatars',
+      directory: 'avatars',
     });
   }
 

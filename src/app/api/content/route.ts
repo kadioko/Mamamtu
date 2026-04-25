@@ -48,10 +48,9 @@ const parseStringArray = (value: unknown): string[] => {
   return [];
 };
 
-const serializeStringArray = (value: unknown): string | null => {
+const serializeStringArray = (value: unknown): string[] => {
   const parsed = parseStringArray(value);
-  if (parsed.length === 0) return null;
-  return parsed.join(', ');
+  return parsed;
 };
 
 export async function GET(req: Request) {
