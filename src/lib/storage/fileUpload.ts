@@ -1,5 +1,6 @@
 import { writeFile, mkdir, unlink } from 'fs/promises';
 import { isAbsolute, join, normalize } from 'path';
+import { put } from '@vercel/blob';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/logger';
 
@@ -58,15 +59,41 @@ export class FileUploadService {
     const fileExtension = file.name.split('.').pop() || '';
     const filename = `${fileId}.${fileExtension}`;
     
-    // Create upload directory if it doesn't exist
     const safeSubdirectory = subdirectory ? this.normalizeRelativePath(subdirectory) : '';
+    const storagePath = [this.uploadDir, safeSubdirectory, filename].filter(Boolean).join('/');
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const blob = await put(storagePath, buffer, {
+        access: 'public',
+        contentType: file.type,
+      });
+
+      const uploadedFile: UploadedFile = {
+        id: fileId,
+        filename,
+        originalName: file.name,
+        mimeType: file.type,
+        size: file.size,
+        path: blob.pathname,
+        url: blob.url,
+        uploadedAt: new Date(),
+      };
+
+      logger.info('File uploaded to blob storage successfully', {
+        fileId,
+        originalName: file.name,
+        size: file.size,
+        mimeType: file.type,
+      });
+
+      return uploadedFile;
+    }
+
     const targetDir = join(process.cwd(), 'uploads', this.uploadDir, safeSubdirectory);
-    
     await mkdir(targetDir, { recursive: true });
 
-    // Write file to disk
     const filePath = join(targetDir, filename);
-    const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(filePath, buffer);
 
     const uploadedFile: UploadedFile = {
@@ -76,7 +103,7 @@ export class FileUploadService {
       mimeType: file.type,
       size: file.size,
       path: filePath,
-      url: `/uploads/${[this.uploadDir, safeSubdirectory, filename].filter(Boolean).join('/')}`,
+      url: `/uploads/${storagePath}`,
       uploadedAt: new Date(),
     };
 

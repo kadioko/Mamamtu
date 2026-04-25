@@ -6,18 +6,17 @@
 - Replaced deprecated `src/middleware.ts` with Next.js 16 `src/proxy.ts`.
 - Scoped local file uploads under a static `uploads/` root and blocked unsafe upload subdirectories.
 - Added idempotent demo education content seeding for the public education page.
+- Upgraded Prisma to 7.x using `prisma.config.ts` and the PostgreSQL driver adapter.
+- Added database-backed audit logs for sensitive patient and medical-record access.
+- Added schema foundations for pregnancy episodes, antenatal visits, newborn records, and immunizations.
+- Added optional Upstash Redis-backed rate limiting.
+- Added optional Vercel Blob-backed upload storage.
+- Added repeatable staff user seeding for admin, provider, and receptionist accounts.
 - Confirmed TypeScript, production build, and Jest pass locally.
 
-## Prisma 7 Plan
+## Prisma 7 Status
 
-Prisma 7 is a major upgrade, so treat it as its own branch.
-
-1. Read the Prisma 7 migration guide before changing versions.
-2. Upgrade `prisma` and `@prisma/client` together.
-3. Regenerate the client and run `npx prisma validate`.
-4. Run `npx prisma migrate status` against the Supabase session pooler.
-5. Run the full test suite and production build.
-6. Check deployment logs for connection pooling behavior before promoting.
+Prisma 7 is implemented. The schema URL moved into `prisma.config.ts`, and runtime clients use `@prisma/adapter-pg`.
 
 Use the Supabase session pooler for migration commands. The transaction pooler can produce prepared-statement conflicts with Prisma.
 
@@ -25,19 +24,16 @@ Use the Supabase session pooler for migration commands. The transaction pooler c
 
 The project currently uses NextAuth v4. `npm audit` still reports a moderate advisory through `uuid`, which is pulled by NextAuth v4.
 
-Recommended path:
+Decision:
 
-1. Keep NextAuth v4 short term because the app already has working credential auth, RBAC, and Prisma adapter wiring.
-2. Rotate secrets before production because credentials were handled during setup.
-3. Plan a separate auth upgrade decision:
-   - Move to Auth.js if you want continuity with the current architecture.
-   - Move to Clerk/Auth0/Descope if you want managed auth, hosted account security, and less custom auth maintenance.
-4. Whichever path is chosen, preserve the existing role model: `ADMIN`, `HEALTHCARE_PROVIDER`, `PATIENT`, and `RECEPTIONIST`.
+Keep NextAuth v4 short term because the app already has working credential auth, RBAC, and Prisma adapter wiring. Move auth migration into a separate project because Auth.js/managed auth changes login/session behavior and should be tested as a product flow, not bundled into database upgrades.
+
+When that project starts, preserve the existing role model: `ADMIN`, `HEALTHCARE_PROVIDER`, `PATIENT`, and `RECEPTIONIST`.
 
 ## Next Improvements
 
-- Add an audit log for patient record reads and edits.
-- Add Redis or Upstash-backed rate limiting for production.
-- Move uploaded medical files to object storage instead of local disk on Vercel.
-- Add richer maternal health models: pregnancy episodes, ANC visits, delivery records, newborn records, immunizations, and high-risk flags.
+- Add dashboard screens for pregnancy episodes, ANC visits, newborn records, and immunizations.
+- Add an audit-log viewer for admins.
+- Configure Upstash Redis in Vercel to activate shared production rate limiting.
+- Configure Vercel Blob in Vercel to activate object-storage uploads.
 - Add content management controls for publishing education resources from the dashboard.

@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
-import { ContentType, DifficultyLevel } from '@prisma/client';
+import { AuditAction, ContentType, DifficultyLevel } from '@prisma/client';
+import { writeAuditLog } from '@/lib/audit';
 import { NextResponse } from 'next/server';
 
 function contentErrorResponse(error: unknown) {
@@ -122,6 +123,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role)) {
+      return NextResponse.json(
+        { message: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
     const data = await req.json();
     
     // Validate required fields
@@ -148,6 +156,15 @@ export async function POST(req: Request) {
         isPublished: data.isPublished || false,
         publishedAt: data.isPublished ? new Date() : null,
       },
+    });
+
+    await writeAuditLog({
+      request: req,
+      userId: session.user.id,
+      action: AuditAction.EDUCATION_CONTENT_CREATED,
+      resource: 'Content',
+      resourceId: content.id,
+      metadata: { title: content.title, slug: content.slug },
     });
 
     return NextResponse.json(content, { status: 201 });

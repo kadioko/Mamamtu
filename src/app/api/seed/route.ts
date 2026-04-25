@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  PrismaClient,
   UserRole,
   AppointmentStatus,
   AppointmentType,
@@ -8,8 +7,7 @@ import {
   DifficultyLevel,
 } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 function isSeedRequestAuthorized(request: NextRequest): boolean {
   const configuredToken = process.env.SEED_DATABASE_TOKEN;
@@ -164,6 +162,67 @@ async function seedEducationContent(authorId: string) {
   }
 }
 
+async function ensureStaffUsers() {
+  const password = 'Demo2025!';
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@mama-tu.health' },
+    update: {
+      name: 'Dr. Amina Hassan',
+      role: UserRole.ADMIN,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+    create: {
+      name: 'Dr. Amina Hassan',
+      email: 'admin@mama-tu.health',
+      hashedPassword,
+      role: UserRole.ADMIN,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
+  const provider = await prisma.user.upsert({
+    where: { email: 'provider@mama-tu.health' },
+    update: {
+      name: 'Dr. Omar Al-Sayed',
+      role: UserRole.HEALTHCARE_PROVIDER,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+    create: {
+      name: 'Dr. Omar Al-Sayed',
+      email: 'provider@mama-tu.health',
+      role: UserRole.HEALTHCARE_PROVIDER,
+      hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
+  const receptionist = await prisma.user.upsert({
+    where: { email: 'reception@mama-tu.health' },
+    update: {
+      name: 'Sarah Johnson',
+      role: UserRole.RECEPTIONIST,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+    create: {
+      name: 'Sarah Johnson',
+      email: 'reception@mama-tu.health',
+      role: UserRole.RECEPTIONIST,
+      hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
+  return { admin, provider, receptionist, password };
+}
+
 // One-time seed endpoint for Vercel deployment
 // Call POST /api/seed once to populate the database
 export async function POST(request: NextRequest) {
@@ -174,19 +233,9 @@ export async function POST(request: NextRequest) {
   try {
     const existingUsers = await prisma.user.count();
     if (existingUsers > 0) {
-      const author = await prisma.user.findFirst({
-        where: { role: { in: [UserRole.ADMIN, UserRole.HEALTHCARE_PROVIDER] } },
-        select: { id: true },
-      });
+      const staff = await ensureStaffUsers();
 
-      if (!author) {
-        return NextResponse.json(
-          { error: 'Database has users, but no admin or provider author for education content.' },
-          { status: 400 }
-        );
-      }
-
-      await seedEducationContent(author.id);
+      await seedEducationContent(staff.admin.id);
 
       const [userCount, patientCount, appointmentCount, categoryCount, contentCount] = await Promise.all([
         prisma.user.count(),
@@ -207,47 +256,19 @@ export async function POST(request: NextRequest) {
             educationCategories: categoryCount,
             educationResources: contentCount,
           },
+          credentials: {
+            password: staff.password,
+            accounts: [
+              { role: 'Administrator', email: staff.admin.email },
+              { role: 'Healthcare Provider', email: staff.provider.email },
+              { role: 'Receptionist', email: staff.receptionist.email },
+            ],
+          },
         },
       });
     }
 
-    // Password for all seeded users
-    const password = 'Demo2025!';
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create users
-    const admin = await prisma.user.create({
-      data: {
-        name: 'Dr. Amina Hassan',
-        email: 'admin@mama-tu.health',
-        hashedPassword,
-        role: UserRole.ADMIN,
-        isActive: true,
-        emailVerified: new Date(),
-      },
-    });
-
-    const provider = await prisma.user.create({
-      data: {
-        name: 'Dr. Omar Al-Sayed',
-        email: 'provider@mama-tu.health',
-        role: UserRole.HEALTHCARE_PROVIDER,
-        hashedPassword,
-        isActive: true,
-        emailVerified: new Date(),
-      },
-    });
-
-    const receptionist = await prisma.user.create({
-      data: {
-        name: 'Sarah Johnson',
-        email: 'reception@mama-tu.health',
-        role: UserRole.RECEPTIONIST,
-        hashedPassword,
-        isActive: true,
-        emailVerified: new Date(),
-      },
-    });
+    const { admin, provider, receptionist, password } = await ensureStaffUsers();
 
     console.log('✅ Healthcare staff created');
 
@@ -381,8 +402,6 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to seed database', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -414,7 +433,5 @@ export async function GET(request: NextRequest) {
       { error: 'Failed to check database status', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

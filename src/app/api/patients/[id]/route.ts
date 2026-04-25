@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { Patient as PrismaPatient } from '@prisma/client';
+import { AuditAction } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { withAuth } from '@/lib/apiAuth';
+import { writeAuditLog } from '@/lib/audit';
 
 const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
@@ -64,6 +66,14 @@ export const GET = withAuth(
       );
     }
 
+    await writeAuditLog({
+      request,
+      action: AuditAction.PATIENT_VIEWED,
+      resource: 'Patient',
+      resourceId: id,
+      patientId: id,
+    });
+
     return NextResponse.json(normalizePatient(patient));
   } catch (error) {
     console.error('Error fetching patient:', error);
@@ -101,6 +111,15 @@ export const PUT = withAuth(
       },
     });
 
+    await writeAuditLog({
+      request,
+      action: AuditAction.PATIENT_UPDATED,
+      resource: 'Patient',
+      resourceId: id,
+      patientId: id,
+      metadata: { fields: Object.keys(data) },
+    });
+
     return NextResponse.json(normalizePatient(patient));
   } catch (error) {
     console.error('Error updating patient:', error);
@@ -129,6 +148,14 @@ export const DELETE = withAuth(
     const { id } = await params;
     await prisma.patient.delete({
       where: { id },
+    });
+
+    await writeAuditLog({
+      request,
+      action: AuditAction.PATIENT_DELETED,
+      resource: 'Patient',
+      resourceId: id,
+      patientId: id,
     });
 
     return NextResponse.json({ success: true });

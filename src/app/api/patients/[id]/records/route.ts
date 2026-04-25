@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { MedicalRecordFormData } from '@/types/patient';
-import { withAuth } from '@/lib/apiAuth';
+import { AuditAction } from '@prisma/client';
+import { writeAuditLog } from '@/lib/audit';
 
 const createMedicalRecordSchema = z.object({
   recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APISSCOMA', 'GENERAL']),
@@ -203,6 +204,15 @@ export async function GET(
 
     const totalPages = Math.ceil(total / limit);
 
+    await writeAuditLog({
+      request,
+      userId: session.user.id,
+      action: AuditAction.MEDICAL_RECORD_VIEWED,
+      resource: 'MedicalRecord',
+      patientId,
+      metadata: { page, limit, recordType, count: records.length },
+    });
+
     return NextResponse.json({
       data: records.map(normalizeMedicalRecord),
       pagination: {
@@ -259,6 +269,16 @@ export async function POST(
         vitals: toJsonString(validatedData.vitals),
         attachments: JSON.stringify([]),
       }
+    });
+
+    await writeAuditLog({
+      request,
+      userId: session.user.id,
+      action: AuditAction.MEDICAL_RECORD_CREATED,
+      resource: 'MedicalRecord',
+      resourceId: typeof record.id === 'string' ? record.id : undefined,
+      patientId,
+      metadata: { recordType: validatedData.recordType, title: validatedData.title },
     });
 
     return NextResponse.json(normalizeMedicalRecord(record), { status: 201 });

@@ -51,6 +51,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role)) {
+      return NextResponse.json(
+        { message: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
     const { name, description, parentId } = await req.json();
 
     if (!name) {

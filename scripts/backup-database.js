@@ -1,8 +1,21 @@
 #!/usr/bin/env node
+require('dotenv/config');
 
 const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
 const fs = require('fs');
 const path = require('path');
+
+function getDatabaseUrlForPgAdapter() {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) throw new Error('DATABASE_URL is required');
+
+  const url = new URL(databaseUrl);
+  if (url.searchParams.get('sslmode') === 'require' && !url.searchParams.has('uselibpqcompat')) {
+    url.searchParams.set('uselibpqcompat', 'true');
+  }
+  return url.toString();
+}
 
 async function backupDatabase() {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -13,7 +26,9 @@ async function backupDatabase() {
     fs.mkdirSync(backupDir, { recursive: true });
   }
 
-  const client = new PrismaClient();
+  const client = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: getDatabaseUrlForPgAdapter() }),
+  });
   
   try {
     console.log('🔄 Creating database backup...');

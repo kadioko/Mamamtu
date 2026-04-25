@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Patient {
@@ -42,11 +41,112 @@ model Patient {
   appointments Appointment[]
   medicalRecords MedicalRecord[]
   notifications Notification[]
+  pregnancyEpisodes PregnancyEpisode[]
+  newbornRecords NewbornRecord[] @relation("MotherNewbornRecords")
 
   @@index([patientId])
   @@index([lastName, firstName])
   @@index([phone])
   @@index([email])
+}
+
+enum PregnancyStatus {
+  ACTIVE
+  DELIVERED
+  LOST_TO_FOLLOW_UP
+  MISCARRIAGE
+  REFERRED
+}
+
+model PregnancyEpisode {
+  id                  String            @id @default(uuid())
+  patientId           String
+  patient             Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  status              PregnancyStatus   @default(ACTIVE)
+  estimatedDueDate    DateTime?
+  lastMenstrualPeriod DateTime?
+  gravida             Int?
+  para                Int?
+  riskLevel           Int               @default(0)
+  highRiskFlags       String[]
+  notes               String?
+  startedAt           DateTime          @default(now())
+  endedAt             DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  antenatalVisits     AntenatalVisit[]
+  newbornRecords      NewbornRecord[]
+
+  @@index([patientId])
+  @@index([status])
+  @@index([estimatedDueDate])
+  @@index([riskLevel])
+}
+
+model AntenatalVisit {
+  id                 String            @id @default(uuid())
+  pregnancyEpisodeId String
+  pregnancyEpisode   PregnancyEpisode  @relation(fields: [pregnancyEpisodeId], references: [id], onDelete: Cascade)
+  visitDate          DateTime
+  gestationalAgeWeeks Int?
+  bloodPressure      String?
+  weight             Float?
+  fundalHeight       Float?
+  fetalHeartRate     Int?
+  dangerSigns        String[]
+  interventions      String[]
+  nextVisitDate      DateTime?
+  notes              String?
+  recordedBy         String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([pregnancyEpisodeId])
+  @@index([visitDate])
+  @@index([nextVisitDate])
+}
+
+model NewbornRecord {
+  id                 String            @id @default(uuid())
+  motherPatientId    String?
+  motherPatient      Patient?          @relation("MotherNewbornRecords", fields: [motherPatientId], references: [id])
+  pregnancyEpisodeId String?
+  pregnancyEpisode   PregnancyEpisode? @relation(fields: [pregnancyEpisodeId], references: [id])
+  name               String?
+  dateOfBirth        DateTime
+  sex                String?
+  birthWeight        Float?
+  apgarOneMinute     Int?
+  apgarFiveMinutes   Int?
+  deliveryFacility   String?
+  complications      String[]
+  notes              String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  immunizations      Immunization[]
+
+  @@index([motherPatientId])
+  @@index([pregnancyEpisodeId])
+  @@index([dateOfBirth])
+}
+
+model Immunization {
+  id              String        @id @default(uuid())
+  newbornRecordId String
+  newbornRecord   NewbornRecord @relation(fields: [newbornRecordId], references: [id], onDelete: Cascade)
+  vaccineName     String
+  doseLabel       String?
+  administeredAt  DateTime
+  nextDueAt       DateTime?
+  facility        String?
+  batchNumber     String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([newbornRecordId])
+  @@index([administeredAt])
+  @@index([nextDueAt])
 }
 
 enum ContentType {
@@ -304,8 +404,43 @@ model User {
   appointments      Appointment[] @relation("CreatedAppointments")
   notifications     Notification[]
   notificationPreference NotificationPreference?
+  auditLogs         AuditLog[]
   
   @@index([email])
+}
+
+enum AuditAction {
+  PATIENT_VIEWED
+  PATIENT_UPDATED
+  PATIENT_DELETED
+  MEDICAL_RECORD_VIEWED
+  MEDICAL_RECORD_CREATED
+  MEDICAL_RECORD_UPDATED
+  MEDICAL_RECORD_DELETED
+  EDUCATION_CONTENT_CREATED
+  EDUCATION_CONTENT_UPDATED
+  EDUCATION_CONTENT_DELETED
+  AUTH_EVENT
+}
+
+model AuditLog {
+  id          String      @id @default(uuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action      AuditAction
+  resource    String
+  resourceId  String?
+  patientId   String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime    @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource, resourceId])
+  @@index([patientId])
+  @@index([createdAt])
 }
 
 model Account {

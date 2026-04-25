@@ -54,7 +54,47 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   }
 }
 
-const defaultStore = new InMemoryRateLimitStore();
+export class UpstashRateLimitStore implements RateLimitStore {
+  private redis: {
+    get<T>(key: string): Promise<T | null>;
+    set(key: string, value: unknown, options?: { px?: number }): Promise<unknown>;
+    del(key: string): Promise<unknown>;
+  };
+
+  constructor() {
+    // Lazy-load to keep Jest and local in-memory tests away from Upstash's ESM-only internals.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { Redis } = require('@upstash/redis') as typeof import('@upstash/redis');
+    this.redis = Redis.fromEnv();
+  }
+
+  async get(key: string) {
+    return this.redis.get<RateLimitEntry>(key);
+  }
+
+  async set(key: string, entry: RateLimitEntry) {
+    const ttlMs = Math.max(entry.resetTime - Date.now(), 1000);
+    await this.redis.set(key, entry, { px: ttlMs });
+  }
+
+  async delete(key: string) {
+    await this.redis.del(key);
+  }
+
+  async keys() {
+    return [];
+  }
+}
+
+function createDefaultRateLimitStore(): RateLimitStore {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return new UpstashRateLimitStore();
+  }
+
+  return new InMemoryRateLimitStore();
+}
+
+const defaultStore = createDefaultRateLimitStore();
 
 // ---------------------------------------------------------------------------
 // RateLimiter — store-agnostic

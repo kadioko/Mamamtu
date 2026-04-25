@@ -7,6 +7,7 @@ import { Icons } from '@/components/ui/icons';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import type { Content } from '@/components/education/content-card';
+import { useSession } from 'next-auth/react';
 
 interface ErrorBoundaryProps {
   fallback: React.ReactNode;
@@ -203,7 +204,7 @@ export default function EducationPage() {
 
 function EducationContent() {
   const searchParams = useSearchParams();
-  const [session, setSession] = useState<{ role?: string } | null>(null);
+  const { data: session } = useSession();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -249,7 +250,7 @@ function EducationContent() {
             Learn about maternal and newborn health with our curated content
           </p>
         </div>
-        {session?.role === 'ADMIN' && (
+        {['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session?.user?.role || '') && (
           <Button asChild>
             <Link href="/education/new">
               <Plus className="mr-2 h-4 w-4" />
