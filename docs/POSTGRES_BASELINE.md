@@ -1,5 +1,7 @@
 # PostgreSQL Baseline Migration
 
+Last updated: 2026-04-26
+
 A clean PostgreSQL baseline SQL file has been generated at:
 
 ```text

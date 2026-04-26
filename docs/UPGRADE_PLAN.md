@@ -1,5 +1,7 @@
 # MamaMtu Upgrade Plan
 
+Last updated: 2026-04-26
+
 ## Completed
 
 - Upgraded the app to patched Next.js 16 and React 19 versions.
@@ -20,6 +22,8 @@
 - Added realistic demo clinical seeding for patients, appointments, records, pregnancies, ANC visits, newborns, immunizations, notifications, reports, audit logs, and long education articles.
 - Added create/edit surfaces for pregnancy episodes, ANC visits, newborn records, and immunizations.
 - Added patient timeline, admin staff user management, Vercel Blob upload UI, Vercel Analytics/Speed Insights, and production health checks.
+- Completed Tailwind CSS 4, TypeScript 6, ESLint 10, Resend 6, and lucide-react 1.x upgrade lanes.
+- Added `VERCEL_PROTECTION_BYPASS` as the protected preview testing secret name and verified the preview can return HTTP 200 with the bypass header.
 
 ## Prisma 7 Status
 
@@ -31,11 +35,11 @@ CI uses `prisma db push` against a temporary Postgres service because the earlie
 
 ## Auth Plan
 
-The project currently uses NextAuth v4. `npm audit` still reports a moderate advisory through `uuid`, which is pulled by NextAuth v4.
+The project currently uses NextAuth v4. Production audit is currently clean because the repo uses a temporary `uuid` override, but the override is not the long-term auth strategy.
 
 Decision:
 
-Keep NextAuth v4 short term because the app already has working credential auth, RBAC, and Prisma adapter wiring. Move auth migration into a separate project because Auth.js/managed auth changes login/session behavior and should be tested as a product flow, not bundled into database upgrades.
+Keep NextAuth v4 short term because the app already has working credential auth, RBAC, and Prisma adapter wiring. Move Better Auth migration into a separate project because it changes login/session behavior and should be tested as a product flow, not bundled into dependency or database upgrades.
 
 When that project starts, preserve the existing role model: `ADMIN`, `HEALTHCARE_PROVIDER`, `PATIENT`, and `RECEPTIONIST`.
 
@@ -55,29 +59,27 @@ After changing these values in Vercel, redeploy the app so server functions rece
 
 Safe semver dependency updates have been applied with `npm update`.
 
-Major upgrades intentionally left for separate work:
+Major upgrades completed:
 
 - Tailwind CSS 4.x migration.
 - TypeScript 6.x compatibility pass.
 - ESLint 10.x compatibility pass.
 - Resend 6.x email SDK migration.
 - lucide-react 1.x icon audit.
-- Auth migration from NextAuth v4 to Auth.js or managed auth.
-- Squash legacy SQLite-era migrations into a clean PostgreSQL baseline migration.
 
 Current decision:
 
 - Keep NextAuth v4 until a dedicated auth migration can preserve credentials login, role claims, session callbacks, and staff account creation.
-- Do not force Tailwind 4, TypeScript 6, ESLint 10, Resend 6, or lucide-react 1.x in this feature pass. Each is a separate compatibility project with UI/build risk.
+- Keep the generated PostgreSQL baseline inactive until Supabase backup/restore rehearsal is complete.
 - See `docs/MAJOR_UPGRADE_ROADMAP.md` for the dedicated migration plan.
 
 ## Next Improvements
 
-- Add richer validation and delete/archive actions for clinical forms.
-- Add role-aware edit controls inside patient timelines.
-- Add preview/download management for uploaded attachments.
-- Plan Auth.js or managed-auth migration as a dedicated project, since audit still flags `uuid` through NextAuth v4.
-- Add tests around clinical delete/archive endpoints and attachment previews.
+- Add automated protected-preview smoke tests using `VERCEL_PROTECTION_BYPASS`.
+- Clean the ESLint warning backlog reported by `npm run lint:all`.
+- Add end-to-end tests for login, education reading, patient creation, appointments, uploads, reports, notifications, and clinical forms.
+- Plan Better Auth migration as a dedicated project.
+- Activate the PostgreSQL baseline only after Supabase backup and restore rehearsal.
 
 Completed in the current refinement pass:
 

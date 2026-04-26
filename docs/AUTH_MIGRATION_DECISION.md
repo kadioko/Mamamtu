@@ -1,5 +1,7 @@
 # Auth Migration Decision
 
+Last updated: 2026-04-26
+
 Current decision: keep NextAuth v4 in production for this upgrade branch, but choose Better Auth as the dedicated migration target.
 
 ## Why This Is Separate

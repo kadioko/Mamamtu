@@ -1,5 +1,7 @@
 # Lint Warning Backlog
 
+Last updated: 2026-04-26
+
 ESLint 10 is active and CI uses:
 
 ```bash
@@ -15,6 +17,14 @@ npm run lint:all
 ```
 
 ## Current Warning Themes
+
+Latest checked command:
+
+```bash
+npm run lint:all -- --format stylish
+```
+
+Result: 0 errors, 307 warnings.
 
 - Replace broad `any` usage in dashboard pages, hooks, search helpers, export helpers, socket helpers, and tests.
 - Remove unused imports and variables in API routes and UI components.

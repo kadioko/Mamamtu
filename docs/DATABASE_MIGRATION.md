@@ -1,5 +1,19 @@
 # Database Migration: SQLite to PostgreSQL
 
+Last updated: 2026-04-26
+
+## Current Status
+
+The app now runs on PostgreSQL with Prisma 7. This document is retained as migration history and as a recovery reference for older SQLite-derived environments.
+
+For current development and CI:
+
+- Use `DATABASE_URL` with PostgreSQL.
+- Use `prisma.config.ts` and the Prisma PostgreSQL adapter.
+- Use `npx prisma db push` only for temporary CI databases.
+- Use reviewed migrations for real schema changes.
+- Do not replay the old SQLite-era migrations against a fresh PostgreSQL database; see `docs/POSTGRES_BASELINE.md` for the clean baseline plan.
+
 This guide walks through migrating from SQLite to PostgreSQL for production deployment.
 
 ## Why PostgreSQL?

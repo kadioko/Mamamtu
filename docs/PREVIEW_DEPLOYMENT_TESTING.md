@@ -1,5 +1,7 @@
 # Preview Deployment Testing
 
+Last updated: 2026-04-26
+
 Latest verified preview deployment:
 
 ```text
@@ -7,6 +9,12 @@ https://mamamtu-6bqtnxuv9-godfrey-marikis-projects.vercel.app
 ```
 
 Vercel reports this deployment as `READY`.
+
+The GitHub Actions secret name for the bypass token is:
+
+```text
+VERCEL_PROTECTION_BYPASS
+```
 
 ## Current Access Blocker
 
@@ -24,6 +32,10 @@ Recommended: keep Deployment Protection enabled and configure Protection Bypass 
 4. Add a Deployment Protection Exception for a preview domain only if bypass tokens are not enough and the plan supports it.
 
 Avoid disabling preview protection entirely. Preview deployments can contain unreleased features, test data, and debugging surfaces that should not be public by default.
+
+Manual verification result:
+
+- `/education` returned HTTP 200 when requested with the bypass header.
 
 ## Permission Note
 

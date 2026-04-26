@@ -1,5 +1,7 @@
 # Test Accounts
 
+Last updated: 2026-04-26
+
 Use these accounts after running the seed scripts or the protected `/api/seed` endpoint.
 
 ## Staff Login Accounts
@@ -63,3 +65,4 @@ Useful demo patient IDs include:
 - These accounts are for local development, demos, and preview testing only.
 - Change `SEED_STAFF_PASSWORD` before seeding any shared or public environment.
 - Do not reuse the demo password for production staff accounts.
+- Review seeded users before promoting any preview database to a real production workflow.

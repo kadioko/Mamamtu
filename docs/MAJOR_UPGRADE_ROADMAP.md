@@ -2,6 +2,8 @@
 
 This document tracks the larger dependency and platform migrations that should be handled as dedicated projects.
 
+Last updated: 2026-04-26
+
 ## Current Status
 
 Completed:
@@ -15,11 +17,14 @@ Completed:
 - Production audit is clean with temporary transitive overrides for `postcss`, `svix`, and `uuid`.
 - A clean PostgreSQL baseline SQL artifact was generated at `prisma/baseline/postgresql-baseline.sql`.
 - CI database setup note corrected to use `prisma db push`.
+- Vercel preview protection remains enabled, with `VERCEL_PROTECTION_BYPASS` available for automation checks.
+- `npm outdated --long` currently reports no outdated packages.
 
 Remaining gated decisions:
 
-- Better Auth migration, now mainly to remove the temporary NextAuth v4 compatibility bridge.
+- Better Auth migration, now mainly to remove the temporary NextAuth v4 compatibility bridge and own auth lifecycle on a supported path.
 - Replacing legacy migrations with the PostgreSQL baseline after a production backup and restore rehearsal.
+- Adding protected-preview smoke tests that exercise deployed routes with the bypass header.
 
 ## Auth Migration
 
@@ -165,3 +170,14 @@ Activation steps:
 3. Confirm the rehearsal schema matches `prisma/schema.prisma`.
 4. Move the baseline SQL into a new first migration only after old migrations are archived.
 5. Mark the production database baseline as resolved with Prisma Migrate after confirming no schema drift.
+
+## Preview Automation
+
+Current decision: keep Vercel Deployment Protection enabled and use `VERCEL_PROTECTION_BYPASS` for automation.
+
+Recommended next steps:
+
+1. Add a GitHub Actions smoke-test job that runs after preview deployment URLs are available.
+2. Pass the bypass token as the `x-vercel-protection-bypass` header.
+3. Verify `/education`, `/auth/signin`, `/api/health`, and selected dashboard routes.
+4. Keep manual preview testing signed in through Vercel.

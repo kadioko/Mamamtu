@@ -1,5 +1,7 @@
 # Vercel Deployment Setup Guide
 
+Last updated: 2026-04-26
+
 This app is a Next.js 16 application backed by PostgreSQL, Prisma 7, NextAuth, Upstash Redis, and Vercel Blob.
 
 ## Required Vercel Environment Variables
@@ -23,6 +25,12 @@ Optional:
 | `SEED_DATABASE_TOKEN` | Protects `/api/seed` in deployed environments. |
 | `RESEND_API_KEY` | Enables real email delivery. |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Enables Google OAuth login. |
+
+Automation-only:
+
+| Key | Purpose |
+| --- | --- |
+| `VERCEL_PROTECTION_BYPASS` | GitHub Actions/automation secret for protected preview checks. Do not expose this to client-side code. |
 
 ## Supabase Connection String
 
@@ -91,6 +99,8 @@ Default seeded password: `Demo2025!`
 GitHub Actions runs Node 20 with a PostgreSQL service, pushes the current Prisma schema into the temporary CI database, then runs lint/test/build.
 
 The workflow uses `prisma db push` instead of replaying the historical migration files because the oldest migrations were created before the project was fully moved to PostgreSQL and contain SQLite-era SQL such as `DATETIME`. For production database changes, keep using reviewed Prisma migrations.
+
+Protected preview deployments should stay enabled. Automated preview checks should send the `VERCEL_PROTECTION_BYPASS` value through the `x-vercel-protection-bypass` header.
 
 ## Post-Deployment Checks
 
