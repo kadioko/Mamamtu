@@ -117,6 +117,7 @@ export interface MedicalRecordFormData {
   vitals?: Partial<Vitals>;
   medications?: Partial<Medication>[];
   labResults?: Partial<LabResult>[];
+  attachments?: string[];
 }
 
 export interface PatientSearchParams {

@@ -11,6 +11,18 @@ const schema = z.object({
   facility: z.string().optional().nullable(),
   batchNumber: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
+}).refine((data) => {
+  if (!data.administeredAt) return true;
+  return new Date(data.administeredAt) <= new Date();
+}, {
+  message: 'Administered date cannot be in the future',
+  path: ['administeredAt'],
+}).refine((data) => {
+  if (!data.administeredAt || !data.nextDueAt) return true;
+  return new Date(data.nextDueAt) > new Date(data.administeredAt);
+}, {
+  message: 'Next due date must be after administered date',
+  path: ['nextDueAt'],
 });
 
 async function canManage() {
@@ -31,4 +43,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     },
   });
   return NextResponse.json(immunization);
+}
+
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (session?.user?.role !== 'ADMIN') return NextResponse.json({ error: 'Only admins can delete immunizations' }, { status: 403 });
+  const { id } = await params;
+  await prisma.immunization.delete({ where: { id } });
+  return NextResponse.json({ success: true });
 }

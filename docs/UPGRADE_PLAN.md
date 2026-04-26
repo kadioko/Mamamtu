@@ -27,7 +27,7 @@ Prisma 7 is implemented. The schema URL moved into `prisma.config.ts`, and runti
 
 Use the Supabase session pooler for migration commands. The transaction pooler can produce prepared-statement conflicts with Prisma.
 
-CI uses `prisma db push --skip-generate` against a temporary Postgres service because the earliest committed migrations contain SQLite-era SQL. A future cleanup should squash a fresh PostgreSQL baseline migration before relying on `migrate deploy` for brand-new databases.
+CI uses `prisma db push` against a temporary Postgres service because the earliest committed migrations contain SQLite-era SQL. A future cleanup should squash a fresh PostgreSQL baseline migration before relying on `migrate deploy` for brand-new databases.
 
 ## Auth Plan
 
@@ -69,6 +69,7 @@ Current decision:
 
 - Keep NextAuth v4 until a dedicated auth migration can preserve credentials login, role claims, session callbacks, and staff account creation.
 - Do not force Tailwind 4, TypeScript 6, ESLint 10, Resend 6, or lucide-react 1.x in this feature pass. Each is a separate compatibility project with UI/build risk.
+- See `docs/MAJOR_UPGRADE_ROADMAP.md` for the dedicated migration plan.
 
 ## Next Improvements
 
@@ -76,3 +77,4 @@ Current decision:
 - Add role-aware edit controls inside patient timelines.
 - Add preview/download management for uploaded attachments.
 - Plan Auth.js or managed-auth migration as a dedicated project, since audit still flags `uuid` through NextAuth v4.
+- Add tests around clinical delete/archive endpoints and attachment previews.

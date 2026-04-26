@@ -11,6 +11,7 @@ type TimelineItem = {
   title: string;
   type: string;
   detail?: string | null;
+  editHref?: string;
 };
 
 export default async function PatientTimelinePage({ params }: { params: Promise<{ id: string }> }) {
@@ -38,13 +39,16 @@ export default async function PatientTimelinePage({ params }: { params: Promise<
     include: { user: { select: { name: true, email: true } } },
   });
 
+  const canEditClinical = ['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role);
+  const canEditRecords = ['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role);
+
   const items: TimelineItem[] = [
     ...patient.appointments.map((item) => ({ at: item.startTime, title: item.title, type: `Appointment - ${item.status}`, detail: item.type.replace(/_/g, ' ') })),
-    ...patient.medicalRecords.map((item) => ({ at: item.createdAt, title: item.title, type: `Medical Record - ${item.recordType}`, detail: item.diagnosis })),
-    ...patient.pregnancyEpisodes.map((item) => ({ at: item.startedAt, title: 'Pregnancy episode started', type: item.status.replace(/_/g, ' '), detail: item.highRiskFlags.join(', ') || item.notes })),
-    ...patient.pregnancyEpisodes.flatMap((episode) => episode.antenatalVisits.map((visit) => ({ at: visit.visitDate, title: 'ANC visit', type: 'Antenatal Care', detail: [visit.bloodPressure, visit.gestationalAgeWeeks ? `${visit.gestationalAgeWeeks} weeks` : null].filter(Boolean).join(' · ') }))),
-    ...patient.newbornRecords.map((item) => ({ at: item.dateOfBirth, title: item.name || 'Newborn recorded', type: 'Birth/Newborn', detail: item.deliveryFacility })),
-    ...patient.newbornRecords.flatMap((record) => record.immunizations.map((item) => ({ at: item.administeredAt, title: item.vaccineName, type: 'Immunization', detail: item.doseLabel }))),
+    ...patient.medicalRecords.map((item) => ({ at: item.createdAt, title: item.title, type: `Medical Record - ${item.recordType}`, detail: item.diagnosis, editHref: canEditRecords ? `/dashboard/patients/${patient.id}` : undefined })),
+    ...patient.pregnancyEpisodes.map((item) => ({ at: item.startedAt, title: 'Pregnancy episode started', type: item.status.replace(/_/g, ' '), detail: item.highRiskFlags.join(', ') || item.notes, editHref: canEditClinical ? `/dashboard/pregnancies/${item.id}/edit` : undefined })),
+    ...patient.pregnancyEpisodes.flatMap((episode) => episode.antenatalVisits.map((visit) => ({ at: visit.visitDate, title: 'ANC visit', type: 'Antenatal Care', detail: [visit.bloodPressure, visit.gestationalAgeWeeks ? `${visit.gestationalAgeWeeks} weeks` : null].filter(Boolean).join(' · '), editHref: canEditClinical ? `/dashboard/antenatal/${visit.id}/edit` : undefined }))),
+    ...patient.newbornRecords.map((item) => ({ at: item.dateOfBirth, title: item.name || 'Newborn recorded', type: 'Birth/Newborn', detail: item.deliveryFacility, editHref: canEditClinical ? `/dashboard/newborns/${item.id}/edit` : undefined })),
+    ...patient.newbornRecords.flatMap((record) => record.immunizations.map((item) => ({ at: item.administeredAt, title: item.vaccineName, type: 'Immunization', detail: item.doseLabel, editHref: canEditClinical ? `/dashboard/immunizations/${item.id}/edit` : undefined }))),
     ...auditLogs.map((log) => ({ at: log.createdAt, title: log.action.replace(/_/g, ' '), type: 'Care Activity', detail: log.user?.name || log.user?.email || 'System' })),
   ].sort((a, b) => b.at.getTime() - a.at.getTime());
 
@@ -66,6 +70,11 @@ export default async function PatientTimelinePage({ params }: { params: Promise<
               <div>
                 <p className="font-semibold">{item.title}</p>
                 {item.detail && <p className="text-sm text-muted-foreground">{item.detail}</p>}
+                {item.editHref && (
+                  <Link href={item.editHref as any} className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
+                    Edit
+                  </Link>
+                )}
               </div>
             </CardContent>
           </Card>

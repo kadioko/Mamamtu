@@ -4,7 +4,7 @@ import { withAuth } from '@/lib/apiAuth';
 import { z } from 'zod';
 
 const updateMedicalRecordSchema = z.object({
-  recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APISSCOMA', 'GENERAL']).optional(),
+  recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APGAR_SCORE', 'GENERAL']).optional(),
   title: z.string().min(1).optional(),
   description: z.string().optional(),
   diagnosis: z.string().optional(),

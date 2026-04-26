@@ -13,6 +13,18 @@ const schema = z.object({
   riskLevel: z.coerce.number().int().min(0).max(5).default(0),
   highRiskFlags: z.array(z.string()).default([]),
   notes: z.string().optional(),
+}).refine((data) => {
+  if (!data.estimatedDueDate || !data.lastMenstrualPeriod) return true;
+  return new Date(data.estimatedDueDate) > new Date(data.lastMenstrualPeriod);
+}, {
+  message: 'Estimated due date must be after last menstrual period',
+  path: ['estimatedDueDate'],
+}).refine((data) => {
+  if (data.gravida === undefined || data.para === undefined) return true;
+  return data.para <= data.gravida;
+}, {
+  message: 'Para cannot be greater than gravida',
+  path: ['para'],
 });
 
 async function canManage() {

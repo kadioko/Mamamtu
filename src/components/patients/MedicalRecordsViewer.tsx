@@ -212,6 +212,35 @@ const MedicalRecordCard = ({ record }: { record: MedicalRecord }) => (
           <p className="text-sm text-gray-600">{record.facility}</p>
         </div>
       )}
+
+      {record.attachments && record.attachments.length > 0 && (
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Attachments</h4>
+          <div className="grid gap-2">
+            {record.attachments.map((url, idx) => {
+              const label = decodeURIComponent(url.split('/').pop() || `Attachment ${idx + 1}`);
+              const isImage = /\.(png|jpe?g|gif|webp|avif)$/i.test(url);
+              return (
+                <div key={url} className="rounded border p-3">
+                  {isImage && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={url} alt={label} className="mb-2 max-h-48 rounded border object-contain" />
+                  )}
+                  <div className="flex flex-wrap items-center gap-3 text-sm">
+                    <a href={url} target="_blank" rel="noreferrer" className="font-medium text-primary hover:underline">
+                      Preview
+                    </a>
+                    <a href={url} download className="text-muted-foreground hover:text-foreground">
+                      Download
+                    </a>
+                    <span className="truncate text-muted-foreground">{label}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </CardContent>
   </Card>
 );

@@ -15,6 +15,15 @@ const schema = z.object({
   deliveryFacility: z.string().optional(),
   complications: z.array(z.string()).default([]),
   notes: z.string().optional(),
+}).refine((data) => new Date(data.dateOfBirth) <= new Date(), {
+  message: 'Date of birth cannot be in the future',
+  path: ['dateOfBirth'],
+}).refine((data) => data.apgarOneMinute === undefined || (data.apgarOneMinute >= 0 && data.apgarOneMinute <= 10), {
+  message: 'APGAR score must be between 0 and 10',
+  path: ['apgarOneMinute'],
+}).refine((data) => data.apgarFiveMinutes === undefined || (data.apgarFiveMinutes >= 0 && data.apgarFiveMinutes <= 10), {
+  message: 'APGAR score must be between 0 and 10',
+  path: ['apgarFiveMinutes'],
 });
 
 async function canManage() {

@@ -14,6 +14,18 @@ const schema = z.object({
   interventions: z.array(z.string()).optional(),
   nextVisitDate: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
+}).refine((data) => {
+  if (!data.visitDate) return true;
+  return new Date(data.visitDate) <= new Date();
+}, {
+  message: 'Visit date cannot be in the future',
+  path: ['visitDate'],
+}).refine((data) => {
+  if (!data.visitDate || !data.nextVisitDate) return true;
+  return new Date(data.nextVisitDate) > new Date(data.visitDate);
+}, {
+  message: 'Next visit date must be after visit date',
+  path: ['nextVisitDate'],
 });
 
 async function canManage() {
@@ -34,4 +46,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     },
   });
   return NextResponse.json(visit);
+}
+
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (session?.user?.role !== 'ADMIN') return NextResponse.json({ error: 'Only admins can delete ANC visits' }, { status: 403 });
+  const { id } = await params;
+  await prisma.antenatalVisit.delete({ where: { id } });
+  return NextResponse.json({ success: true });
 }

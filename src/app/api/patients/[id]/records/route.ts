@@ -7,7 +7,7 @@ import { AuditAction } from '@prisma/client';
 import { writeAuditLog } from '@/lib/audit';
 
 const createMedicalRecordSchema = z.object({
-  recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APISSCOMA', 'GENERAL']),
+  recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APGAR_SCORE', 'GENERAL']),
   title: z.string().min(1),
   description: z.string().optional(),
   diagnosis: z.string().optional(),

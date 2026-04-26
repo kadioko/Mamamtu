@@ -90,7 +90,7 @@ Default seeded password: `Demo2025!`
 
 GitHub Actions runs Node 20 with a PostgreSQL service, pushes the current Prisma schema into the temporary CI database, then runs lint/test/build.
 
-The workflow uses `prisma db push --skip-generate` instead of replaying the historical migration files because the oldest migrations were created before the project was fully moved to PostgreSQL and contain SQLite-era SQL such as `DATETIME`. For production database changes, keep using reviewed Prisma migrations.
+The workflow uses `prisma db push` instead of replaying the historical migration files because the oldest migrations were created before the project was fully moved to PostgreSQL and contain SQLite-era SQL such as `DATETIME`. For production database changes, keep using reviewed Prisma migrations.
 
 ## Post-Deployment Checks
 

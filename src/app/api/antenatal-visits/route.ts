@@ -15,6 +15,15 @@ const schema = z.object({
   interventions: z.array(z.string()).default([]),
   nextVisitDate: z.string().optional(),
   notes: z.string().optional(),
+}).refine((data) => new Date(data.visitDate) <= new Date(), {
+  message: 'Visit date cannot be in the future',
+  path: ['visitDate'],
+}).refine((data) => {
+  if (!data.nextVisitDate) return true;
+  return new Date(data.nextVisitDate) > new Date(data.visitDate);
+}, {
+  message: 'Next visit date must be after visit date',
+  path: ['nextVisitDate'],
 });
 
 async function canManage() {

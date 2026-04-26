@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { FileUploadField } from '@/components/upload/FileUploadField';
 
 const medicalRecordSchema = z.object({
-  recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APISSCOMA', 'GENERAL']),
+  recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APGAR_SCORE', 'GENERAL']),
   title: z.string().min(2, 'Title is required').max(200, 'Title must be less than 200 characters'),
   description: z.string().optional(),
   diagnosis: z.string().optional(),

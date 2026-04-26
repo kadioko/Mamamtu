@@ -12,6 +12,15 @@ const schema = z.object({
   facility: z.string().optional(),
   batchNumber: z.string().optional(),
   notes: z.string().optional(),
+}).refine((data) => new Date(data.administeredAt) <= new Date(), {
+  message: 'Administered date cannot be in the future',
+  path: ['administeredAt'],
+}).refine((data) => {
+  if (!data.nextDueAt) return true;
+  return new Date(data.nextDueAt) > new Date(data.administeredAt);
+}, {
+  message: 'Next due date must be after administered date',
+  path: ['nextDueAt'],
 });
 
 async function canManage() {

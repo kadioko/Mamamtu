@@ -48,7 +48,7 @@ jobs:
         run: npx prisma generate
 
       - name: Push Prisma schema to CI database
-        run: npx prisma db push --skip-generate
+        run: npx prisma db push
 
       - name: Run ESLint
         run: npm run lint --if-present
@@ -99,7 +99,7 @@ jobs:
         run: npx prisma generate
 
       - name: Push Prisma schema to CI database
-        run: npx prisma db push --skip-generate
+        run: npx prisma db push
 
       - name: Build application
         run: npm run build
