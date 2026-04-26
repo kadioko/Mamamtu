@@ -1,6 +1,6 @@
 # Auth Migration Decision
 
-Current decision: keep NextAuth v4 in production while planning a dedicated migration to Better Auth or managed auth.
+Current decision: keep NextAuth v4 in production for this upgrade branch, but choose Better Auth as the dedicated migration target.
 
 ## Why This Is Separate
 
@@ -16,9 +16,13 @@ The current app depends on:
 
 ## Recommended Target
 
-Prefer Better Auth as the next self-hosted auth target because Auth.js/NextAuth is now part of Better Auth and the official migration path points there.
+Use Better Auth as the next self-hosted auth target because Auth.js/NextAuth is now part of Better Auth and the official migration path points there.
 
 Use managed auth such as Clerk/Auth0/Descope only if the product decision is to move identity lifecycle outside this database.
+
+## Audit Driver
+
+`npm audit --omit=dev` still reports `uuid` through `next-auth@4.24.14`. That warning should be removed by the auth migration instead of forcing a downgrade or unsafe transitive override.
 
 ## Migration Checklist
 

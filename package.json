@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "lint": "eslint .",
+    "lint": "eslint . --quiet",
+    "lint:all": "eslint .",
     "start": "next start",
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -99,5 +100,8 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.0.17"
+  },
+  "overrides": {
+    "svix": "^1.92.2"
   }
 }

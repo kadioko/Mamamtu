@@ -46,7 +46,6 @@ type MedicalRecordModel = {
   findMany: (args: unknown) => Promise<MedicalRecordRow[]>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const medicalRecordModel = (prisma as unknown as { medicalRecord: MedicalRecordModel })
   .medicalRecord;
 

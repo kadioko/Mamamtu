@@ -14,6 +14,14 @@ The oldest migrations were created during the SQLite era and include SQL such as
 
 The baseline gives us a clean PostgreSQL-only schema snapshot generated from the current `prisma/schema.prisma`.
 
+## Drift Check
+
+The current configured database was checked against `prisma/schema.prisma` with Prisma Migrate diff, and no schema difference was detected.
+
+```bash
+npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+```
+
 ## Generated With
 
 ```bash

@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+dev-server*.log
+.next
+.swc
+coverage
+node_modules
+tsconfig.tsbuildinfo
