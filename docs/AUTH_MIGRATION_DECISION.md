@@ -22,7 +22,9 @@ Use managed auth such as Clerk/Auth0/Descope only if the product decision is to 
 
 ## Audit Driver
 
-`npm audit --omit=dev` still reports `uuid` through `next-auth@4.24.14`. That warning should be removed by the auth migration instead of forcing a downgrade or unsafe transitive override.
+`npm audit --omit=dev` previously reported `uuid` through `next-auth@4.24.14`. This branch uses a temporary npm override to force `uuid@14.0.0`, and the audit is currently clean.
+
+The override is a bridge, not the long-term answer. Better Auth remains the preferred migration because it removes the dependency on NextAuth v4 and gives the app a supported auth path.
 
 ## Migration Checklist
 
@@ -32,7 +34,8 @@ Use managed auth such as Clerk/Auth0/Descope only if the product decision is to 
 4. Map current `User`, `Account`, `Session`, and verification fields to the target auth schema.
 5. Port credential and Google OAuth flows.
 6. Verify session cookies on local, preview, and production domains.
-7. Run an audit before and after migration to confirm the `uuid` issue from NextAuth v4 is gone.
+7. Remove the temporary `uuid` override after NextAuth v4 is removed.
+8. Run an audit before and after migration to confirm the auth dependency path is clean without overrides.
 
 ## Sources
 

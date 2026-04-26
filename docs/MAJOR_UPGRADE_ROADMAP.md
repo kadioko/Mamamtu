@@ -12,21 +12,21 @@ Completed:
 - TypeScript upgraded to `6.0.3`.
 - ESLint upgraded to `10.2.1`.
 - `lint` and `typecheck` scripts added.
+- Production audit is clean with temporary transitive overrides for `postcss`, `svix`, and `uuid`.
 - A clean PostgreSQL baseline SQL artifact was generated at `prisma/baseline/postgresql-baseline.sql`.
 - CI database setup note corrected to use `prisma db push`.
 
 Remaining gated decisions:
 
-- Auth.js or managed-auth migration.
+- Better Auth migration, now mainly to remove the temporary NextAuth v4 compatibility bridge.
 - Replacing legacy migrations with the PostgreSQL baseline after a production backup and restore rehearsal.
 
 ## Auth Migration
 
-Current decision: keep NextAuth v4 short term and plan Better Auth/Auth.js as a dedicated migration project.
+Current decision: keep NextAuth v4 short term with a temporary `uuid` override, and plan Better Auth as a dedicated migration project.
 
 Reason:
 
-- The app relies on credential login, Prisma adapter tables, JWT session callbacks, role claims, email verification state, and staff account creation.
 - Auth.js/NextAuth is now part of Better Auth, and Better Auth is the forward-looking migration path.
 - The app relies on credential login, Prisma adapter tables, JWT session callbacks, role claims, email verification state, and staff account creation.
 - Better Auth or managed auth would change session, user lifecycle, and database ownership, so this should not be mixed into dependency upgrades.
@@ -104,12 +104,13 @@ Outcome:
 - Upgraded ESLint to `10.2.1`.
 - Added `npm run lint`.
 - Replaced the old `FlatCompat` config with a native flat config that uses `@next/eslint-plugin-next` and `typescript-eslint`.
+- Re-enabled React and React Hooks rules through `@eslint/compat`.
 - `npm run lint` passes.
 
 Compatibility note:
 
-- `eslint-plugin-react` currently fails under ESLint 10 in this project with a rule context API error, so React plugin rules are intentionally omitted until the plugin stack catches up.
-- Existing `any` and unused-variable issues are warnings, not CI-blocking errors. They should be cleaned up incrementally.
+- `eslint-plugin-react@7.37.5` still needs `@eslint/compat` under ESLint 10.
+- Existing `any`, unused-variable, and React Hooks compiler-style issues are warnings, not CI-blocking errors. They should be cleaned up incrementally.
 
 Source checked:
 

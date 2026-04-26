@@ -18,12 +18,13 @@ npm run lint:all
 
 - Replace broad `any` usage in dashboard pages, hooks, search helpers, export helpers, socket helpers, and tests.
 - Remove unused imports and variables in API routes and UI components.
-- Remove stale eslint-disable comments where the warning no longer exists.
-- Revisit React-specific lint rules after `eslint-plugin-react` supports ESLint 10 cleanly in this project.
+- React rules are enabled through `@eslint/compat` because `eslint-plugin-react@7.37.5` still uses removed ESLint rule-context APIs directly.
+- React Hooks compiler-style findings are warnings for now, including `set-state-in-effect`, `immutability`, and `refs`.
 
 ## Cleanup Order
 
 1. Hooks and shared libraries first, because they affect many callers.
 2. API route unused imports next, because these are usually mechanical.
 3. Dashboard page `any` values after shared data types are clarified.
-4. Test files last, keeping test readability ahead of type purity.
+4. React Hooks compiler warnings after behavior is reviewed component by component.
+5. Test files last, keeping test readability ahead of type purity.

@@ -1,5 +1,8 @@
+import { fixupPluginRules } from "@eslint/compat";
 import nextPlugin from "@next/eslint-plugin-next";
 import globals from "globals";
+import reactPlugin from "eslint-plugin-react";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 
 const eslintConfig = [
@@ -16,6 +19,8 @@ const eslintConfig = [
     files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
     plugins: {
       "@next/next": nextPlugin,
+      react: fixupPluginRules(reactPlugin),
+      "react-hooks": fixupPluginRules(reactHooksPlugin),
     },
     languageOptions: {
       ecmaVersion: "latest",
@@ -25,9 +30,21 @@ const eslintConfig = [
         ...globals.node,
       },
     },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
     rules: {
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
+      ...reactPlugin.configs.recommended.rules,
+      ...reactHooksPlugin.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react-hooks/immutability": "warn",
+      "react-hooks/refs": "warn",
+      "react-hooks/set-state-in-effect": "warn",
     },
   },
   ...tseslint.configs.recommended,
