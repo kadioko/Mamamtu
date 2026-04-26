@@ -4,31 +4,32 @@ This document tracks the larger dependency and platform migrations that should b
 
 ## Current Status
 
-Completed in the first roadmap pass:
+Completed:
 
 - `lucide-react` upgraded to `1.11.0`.
 - `resend` upgraded to `6.12.2`.
-- Production build passes with Next.js 16.2.4 and Prisma 7.8.0.
-- Jest passes with 22 suites and 177 tests.
+- Tailwind CSS upgraded to `4.2.4`.
+- TypeScript upgraded to `6.0.3`.
+- ESLint upgraded to `10.2.1`.
+- `lint` and `typecheck` scripts added.
+- A clean PostgreSQL baseline SQL artifact was generated at `prisma/baseline/postgresql-baseline.sql`.
 - CI database setup note corrected to use `prisma db push`.
 
-Remaining major lanes:
+Remaining gated decisions:
 
-- Tailwind CSS 4.x migration.
-- TypeScript 6.x compatibility pass.
-- ESLint 10.x compatibility pass.
 - Auth.js or managed-auth migration.
-- Clean PostgreSQL baseline migration.
+- Replacing legacy migrations with the PostgreSQL baseline after a production backup and restore rehearsal.
 
 ## Auth Migration
 
-Current decision: keep NextAuth v4 short term.
+Current decision: keep NextAuth v4 short term and plan Better Auth/Auth.js as a dedicated migration project.
 
 Reason:
 
 - The app relies on credential login, Prisma adapter tables, JWT session callbacks, role claims, email verification state, and staff account creation.
-- Auth.js v5 does not require a database schema break for standard NextAuth tables, but it changes the configuration shape and centralizes auth helpers around the root `auth.ts` pattern.
-- Managed auth options such as Clerk/Auth0/Descope would move user lifecycle and session behavior outside the current database model, so they need a product-level decision.
+- Auth.js/NextAuth is now part of Better Auth, and Better Auth is the forward-looking migration path.
+- The app relies on credential login, Prisma adapter tables, JWT session callbacks, role claims, email verification state, and staff account creation.
+- Better Auth or managed auth would change session, user lifecycle, and database ownership, so this should not be mixed into dependency upgrades.
 
 Recommended Auth.js project steps:
 
@@ -46,29 +47,33 @@ Recommended Auth.js project steps:
    - role propagation into `session.user.role`
    - protected API route authorization
    - Google OAuth if enabled
-4. Port configuration to the Auth.js v5 style and replace server session calls with the new helper consistently.
+4. Choose one target:
+   - Better Auth for self-hosted auth with stronger long-term library direction.
+   - Clerk/Auth0/Descope for managed identity and lower app-maintenance burden.
+   - Auth.js v5 only if preserving the current NextAuth mental model is the priority.
 5. Run a preview deploy and verify cookie/session behavior on the production domain.
 
 Sources checked:
 
-- Auth.js v5 migration guide: `https://authjs.dev/getting-started/migrating-to-v5`
-- Better Auth migration note: `https://authjs.dev/getting-started/migrate-to-better-auth`
+- Better Auth migration guide: `https://better-auth.com/docs/guides/next-auth-migration-guide`
+- NextAuth/Auth.js project page: `https://next-auth.js.org/`
 
 ## Tailwind CSS 4
 
-Current decision: defer.
+Current decision: complete.
 
-Reason:
+Outcome:
 
-- Tailwind v4 changes configuration toward CSS-first `@theme`.
-- The app uses Tailwind 3 config, shadcn-style components, and a broad dashboard UI surface.
+- Upgraded `tailwindcss` to `4.2.4`.
+- Added `@tailwindcss/postcss`.
+- Updated `postcss.config.mjs` to use the new v4 PostCSS plugin.
+- Updated `src/app/globals.css` to use `@import "tailwindcss"` with the existing config bridged through `@config`.
+- `npm run build` passes.
 
-Recommended steps:
+Follow-up visual checks:
 
-1. Run `npx @tailwindcss/upgrade` on a branch.
-2. Review generated CSS/config changes.
-3. Manually verify dashboard, forms, modals, education pages, and dark mode.
-4. Keep Tailwind 3 if mobile/browser support below Safari 16.4, Chrome 111, or Firefox 128 is required.
+1. Verify dashboard, forms, modals, education pages, and dark mode in browser preview.
+2. Later convert the remaining JavaScript Tailwind config into CSS-first `@theme` tokens if desired.
 
 Source checked:
 
@@ -76,14 +81,15 @@ Source checked:
 
 ## TypeScript 6
 
-Current decision: defer until dependency ecosystem is ready.
+Current decision: complete.
 
-Recommended steps:
+Outcome:
 
-1. Upgrade TypeScript on a branch.
-2. Run `next build`, `tsc --noEmit`, and Jest.
-3. Check for removed compiler options such as `outFile` and stricter DOM/library types.
-4. Track compiler behavior ahead of the TypeScript 7 Go-based compiler transition.
+1. Upgraded TypeScript to `6.0.3`.
+2. Removed deprecated `baseUrl` from `tsconfig.json`.
+3. Added `npm run typecheck`.
+4. `npm run typecheck` passes.
+5. `npm run build` passes.
 
 Source checked:
 
@@ -91,17 +97,19 @@ Source checked:
 
 ## ESLint 10
 
-Current decision: defer.
+Current decision: complete with a compatibility note.
 
-Reason:
+Outcome:
 
-- The app uses flat config, Next.js ESLint config, Jest, and TypeScript linting. ESLint major upgrades should wait for `eslint-config-next` compatibility.
+- Upgraded ESLint to `10.2.1`.
+- Added `npm run lint`.
+- Replaced the old `FlatCompat` config with a native flat config that uses `@next/eslint-plugin-next` and `typescript-eslint`.
+- `npm run lint` passes.
 
-Recommended steps:
+Compatibility note:
 
-1. Upgrade ESLint and `eslint-config-next` together.
-2. Run `npm run lint --if-present`.
-3. Review any rule behavior changes and formatter output.
+- `eslint-plugin-react` currently fails under ESLint 10 in this project with a rule context API error, so React plugin rules are intentionally omitted until the plugin stack catches up.
+- Existing `any` and unused-variable issues are warnings, not CI-blocking errors. They should be cleaned up incrementally.
 
 Source checked:
 
@@ -141,16 +149,18 @@ Follow-up visual checks:
 
 ## PostgreSQL Baseline Migration
 
-Current decision: defer but important.
+Current decision: baseline artifact generated, activation deferred until database backup rehearsal.
 
 Reason:
 
 - The oldest migrations contain SQLite-era SQL such as `DATETIME`.
 - CI uses `prisma db push` for temporary databases to avoid replaying those legacy migrations.
+- A clean PostgreSQL baseline was generated from the current Prisma schema at `prisma/baseline/postgresql-baseline.sql`.
 
-Recommended steps:
+Activation steps:
 
-1. Create a clean database from current `prisma/schema.prisma`.
-2. Generate a new PostgreSQL baseline migration from that schema.
-3. Mark existing production database state as resolved after confirming Supabase already matches the schema.
-4. Replace or archive legacy SQLite-era migrations only after backup and restore rehearsal.
+1. Back up Supabase production.
+2. Restore the backup into a rehearsal database.
+3. Confirm the rehearsal schema matches `prisma/schema.prisma`.
+4. Move the baseline SQL into a new first migration only after old migrations are archived.
+5. Mark the production database baseline as resolved with Prisma Migrate after confirming no schema drift.
