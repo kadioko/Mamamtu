@@ -16,9 +16,13 @@ This is expected when Standard Protection is active. It protects preview deploym
 
 ## Safe Testing Options
 
-1. Open the preview URL while signed in to the Vercel account/team that has access to the project.
-2. Configure Protection Bypass for Automation and use the `x-vercel-protection-bypass` header or query parameter for automated checks.
-3. Add a Deployment Protection Exception for a preview domain if the plan supports it.
+Recommended: keep Deployment Protection enabled and configure Protection Bypass for Automation for CI/browser verification.
+
+1. Configure Protection Bypass for Automation and use the `x-vercel-protection-bypass` header or query parameter for automated checks.
+2. Open the preview URL while signed in to the Vercel account/team that has access to the project for manual testing.
+3. Add a Deployment Protection Exception for a preview domain only if bypass tokens are not enough and the plan supports it.
+
+Avoid disabling preview protection entirely. Preview deployments can contain unreleased features, test data, and debugging surfaces that should not be public by default.
 
 ## Permission Note
 
