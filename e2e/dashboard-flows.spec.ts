@@ -46,6 +46,8 @@ test.describe('dashboard care-team flows', () => {
     await page.goto('/dashboard/patients');
     await expectPageReady(page, /patients/i);
     await expect(page.getByRole('link', { name: /new patient|add patient/i }).first()).toBeVisible();
+    await expect(page.getByText(/loading patients/i)).toHaveCount(0);
+    await expect(page.getByText(/DEMO-\d{4}|PAT-\d{4}/i).first()).toBeVisible();
   });
 
   test('clinical form entry points are reachable', async ({ page }) => {

@@ -25,6 +25,8 @@ interface PatientListProps {
   readOnly?: boolean;
 }
 
+const noopDataLoaded = () => {};
+
 export function PatientList({ 
   searchTerm,
   onSearchChange,
@@ -33,7 +35,7 @@ export function PatientList({
   totalPages: initialTotalPages = 1,
   totalItems: initialTotalItems = 0,
   loading: propLoading = false,
-  onDataLoaded = () => {},
+  onDataLoaded = noopDataLoaded,
   basePath = '/patients',
   readOnly = false,
 }: PatientListProps) {
