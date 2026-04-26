@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { WebSocketProvider } from '@/components/providers/WebSocketProvider';
 import { SessionProvider } from '@/components/providers/SessionProvider';
@@ -61,6 +63,8 @@ export default function RootLayout({
                 <Footer />
               </div>
               <Toaster />
+              <Analytics />
+              <SpeedInsights />
             </WebSocketProvider>
           </SessionProvider>
         </ThemeProvider>

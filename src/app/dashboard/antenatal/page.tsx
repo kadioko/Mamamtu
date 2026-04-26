@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
@@ -23,9 +24,12 @@ export default async function AntenatalVisitsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">ANC Visits</h1>
-        <p className="text-muted-foreground">Review antenatal measurements, danger signs, and next visit dates.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">ANC Visits</h1>
+          <p className="text-muted-foreground">Review antenatal measurements, danger signs, and next visit dates.</p>
+        </div>
+        <Button asChild><Link href="/dashboard/antenatal/new">New ANC Visit</Link></Button>
       </div>
       <div className="grid gap-4">
         {visits.length === 0 ? (
@@ -45,6 +49,7 @@ export default async function AntenatalVisitsPage() {
               <div><span className="text-muted-foreground">GA</span><p>{visit.gestationalAgeWeeks ? `${visit.gestationalAgeWeeks} weeks` : 'Not set'}</p></div>
               <div><span className="text-muted-foreground">BP</span><p>{visit.bloodPressure ?? 'Not set'}</p></div>
               <div><span className="text-muted-foreground">Next</span><p>{visit.nextVisitDate?.toLocaleDateString() ?? 'Not set'}</p></div>
+              <div><Link href={`/dashboard/antenatal/${visit.id}/edit` as any} className="font-medium text-primary hover:underline">Edit</Link></div>
             </CardContent>
           </Card>
         ))}

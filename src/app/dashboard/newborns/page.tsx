@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
@@ -22,9 +23,12 @@ export default async function NewbornRecordsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">Newborn Records</h1>
-        <p className="text-muted-foreground">Track births, APGAR scores, birth weight, and linked immunizations.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Newborn Records</h1>
+          <p className="text-muted-foreground">Track births, APGAR scores, birth weight, and linked immunizations.</p>
+        </div>
+        <Button asChild><Link href="/dashboard/newborns/new">New Newborn</Link></Button>
       </div>
       <div className="grid gap-4">
         {records.length === 0 ? (
@@ -41,6 +45,7 @@ export default async function NewbornRecordsPage() {
                 <span className="text-muted-foreground">Mother</span>
                 <p>{record.motherPatient ? <Link href={`/dashboard/patients/${record.motherPatient.id}`} className="hover:underline">{record.motherPatient.firstName} {record.motherPatient.lastName}</Link> : 'Not linked'}</p>
               </div>
+              <div className="md:col-span-6"><Link href={`/dashboard/newborns/${record.id}/edit` as any} className="text-sm font-medium text-primary hover:underline">Edit newborn record</Link></div>
             </CardContent>
           </Card>
         ))}

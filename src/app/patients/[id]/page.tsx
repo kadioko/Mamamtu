@@ -154,6 +154,9 @@ export default function PatientDetailPage() {
           <Edit className="h-4 w-4 mr-2" />
           Edit Patient
         </Button>
+        <Button variant="outline" onClick={() => router.push(`/dashboard/patients/${patient.id}/timeline`)}>
+          Timeline
+        </Button>
       </div>
 
       {/* Patient Overview */}

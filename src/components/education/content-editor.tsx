@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Badge } from '../ui/badge';
 import { AlertCircle } from 'lucide-react';
+import { EducationFileUpload } from '@/components/upload/EducationFileUpload';
 
 const formSchema = z.object({
   title: z
@@ -573,6 +574,7 @@ export function ContentEditor({ initialData, onSubmit, isSubmitting: isExternalS
                         <FormLabel>
                           {contentType === 'PDF' ? 'PDF URL' : 'Presentation URL'}
                         </FormLabel>
+                        <EducationFileUpload onUploaded={(url) => form.setValue('fileUrl', url, { shouldValidate: true })} />
                         <FormControl>
                           <Input placeholder="https://example.com/document.pdf" {...field} />
                         </FormControl>

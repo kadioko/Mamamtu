@@ -24,6 +24,8 @@ import {
   Sparkles,
   ShieldCheck,
   Syringe,
+  UserCog,
+  Gauge,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -128,6 +130,22 @@ const sidebarItems: SidebarItem[] = [
     icon: ShieldCheck,
     gradient: 'radial-gradient(circle, rgba(100,116,139,0.2) 0%, rgba(71,85,105,0.08) 55%, rgba(51,65,85,0) 100%)',
     iconColor: 'text-slate-500',
+    allowedRoles: ['ADMIN'],
+  },
+  {
+    title: 'Staff Users',
+    href: '/dashboard/users',
+    icon: UserCog,
+    gradient: 'radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(37,99,235,0.08) 55%, rgba(29,78,216,0) 100%)',
+    iconColor: 'text-blue-500',
+    allowedRoles: ['ADMIN'],
+  },
+  {
+    title: 'Production',
+    href: '/dashboard/production',
+    icon: Gauge,
+    gradient: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.08) 55%, rgba(4,120,87,0) 100%)',
+    iconColor: 'text-emerald-500',
     allowedRoles: ['ADMIN'],
   },
   {

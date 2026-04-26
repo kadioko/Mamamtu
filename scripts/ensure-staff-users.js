@@ -15,7 +15,7 @@ function getDatabaseUrlForPgAdapter() {
 }
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: getDatabaseUrlForPgAdapter() }),
+  adapter: new PrismaPg({ connectionString: getDatabaseUrlForPgAdapter(), max: 1 }),
 });
 
 async function upsertStaffUser({ email, name, role, password }) {
@@ -47,26 +47,25 @@ async function upsertStaffUser({ email, name, role, password }) {
 
 async function main() {
   const password = process.env.SEED_STAFF_PASSWORD || 'Demo2025!';
-  const users = await Promise.all([
-    upsertStaffUser({
+  const users = [];
+  users.push(await upsertStaffUser({
       email: process.env.SEED_ADMIN_EMAIL || 'admin@mama-tu.health',
       name: 'Dr. Amina Hassan',
       role: UserRole.ADMIN,
       password,
-    }),
-    upsertStaffUser({
+    }));
+  users.push(await upsertStaffUser({
       email: process.env.SEED_PROVIDER_EMAIL || 'provider@mama-tu.health',
       name: 'Dr. Omar Al-Sayed',
       role: UserRole.HEALTHCARE_PROVIDER,
       password,
-    }),
-    upsertStaffUser({
+    }));
+  users.push(await upsertStaffUser({
       email: process.env.SEED_RECEPTION_EMAIL || 'reception@mama-tu.health',
       name: 'Sarah Johnson',
       role: UserRole.RECEPTIONIST,
       password,
-    }),
-  ]);
+    }));
 
   console.table(users);
   console.log(`Staff users are ready. Default password: ${password}`);

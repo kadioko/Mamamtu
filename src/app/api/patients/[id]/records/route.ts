@@ -43,7 +43,8 @@ const createMedicalRecordSchema = z.object({
   healthcareProvider: z.string().optional(),
   facility: z.string().optional(),
   notes: z.string().optional(),
-  appointmentId: z.string().optional()
+  appointmentId: z.string().optional(),
+  attachments: z.array(z.string()).optional()
 });
 
 const parseStringArray = (value: unknown): string[] => {
@@ -267,7 +268,7 @@ export async function POST(
         medications: toJsonString(validatedData.medications),
         labResults: toJsonString(validatedData.labResults),
         vitals: toJsonString(validatedData.vitals),
-        attachments: JSON.stringify([]),
+        attachments: toJsonString(validatedData.attachments || []),
       }
     });
 

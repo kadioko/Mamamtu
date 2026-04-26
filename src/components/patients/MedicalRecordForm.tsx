@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { FileUploadField } from '@/components/upload/FileUploadField';
 
 const medicalRecordSchema = z.object({
   recordType: z.enum(['CONSULTATION', 'LAB_RESULT', 'PRESCRIPTION', 'PROCEDURE', 'ADMISSION', 'DISCHARGE', 'VACCINATION', 'PRENATAL_VISIT', 'APISSCOMA', 'GENERAL']),
@@ -24,6 +25,7 @@ const medicalRecordSchema = z.object({
   healthcareProvider: z.string().optional(),
   facility: z.string().optional(),
   notes: z.string().optional(),
+  attachments: z.array(z.string()).optional(),
 
   vitals: z.object({
     temperature: z.number().min(35, 'Temperature too low').max(45, 'Temperature too high').optional(),
@@ -308,6 +310,7 @@ export function MedicalRecordForm({ patientId, onSuccess, onCancel }: MedicalRec
   const [labResults, setLabResults] = useState<LabResultEntry[]>([]);
   const [symptoms, setSymptoms] = useState<string[]>([]);
   const [newSymptom, setNewSymptom] = useState('');
+  const [attachments, setAttachments] = useState<Array<{ url: string; originalName: string }>>([]);
 
   const form = useForm<MedicalRecordFormValues>({
     resolver: zodResolver(medicalRecordSchema),
@@ -335,6 +338,7 @@ export function MedicalRecordForm({ patientId, onSuccess, onCancel }: MedicalRec
         symptoms,
         medications,
         labResults,
+        attachments: attachments.map((file) => file.url),
       };
 
       const response = await fetch('/api/patients/' + patientId + '/records', {
@@ -501,6 +505,7 @@ export function MedicalRecordForm({ patientId, onSuccess, onCancel }: MedicalRec
               <TabsTrigger value="medications">Medications</TabsTrigger>
               <TabsTrigger value="lab-results">Lab Results</TabsTrigger>
               <TabsTrigger value="vitals">Vitals</TabsTrigger>
+              <TabsTrigger value="attachments">Files</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-4">
@@ -663,6 +668,19 @@ export function MedicalRecordForm({ patientId, onSuccess, onCancel }: MedicalRec
                   </div>
                 )}
               </div>
+            </TabsContent>
+
+            <TabsContent value="attachments" className="space-y-4">
+              <FileUploadField patientId={patientId} onUploaded={(files) => setAttachments((current) => [...current, ...files])} />
+              {attachments.length > 0 && (
+                <div className="space-y-2">
+                  {attachments.map((file) => (
+                    <div key={file.url} className="rounded-md border p-3 text-sm">
+                      <a href={file.url} target="_blank" rel="noreferrer" className="font-medium text-primary hover:underline">{file.originalName}</a>
+                    </div>
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
 

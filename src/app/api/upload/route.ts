@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AuthenticatedRequest, withAuth } from '@/lib/apiAuth';
 import { UserRole } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { medicalDocumentService, avatarService } from '@/lib/storage/fileUpload';
+import { medicalDocumentService, avatarService, fileUploadService } from '@/lib/storage/fileUpload';
 import { z } from 'zod';
 
 const uploadSchema = z.object({
-  type: z.enum(['medical-document', 'lab-results', 'imaging', 'avatar']),
+  type: z.enum(['medical-document', 'lab-results', 'imaging', 'avatar', 'education-resource']),
   patientId: z.string().uuid().optional(),
   documentType: z.string().optional(),
   testType: z.string().optional(),
@@ -128,6 +128,16 @@ const handlePost = async (request: AuthenticatedRequest) => {
           );
         }
         uploadedFile = await avatarService.uploadAvatar(file, userId);
+        break;
+
+      case 'education-resource':
+        if (request.user?.role !== UserRole.ADMIN && request.user?.role !== UserRole.HEALTHCARE_PROVIDER) {
+          return NextResponse.json(
+            { error: 'Forbidden - Insufficient permissions for education uploads' },
+            { status: 403 }
+          );
+        }
+        uploadedFile = await fileUploadService.uploadFile(file, 'education');
         break;
 
       default:

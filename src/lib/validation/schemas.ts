@@ -41,7 +41,7 @@ export const patientQuerySchema = z.object({
 });
 
 // Appointment schemas
-export const createAppointmentSchema = z.object({
+const appointmentBaseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
   description: z.string().max(1000, 'Description too long').optional(),
   startTime: dateSchema.refine((date) => date >= new Date(), 'Start time must be in the future'),
@@ -50,14 +50,24 @@ export const createAppointmentSchema = z.object({
   location: z.string().max(200, 'Location too long').optional(),
   notes: z.string().max(1000, 'Notes too long').optional(),
   patientId: z.string().uuid('Invalid patient ID'),
-}).refine((data) => data.endTime > data.startTime, {
+});
+
+const validateAppointmentTimeRange = <T extends { startTime?: Date; endTime?: Date }>(data: T) => {
+  if (!data.startTime || !data.endTime) return true;
+  return data.endTime > data.startTime;
+};
+
+export const createAppointmentSchema = appointmentBaseSchema.refine(validateAppointmentTimeRange, {
   message: 'End time must be after start time',
   path: ['endTime'],
 });
 
-export const updateAppointmentSchema = createAppointmentSchema.extend({
+export const updateAppointmentSchema = appointmentBaseSchema.extend({
   status: appointmentStatusSchema.optional(),
-}).partial();
+}).partial().refine(validateAppointmentTimeRange, {
+  message: 'End time must be after start time',
+  path: ['endTime'],
+});
 
 export const appointmentQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),

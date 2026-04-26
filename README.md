@@ -40,7 +40,7 @@ A comprehensive healthcare management system for maternal and newborn health ser
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - npm, yarn, or pnpm
 
 ### Installation
@@ -69,6 +69,8 @@ A comprehensive healthcare management system for maternal and newborn health ser
    - `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `SEED_DATABASE_TOKEN` - Optional guard token for `/api/seed` in deployed environments
    - `RESEND_API_KEY` - Optional, for email functionality
+   - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` - Production Redis rate limiting
+   - `BLOB_READ_WRITE_TOKEN` - Vercel Blob upload storage
    - `GOOGLE_CLIENT_ID/SECRET` - Optional, for Google OAuth
 
 4. **Initialize the database**
@@ -78,6 +80,8 @@ A comprehensive healthcare management system for maternal and newborn health ser
    npm run prisma:migrate
    npm run prisma:seed
    ```
+
+   The seed command creates staff accounts, long-form education resources, and realistic demo clinical data for patients, appointments, medical records, pregnancy episodes, ANC visits, newborns, immunizations, notifications, and audit logs.
 
 5. **Start the development server**
 
@@ -90,9 +94,11 @@ A comprehensive healthcare management system for maternal and newborn health ser
 ### Default Test Accounts
 
 After seeding, you can login with:
-- **Admin**: admin@mamamtu.com
-- **Healthcare Provider**: doctor@mamamtu.com
-- **Patient**: patient@mamamtu.com
+- **Admin**: `admin@mama-tu.health`
+- **Healthcare Provider**: `provider@mama-tu.health`
+- **Receptionist**: `reception@mama-tu.health`
+
+Default seeded password: `Demo2025!`
 
 ## 📂 Project Structure
 

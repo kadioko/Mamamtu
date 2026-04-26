@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
@@ -18,9 +20,12 @@ export default async function ImmunizationsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">Immunizations</h1>
-        <p className="text-muted-foreground">Review newborn vaccines, doses, batches, and next due dates.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Immunizations</h1>
+          <p className="text-muted-foreground">Review newborn vaccines, doses, batches, and next due dates.</p>
+        </div>
+        <Button asChild><Link href="/dashboard/immunizations/new">New Immunization</Link></Button>
       </div>
       <div className="grid gap-4">
         {immunizations.length === 0 ? (
@@ -34,6 +39,7 @@ export default async function ImmunizationsPage() {
               <div><span className="text-muted-foreground">Next due</span><p>{immunization.nextDueAt?.toLocaleDateString() ?? 'Not set'}</p></div>
               <div><span className="text-muted-foreground">Facility</span><p>{immunization.facility ?? 'Not set'}</p></div>
               <div><span className="text-muted-foreground">Newborn</span><p>{immunization.newbornRecord.name ?? 'Unnamed newborn'}</p></div>
+              <div className="md:col-span-6"><Link href={`/dashboard/immunizations/${immunization.id}/edit` as any} className="text-sm font-medium text-primary hover:underline">Edit immunization</Link></div>
             </CardContent>
           </Card>
         ))}

@@ -1,186 +1,104 @@
 # Vercel Deployment Setup Guide
 
-## Overview
+This app is a Next.js 16 application backed by PostgreSQL, Prisma 7, NextAuth, Upstash Redis, and Vercel Blob.
 
-This guide explains how to configure your Mamamtu application for deployment on Vercel with PostgreSQL database support (Supabase/Neon recommended).
+## Required Vercel Environment Variables
 
-## Important: Vercel + PostgreSQL
+Set these in Vercel Project Settings > Environment Variables for Production, Preview, and Development unless noted.
 
-Vercel is a **Serverless platform** with the following constraints:
+| Key | Purpose |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string. Use the Supabase session pooler for Prisma migrations and app runtime. |
+| `NEXTAUTH_SECRET` | Secret used by NextAuth session/JWT signing. |
+| `NEXTAUTH_URL` | Production URL, for example `https://mamamtu.vercel.app`. |
+| `NEXT_PUBLIC_APP_URL` | Public app URL, for example `https://mamamtu.vercel.app`. |
+| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST endpoint for shared rate limiting. |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token. |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token for production uploads. |
 
-1. **Read-Only Filesystem at Runtime**: You can read the database to display data, but you cannot save new data (user sign-ups, form submissions) to it once the site is live.
+Optional:
 
-2. **Data Reset**: Every time your function "sleeps" and wakes up, the database resets to the version you deployed.
+| Key | Purpose |
+| --- | --- |
+| `SEED_DATABASE_TOKEN` | Protects `/api/seed` in deployed environments. |
+| `RESEND_API_KEY` | Enables real email delivery. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Enables Google OAuth login. |
 
-3. **Recommendation**: For a professional health platform like Mamamtu, consider migrating to a hosted PostgreSQL database (e.g., Supabase, Railway, or Neon).
+## Supabase Connection String
 
-## Step 1: Set Up PostgreSQL Database
+Use an encoded password in `DATABASE_URL`. For example, `!` becomes `%21`.
 
-### Option A: Supabase (Recommended)
+Recommended production format:
 
-1. Go to [Supabase](https://supabase.com)
-2. Create a new project
-3. Note down your connection string from Settings > Database
+```env
+DATABASE_URL="postgresql://postgres.<project-ref>:<encoded-password>@aws-1-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require"
+```
 
-### Option B: Neon
+Use the session pooler on port `5432`. Avoid the transaction pooler for Prisma migrations because prepared statements can conflict.
 
-1. Go to [Neon](https://neon.tech)
-2. Create a new project
-3. Get your connection string
+## Upstash Redis
 
-### Option C: Railway or Other Providers
+Redis is used for shared production rate limiting.
 
-Use any PostgreSQL-compatible provider.
+1. In Vercel, add the Upstash Redis integration or create a Redis database from Storage/Marketplace.
+2. Connect it to this project.
+3. Confirm Vercel created:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+4. Redeploy the app.
 
-## Step 2: Update Environment Variables in Vercel
+If these values are missing, the app falls back to local in-memory rate limiting, which is fine for development but not enough for production.
 
-Add these to your Vercel project settings (Settings > Environment Variables):
+## Vercel Blob
 
-| Key | Value | Environment |
-|-----|-------|-------------|
-| `DATABASE_URL` | `postgresql://username:password@hostname:5432/database_name?schema=public` | Production, Preview, Development |
-| `NEXTAUTH_SECRET` | `[generate-a-strong-secret]` | Production, Preview, Development |
-| `NEXTAUTH_URL` | `https://mamamtu-[hash].vercel.app` | Production |
-| `NEXT_PUBLIC_APP_URL` | `https://mamamtu-[hash].vercel.app` | Production |
+Blob is used for production object-storage uploads.
 
-**Replace the placeholders:**
+1. In Vercel, create a Blob store for the project.
+2. Confirm Vercel created:
+   - `BLOB_READ_WRITE_TOKEN`
+3. Redeploy the app.
 
-- `username`: Your database username
-- `password`: Your database password
-- `hostname`: Your database host (e.g., `db.xxxx.supabase.co` for Supabase)
-- `database_name`: Your database name
-- `[hash]`: Your actual Vercel deployment URL hash
+If this value is missing, local development stores uploads under the local `uploads/` folder.
 
-### Generate NEXTAUTH_SECRET
+## Database Migration And Seeding
+
+Run migrations before or during deployment:
 
 ```bash
-openssl rand -base64 32
+npm run prisma:migrate:deploy
 ```
 
-## Step 3: Verify Prisma Configuration
-
-Your `prisma/schema.prisma` has been updated to use PostgreSQL:
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
-
-The schema has been optimized for PostgreSQL with:
-- Proper array support for `allergies`, `tags`, `symptoms`, `medications`
-- JSONB support for complex data like `labResults`, `vitals`, `metadata`
-- All data types are PostgreSQL-compatible
-
-## Step 4: Database Migration
-
-### For Existing SQLite Data
-
-If you have existing data in SQLite, you'll need to export and import it to PostgreSQL. Prisma provides tools for this:
+Seed staff users and education content:
 
 ```bash
-# Export SQLite data (if needed)
-npx prisma db push --force-reset
-
-# Then import to PostgreSQL after setting up the database
-npx prisma db push
+npm run prisma:seed
 ```
 
-### For Fresh PostgreSQL Setup
+The seed command also creates realistic demo clinical data so a fresh environment has patients, appointments, medical records, pregnancy episodes, ANC visits, newborn records, immunizations, notifications, reports data, and long education articles.
 
-```bash
-# After setting DATABASE_URL to PostgreSQL connection string
-npx prisma db push
-npx prisma db seed  # If you have seed data
-```
+Seeded staff accounts:
 
-## Step 5: Deploy to Vercel
+| Role | Email |
+| --- | --- |
+| Admin | `admin@mama-tu.health` |
+| Provider | `provider@mama-tu.health` |
+| Receptionist | `reception@mama-tu.health` |
 
-### Option A: Via Vercel Dashboard
+Default seeded password: `Demo2025!`
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Vercel will automatically detect Next.js and build your project
-4. Set environment variables in project settings
-5. Deploy!
+## CI Notes
 
-### Option B: Via Vercel CLI
+GitHub Actions runs Node 20 with a PostgreSQL service, pushes the current Prisma schema into the temporary CI database, then runs lint/test/build.
 
-```bash
-npx vercel deploy --prod --yes
-```
+The workflow uses `prisma db push --skip-generate` instead of replaying the historical migration files because the oldest migrations were created before the project was fully moved to PostgreSQL and contain SQLite-era SQL such as `DATETIME`. For production database changes, keep using reviewed Prisma migrations.
 
-## Step 6: Post-Deployment Verification
+## Post-Deployment Checks
 
-After deployment:
+After redeploying, verify:
 
-1. Visit your Vercel deployment URL
-2. Test read operations (viewing patients, appointments, content)
-3. Check that static pages load correctly
-4. Verify API endpoints respond properly
-
-## Important Notes
-
-### Data Persistence
-
-- **Read Operations**: Work fine with PostgreSQL on Vercel
-- **Write Operations**: Full persistence with PostgreSQL
-- **Solution**: PostgreSQL provides full data persistence
-
-### Build Process
-
-- Vercel will run `npm run build` which includes `prisma generate`
-- The database connection must be available for `generateStaticParams` queries to work
-- All static pages will be pre-rendered during build
-
-### Recommended Next Steps
-
-For production use, consider:
-
-1. **Migrate to PostgreSQL**:
-   - Supabase (Free tier available)
-   - Railway
-   - Neon
-   - AWS RDS
-
-2. **Update Prisma Schema**:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-
-3. **Update Environment Variables**:
-   ```
-   DATABASE_URL=postgresql://user:password@host:port/database
-   ```
-
-## Troubleshooting
-
-### Build Fails with "DATABASE_URL not found"
-
-- Ensure `DATABASE_URL` is set in Vercel project settings
-- Check that the variable is set for the correct environment (Production)
-- Verify the value matches your PostgreSQL connection string
-
-### Database Connection Fails
-
-- Confirm your PostgreSQL database is accessible from Vercel's IP ranges
-- Check that the connection string format is correct
-- Verify database credentials are valid
-
-### Prisma Client Generation Fails
-
-- Ensure `postinstall` script runs: `prisma generate`
-- Check that `@prisma/client` is in `package.json` dependencies
-- Verify Prisma schema is valid
-
-## Support
-
-For more information:
-
-- [Vercel Next.js Documentation](https://vercel.com/docs/frameworks/nextjs)
-- [Prisma Vercel Guide](https://www.prisma.io/docs/orm/deployment/deployment-guides/deploying-to-vercel)
-- [PostgreSQL on Vercel](https://vercel.com/docs/storage/vercel-postgres)
+- `/education` loads seeded resources.
+- `/dashboard/education` can publish/unpublish resources.
+- `/dashboard/patients/new` creates a patient.
+- `/dashboard/appointments/new` creates an appointment.
+- `/dashboard/audit` loads for admin users.
+- `/icon`, `/apple-icon`, and `/manifest.json` return app install metadata.

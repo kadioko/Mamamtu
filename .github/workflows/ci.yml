@@ -47,8 +47,8 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Apply database migrations
-        run: npx prisma migrate deploy
+      - name: Push Prisma schema to CI database
+        run: npx prisma db push --skip-generate
 
       - name: Run ESLint
         run: npm run lint --if-present
@@ -98,8 +98,8 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Apply database migrations
-        run: npx prisma migrate deploy
+      - name: Push Prisma schema to CI database
+        run: npx prisma db push --skip-generate
 
       - name: Build application
         run: npm run build
