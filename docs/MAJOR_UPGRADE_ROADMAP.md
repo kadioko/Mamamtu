@@ -2,6 +2,24 @@
 
 This document tracks the larger dependency and platform migrations that should be handled as dedicated projects.
 
+## Current Status
+
+Completed in the first roadmap pass:
+
+- `lucide-react` upgraded to `1.11.0`.
+- `resend` upgraded to `6.12.2`.
+- Production build passes with Next.js 16.2.4 and Prisma 7.8.0.
+- Jest passes with 22 suites and 177 tests.
+- CI database setup note corrected to use `prisma db push`.
+
+Remaining major lanes:
+
+- Tailwind CSS 4.x migration.
+- TypeScript 6.x compatibility pass.
+- ESLint 10.x compatibility pass.
+- Auth.js or managed-auth migration.
+- Clean PostgreSQL baseline migration.
+
 ## Auth Migration
 
 Current decision: keep NextAuth v4 short term.
@@ -91,24 +109,35 @@ Source checked:
 
 ## Resend 6
 
-Current decision: defer.
+Current decision: complete.
 
-Recommended steps:
+Outcome:
 
-1. Inventory all email sends and template payloads.
-2. Upgrade Resend on a branch.
-3. Send test verification/reset emails in preview.
-4. Confirm fallback behavior when `RESEND_API_KEY` is missing.
+- Upgraded `resend` to `6.12.2`.
+- Existing email wrapper in `src/lib/email.ts` remains compatible.
+- `npm run build` passed.
+- `npm test -- --runInBand --silent` passed.
+
+Follow-up production checks:
+
+1. Send test verification/reset emails from a Vercel preview deployment.
+2. Confirm fallback behavior when `RESEND_API_KEY` is missing.
+3. Verify the sender domain is still approved in Resend.
 
 ## lucide-react 1.x
 
-Current decision: defer.
+Current decision: complete.
 
-Recommended steps:
+Outcome:
 
-1. Upgrade lucide-react on a branch.
-2. Run TypeScript build to catch renamed/removed icons.
-3. Visually verify sidebar, forms, and dashboard action buttons.
+1. Upgraded `lucide-react` to `1.11.0`.
+2. TypeScript build passed with no renamed/removed icon errors.
+3. Jest passed.
+
+Follow-up visual checks:
+
+1. Verify sidebar, forms, dashboard action buttons, and empty states in a browser preview.
+2. Audit any future icon imports during feature work because lucide 1.x can still expose design-level differences.
 
 ## PostgreSQL Baseline Migration
 
@@ -117,7 +146,7 @@ Current decision: defer but important.
 Reason:
 
 - The oldest migrations contain SQLite-era SQL such as `DATETIME`.
-- CI uses `prisma db push --skip-generate` for temporary databases to avoid replaying those legacy migrations.
+- CI uses `prisma db push` for temporary databases to avoid replaying those legacy migrations.
 
 Recommended steps:
 
