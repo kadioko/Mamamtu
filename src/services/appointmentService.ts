@@ -1,6 +1,6 @@
 import { Appointment, CreateAppointmentInput, UpdateAppointmentInput, PaginatedAppointments, AppointmentFilter } from '@/types/appointment';
 import { prisma } from '@/lib/prisma';
-import { AppointmentStatus, AppointmentType, Prisma } from '@prisma/client';
+import { AppointmentStatus, Prisma } from '@prisma/client';
 // removed unused imports
 
 export const getAppointments = async (filter: AppointmentFilter = {}): Promise<PaginatedAppointments> => {

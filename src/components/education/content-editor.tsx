@@ -18,7 +18,6 @@ import { Icons } from '../ui/icons';
 import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Badge } from '../ui/badge';
 import { AlertCircle } from 'lucide-react';
 import { EducationFileUpload } from '@/components/upload/EducationFileUpload';
 

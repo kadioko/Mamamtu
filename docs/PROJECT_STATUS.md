@@ -9,7 +9,8 @@ MamaMtu is in a strong post-upgrade state. The major platform migrations are com
 Latest local checks:
 
 - `npm outdated --long`: no outdated packages listed.
-- `npm run lint:all -- --format stylish`: 0 errors, 307 warnings.
+- `npm run lint:all -- --format stylish`: 0 errors, 181 warnings after the first cleanup pass.
+- `npm run e2e -- --project=chromium`: 7 passed.
 - Previous major-roadmap verification passed lint, typecheck, tests, build, and production audit.
 
 ## Completed Platform Work
@@ -27,6 +28,7 @@ Latest local checks:
 - PWA/browser app icons.
 - Protected preview testing with `VERCEL_PROTECTION_BYPASS`.
 - Clean production audit with temporary transitive overrides.
+- Playwright E2E foundation for login, education, health, dashboard, patients, appointments, uploads, reports, notifications, and clinical form entry points.
 
 ## Completed Product Work
 
@@ -40,11 +42,11 @@ Latest local checks:
 
 ## Best Next Upgrades
 
-1. Add automated protected-preview smoke tests.
+1. Wire Playwright E2E into protected-preview smoke tests.
    Use the `VERCEL_PROTECTION_BYPASS` GitHub secret to verify key deployed pages after preview deployment.
 
-2. Clean the ESLint warning backlog.
-   Start with unused imports and variables, then shared library `any` usage, then dashboard page data types, then React Hooks compiler warnings.
+2. Continue the ESLint warning cleanup.
+   First pass reduced the backlog from 307 to 181 warnings. Next focus should be shared library `any` usage, dashboard page data types, then React Hooks compiler warnings.
 
 3. Do the Better Auth migration as its own branch.
    Current NextAuth v4 works, but the `uuid` override is a bridge. Better Auth is the chosen long-term self-hosted auth path.
@@ -52,17 +54,17 @@ Latest local checks:
 4. Rehearse the PostgreSQL baseline activation.
    Back up Supabase, restore into a rehearsal DB, verify drift, then replace legacy SQLite-era migrations with the generated PostgreSQL baseline.
 
-5. Add end-to-end tests for real user journeys.
-   Cover login, education reading, patient creation, appointment creation, uploads, reports, notifications, and clinical form flows.
+5. Deepen the E2E tests from smoke coverage into create/update workflows.
+   Current tests verify entry points and rendering. Next add real patient creation, appointment creation, attachment upload, and clinical record submission in an isolated test database.
 
 6. Add production observability review.
    Confirm Web Analytics, Speed Insights, logs, health dashboard, upload storage, Redis rate limiting, and email delivery all behave in a preview/prod environment.
 
 ## Recommended Work Order
 
-1. Preview smoke test workflow.
-2. Lint warning cleanup pass.
-3. End-to-end journey tests.
+1. Protected-preview Playwright workflow.
+2. Deeper E2E create/update journey tests.
+3. Lint warning cleanup pass.
 4. Auth migration.
 5. PostgreSQL baseline activation.
 6. Product polish and clinical reporting improvements.

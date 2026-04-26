@@ -1,11 +1,9 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { compare } from 'bcryptjs';
 import { AuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
-import { ACCOUNT_LOCKOUT_CONFIG } from './security';
 import { authorizeCredentials } from './auth-credentials';
 
 // NextAuth type augmentation lives in src/types/auth.d.ts

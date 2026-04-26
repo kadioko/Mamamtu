@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -133,7 +133,7 @@ export function AppointmentCalendar({
 
       {/* Weekday Headers */}
       <div className="grid grid-cols-7 gap-px bg-gray-200 rounded-t-md overflow-hidden">
-        {weekDays.map((day, index) => (
+        {weekDays.map((day) => (
           <div
             key={day}
             className="bg-white p-2 text-center text-sm font-medium text-gray-700"

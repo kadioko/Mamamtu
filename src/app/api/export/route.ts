@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/apiAuth';
 import { prisma } from '@/lib/prisma';
 import { csvExporter } from '@/lib/export/csvExporter';
 import { pdfExporter } from '@/lib/export/pdfExporter';

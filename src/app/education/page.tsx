@@ -122,7 +122,6 @@ function ContentListWrapper() {
   
   const page = typeof searchParams.get('page') === 'string' ? parseInt(searchParams.get('page') as string) : 1;
   const pageSize = 9;
-  const skip = (page - 1) * pageSize;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,7 +131,6 @@ function ContentListWrapper() {
         
         const category = searchParams.get('category') || '';
         const search = searchParams.get('search') || '';
-        const sort = searchParams.get('sort') || 'newest';
         
         const queryParams = new URLSearchParams({
           page: page.toString(),

@@ -52,7 +52,14 @@ const eslintConfig = [
     files: ["**/*.{ts,tsx,mts,cts}"],
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
   },
   {
@@ -94,9 +101,22 @@ const eslintConfig = [
       "**/app/api/**/*.{ts,tsx}",
       "**/components/**/*.{ts,tsx}",
     ],
+    ignores: [
+      "**/__tests__/**/*.{ts,tsx}",
+      "**/*.test.{ts,tsx}",
+      "**/*.spec.{ts,tsx}",
+      "**/test/**/*.{ts,tsx}",
+    ],
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
       "prefer-const": "warn",
     },
   },

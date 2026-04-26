@@ -11,7 +11,7 @@ export type CalendarProps = {
   className?: string;
 };
 
-export function Calendar({ mode = "single", selected, onSelect, className }: CalendarProps) {
+export function Calendar({ selected, onSelect, className }: CalendarProps) {
   const [value, setValue] = React.useState<string | undefined>(
     selected ? toInputValue(selected) : undefined
   );

@@ -8,7 +8,6 @@ import {
   sanitizeInput,
   generateSecureToken,
   hashToken,
-  ACCOUNT_LOCKOUT_CONFIG
 } from '@/lib/security';
 import { checkRateLimit, getClientIdentifier, generalRateLimiter } from '@/lib/rateLimiter';
 

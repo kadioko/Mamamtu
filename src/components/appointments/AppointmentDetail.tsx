@@ -1,12 +1,11 @@
 'use client';
 
 import { format, parseISO } from 'date-fns';
-import { CalendarDays, Clock, User, Stethoscope, MapPin, FileText, AlertCircle } from 'lucide-react';
+import { CalendarDays, User, Stethoscope, MapPin, FileText, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Appointment, AppointmentStatus } from '@/types/appointment';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

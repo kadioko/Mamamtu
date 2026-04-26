@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 

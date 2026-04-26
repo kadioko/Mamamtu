@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { Appointment, CreateAppointmentInput, AppointmentStatus, AppointmentType } from '@/types/appointment';
+import { Appointment, AppointmentType } from '@/types/appointment';
 
 const appointmentFormSchema = z.object({
   title: z.string().min(2, 'Title is required').max(100),
@@ -102,7 +102,7 @@ export function AppointmentForm({ initialData, onSuccess, onCancel, patients }: 
         throw new Error(errorData.error || 'Failed to save appointment');
       }
 
-      const result = await response.json();
+      await response.json();
       toast.success(initialData?.id ? 'Appointment updated successfully' : 'Appointment created successfully');
       
       if (onSuccess) {

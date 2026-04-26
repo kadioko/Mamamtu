@@ -1,4 +1,4 @@
-import { FC, ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 
 export const Icons = {
   spinner: (props: ComponentProps<'svg'>) => (

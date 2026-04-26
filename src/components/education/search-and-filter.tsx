@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ContentType, DifficultyLevel } from '@prisma/client';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface SearchAndFilterProps {
@@ -24,7 +24,6 @@ export function SearchAndFilter({
   initialType = '',
 }: SearchAndFilterProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   
   const [search, setSearch] = useState(initialSearch);
   const [category, setCategory] = useState(initialCategory);

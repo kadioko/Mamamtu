@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, X, Calendar, User, FileText, Tag } from 'lucide-react';
+import { Search, Filter, X, Calendar, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,15 +45,6 @@ const APPOINTMENT_STATUS_OPTIONS = [
   { value: 'COMPLETED', label: 'Completed' },
   { value: 'CANCELLED', label: 'Cancelled' },
   { value: 'NO_SHOW', label: 'No Show' },
-];
-
-const APPOINTMENT_TYPE_OPTIONS = [
-  { value: 'CONSULTATION', label: 'Consultation' },
-  { value: 'FOLLOW_UP', label: 'Follow-up' },
-  { value: 'LAB_TEST', label: 'Lab Test' },
-  { value: 'ULTRASOUND', label: 'Ultrasound' },
-  { value: 'VACCINATION', label: 'Vaccination' },
-  { value: 'OTHER', label: 'Other' },
 ];
 
 const RECORD_TYPE_OPTIONS = [

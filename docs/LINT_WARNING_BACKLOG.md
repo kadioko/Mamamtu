@@ -24,9 +24,15 @@ Latest checked command:
 npm run lint:all -- --format stylish
 ```
 
-Result: 0 errors, 307 warnings.
+Result: 0 errors, 181 warnings after the first cleanup pass.
 
-- Replace broad `any` usage in dashboard pages, hooks, search helpers, export helpers, socket helpers, and tests.
+The cleanup pass:
+
+- Fixed test override ordering so test-only `any` usage is not re-enabled by broader app/API overrides.
+- Removed safe unused imports and variables across API routes and UI components.
+- Added stricter socket payload types in `src/hooks/useSocket.ts`.
+
+- Replace broad `any` usage in dashboard pages, hooks, search helpers, export helpers, and socket helpers.
 - Remove unused imports and variables in API routes and UI components.
 - React rules are enabled through `@eslint/compat` because `eslint-plugin-react@7.37.5` still uses removed ESLint rule-context APIs directly.
 - React Hooks compiler-style findings are warnings for now, including `set-state-in-effect`, `immutability`, and `refs`.

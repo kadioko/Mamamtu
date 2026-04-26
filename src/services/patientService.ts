@@ -1,4 +1,4 @@
-import { Patient, PatientsResponse, PatientSearchParams, MedicalRecord, MedicalRecordsResponse } from '@/types/patient';
+import { Patient, PatientsResponse, PatientSearchParams, MedicalRecordsResponse } from '@/types/patient';
 
 const API_BASE_URL = '/api/patients';
 

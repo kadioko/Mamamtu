@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/apiAuth';
 import { prisma } from '@/lib/prisma';
 import { advancedSearchService, SearchFilters } from '@/lib/search/advancedSearch';
 import { z } from 'zod';

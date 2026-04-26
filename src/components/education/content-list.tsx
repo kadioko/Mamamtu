@@ -1,7 +1,6 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/ui/icons';
-import { ContentCard, type Content, type ContentType } from './content-card';
+import { ContentCard, type Content } from './content-card';
 import { ContentListSkeleton } from './content-skeleton';
 import { ContentListError, ContentListEmpty } from './content-states';
 

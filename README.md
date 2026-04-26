@@ -114,6 +114,8 @@ More details are in [docs/TEST_ACCOUNTS.md](docs/TEST_ACCOUNTS.md).
 | `npm run typecheck` | Run TypeScript without emit |
 | `npm test` | Run Jest |
 | `npm run test:coverage` | Run Jest coverage |
+| `npm run e2e` | Run Playwright browser E2E tests |
+| `npm run e2e:install` | Install Playwright browser binaries |
 | `npm run prisma:migrate` | Run local Prisma migrations |
 | `npm run prisma:migrate:deploy` | Apply production Prisma migrations |
 | `npm run prisma:seed` | Seed staff, education, and demo clinical data |

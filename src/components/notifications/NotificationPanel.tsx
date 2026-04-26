@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Bell, Check, Trash2, Settings, AlertCircle, Calendar, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
 
@@ -53,7 +52,7 @@ const getPriorityColor = (priority: number) => {
   return 'bg-gray-50 border-gray-200';
 };
 
-export function NotificationPanel({ onClose, onMarkAllRead, onNotificationRead }: NotificationPanelProps) {
+export function NotificationPanel({ onMarkAllRead, onNotificationRead }: NotificationPanelProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');

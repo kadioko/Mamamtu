@@ -12,7 +12,6 @@ import { NotificationPanel } from './NotificationPanel';
 
 export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     fetchUnreadCount();
@@ -68,7 +67,7 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-96 p-0">
         <NotificationPanel
-          onClose={() => setIsOpen(false)}
+          onClose={() => undefined}
           onMarkAllRead={handleMarkAllRead}
           onNotificationRead={fetchUnreadCount}
         />

@@ -115,7 +115,6 @@ export function PatientForm({
   });
   
   const {
-    handleSubmit,
     control,
     formState: { errors },
     reset,
