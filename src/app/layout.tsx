@@ -26,12 +26,17 @@ export const metadata: Metadata = {
   description: 'Comprehensive healthcare management for mothers and newborns',
   keywords: ['maternal health', 'newborn care', 'healthcare', 'Kenya', 'prenatal care'],
   authors: [{ name: 'MamaMtu Team' }],
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/icon',
+    apple: '/apple-icon',
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f766e' },
   ],
 };
 

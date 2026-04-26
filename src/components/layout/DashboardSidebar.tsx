@@ -19,8 +19,11 @@ import {
   ChevronRight,
   Heart,
   Activity,
+  Baby,
   ClipboardList,
   Sparkles,
+  ShieldCheck,
+  Syringe,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -73,6 +76,38 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
+    title: 'Pregnancies',
+    href: '/dashboard/pregnancies',
+    icon: Heart,
+    gradient: 'radial-gradient(circle, rgba(244,63,94,0.2) 0%, rgba(225,29,72,0.08) 55%, rgba(190,18,60,0) 100%)',
+    iconColor: 'text-rose-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
+  },
+  {
+    title: 'ANC Visits',
+    href: '/dashboard/antenatal',
+    icon: ClipboardList,
+    gradient: 'radial-gradient(circle, rgba(20,184,166,0.2) 0%, rgba(13,148,136,0.08) 55%, rgba(15,118,110,0) 100%)',
+    iconColor: 'text-teal-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
+  },
+  {
+    title: 'Newborns',
+    href: '/dashboard/newborns',
+    icon: Baby,
+    gradient: 'radial-gradient(circle, rgba(56,189,248,0.2) 0%, rgba(14,165,233,0.08) 55%, rgba(2,132,199,0) 100%)',
+    iconColor: 'text-cyan-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
+  },
+  {
+    title: 'Immunizations',
+    href: '/dashboard/immunizations',
+    icon: Syringe,
+    gradient: 'radial-gradient(circle, rgba(132,204,22,0.2) 0%, rgba(101,163,13,0.08) 55%, rgba(77,124,15,0) 100%)',
+    iconColor: 'text-lime-500',
+    allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
+  },
+  {
     title: 'Reports',
     href: '/dashboard/reports',
     icon: ClipboardList,
@@ -86,6 +121,14 @@ const sidebarItems: SidebarItem[] = [
     icon: BookOpen,
     gradient: 'radial-gradient(circle, rgba(34,197,94,0.2) 0%, rgba(22,163,74,0.08) 55%, rgba(21,128,61,0) 100%)',
     iconColor: 'text-green-500',
+  },
+  {
+    title: 'Audit Log',
+    href: '/dashboard/audit',
+    icon: ShieldCheck,
+    gradient: 'radial-gradient(circle, rgba(100,116,139,0.2) 0%, rgba(71,85,105,0.08) 55%, rgba(51,65,85,0) 100%)',
+    iconColor: 'text-slate-500',
+    allowedRoles: ['ADMIN'],
   },
   {
     title: 'Notifications',

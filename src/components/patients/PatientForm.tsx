@@ -62,7 +62,7 @@ export function PatientForm({
         firstName: '',
         lastName: '',
         dateOfBirth: '',
-        gender: 'PREFER_NOT_TO_SAY' as const,
+        gender: 'FEMALE',
         phone: '',
         email: '',
         address: '',
@@ -70,7 +70,7 @@ export function PatientForm({
         state: '',
         postalCode: '',
         country: '',
-        bloodType: 'UNKNOWN' as const,
+        bloodType: '',
         allergies: '',
         medicalHistory: '',
         emergencyContactName: '',
@@ -87,7 +87,7 @@ export function PatientForm({
       dateOfBirth: initialData.dateOfBirth
         ? format(new Date(initialData.dateOfBirth), 'yyyy-MM-dd')
         : '',
-      gender: initialData.gender || 'PREFER_NOT_TO_SAY',
+      gender: initialData.gender === 'PREFER_NOT_TO_SAY' ? 'OTHER' : initialData.gender || 'FEMALE',
       phone: initialData.phone || '',
       email: initialData.email || '',
       address: initialData.address || '',
@@ -95,7 +95,7 @@ export function PatientForm({
       state: initialData.state || '',
       postalCode: initialData.postalCode || '',
       country: initialData.country || '',
-      bloodType: (initialData.bloodType as BloodType) || 'UNKNOWN',
+      bloodType: (initialData.bloodType as BloodType) || '',
       allergies: Array.isArray(initialData.allergies)
         ? initialData.allergies.join(', ')
         : (initialData.allergies || ''),
@@ -129,15 +129,38 @@ export function PatientForm({
       setSubmitError(null);
 
       // Transform data for API submission
-      const dataToSubmit = {
+      const dataToSubmit: Partial<Patient> & Record<string, unknown> = {
         ...formData,
-        gender: (formData.gender || 'PREFER_NOT_TO_SAY') as Gender,
-        bloodType: (formData.bloodType || 'UNKNOWN') as BloodType,
+        gender: (formData.gender === 'PREFER_NOT_TO_SAY' ? 'OTHER' : formData.gender || 'FEMALE') as Gender,
+        bloodType: formData.bloodType as BloodType | undefined,
         dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
         allergies: formData.allergies
           ? formData.allergies.split(',').map((a: string) => a.trim()).filter(Boolean)
           : [],
       };
+      if (!formData.bloodType || formData.bloodType === 'UNKNOWN') {
+        delete (dataToSubmit as { bloodType?: string }).bloodType;
+      }
+      [
+        'phone',
+        'email',
+        'address',
+        'city',
+        'state',
+        'postalCode',
+        'country',
+        'medicalHistory',
+        'emergencyContactName',
+        'emergencyContactPhone',
+        'insuranceProvider',
+        'insuranceNumber',
+        'notes',
+      ].forEach((key) => {
+        const value = dataToSubmit[key as keyof typeof dataToSubmit];
+        if (typeof value === 'string' && value.trim() === '') {
+          delete (dataToSubmit as Record<string, unknown>)[key];
+        }
+      });
 
       await onSubmit(dataToSubmit);
       reset();
@@ -263,7 +286,6 @@ export function PatientForm({
                         <option value="MALE">Male</option>
                         <option value="FEMALE">Female</option>
                         <option value="OTHER">Other</option>
-                        <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
                       </select>
                     )}
                   />
@@ -324,7 +346,6 @@ export function PatientForm({
                         <option value="AB-">AB-</option>
                         <option value="O+">O+</option>
                         <option value="O-">O-</option>
-                        <option value="UNKNOWN">Unknown</option>
                       </select>
                     )}
                   />

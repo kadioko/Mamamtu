@@ -48,7 +48,7 @@ export const createPatient = async (data: Partial<Patient>): Promise<Patient> =>
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to create patient');
+    throw new Error(error.message || error.error || 'Failed to create patient');
   }
   
   return response.json();
@@ -66,7 +66,7 @@ export const updatePatient = async (id: string, data: Partial<Patient>): Promise
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to update patient');
+    throw new Error(error.message || error.error || 'Failed to update patient');
   }
   
   return response.json();
@@ -80,7 +80,7 @@ export const deletePatient = async (id: string): Promise<void> => {
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to delete patient');
+    throw new Error(error.message || error.error || 'Failed to delete patient');
   }
 };
 

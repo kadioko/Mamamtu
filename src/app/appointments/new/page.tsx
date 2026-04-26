@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
-import { getPatients } from '@/services/patientService';
+import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import { AppointmentForm } from '@/components/appointments/AppointmentForm';
 
 export const dynamic = 'force-dynamic';
@@ -22,14 +22,16 @@ export default async function NewAppointmentPage({
   const defaultEndDate = new Date(defaultDate);
   defaultEndDate.setHours(defaultDate.getHours() + 1);
 
-  // Fetch patients for the dropdown
-  const patientsResponse = await getPatients({ limit: 100 });
-  const patients = patientsResponse.data.map(patient => ({
+  const patientRecords = await prisma.patient.findMany({
+    where: { isActive: true },
+    orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+    take: 100,
+    select: { id: true, firstName: true, lastName: true, patientId: true },
+  });
+  const patients = patientRecords.map(patient => ({
     id: patient.id,
-    name: `${patient.firstName} ${patient.lastName}`,
+    name: `${patient.firstName} ${patient.lastName} (${patient.patientId})`,
   }));
-
-  // Submission is handled inside AppointmentForm client component
 
   return (
     <div className="space-y-6">
@@ -43,11 +45,19 @@ export default async function NewAppointmentPage({
       <div className="max-w-4xl">
         <AppointmentForm
           patients={patients}
-          onCancel={async () => {
-            'use server';
-            redirect('/appointments');
+          initialData={{
+            startTime: defaultDate,
+            endTime: defaultEndDate,
           }}
         />
+        {patients.length === 0 && (
+          <p className="mt-4 text-sm text-muted-foreground">
+            Add a patient before scheduling appointments.{' '}
+            <Link href="/dashboard/patients/new" className="font-medium text-primary hover:underline">
+              Create patient
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

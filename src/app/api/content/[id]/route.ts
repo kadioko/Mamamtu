@@ -1,6 +1,9 @@
 import { auth } from '@/auth';
+import { writeAuditLog } from '@/lib/audit';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+
+const canManageContent = (role?: string) => role === 'ADMIN' || role === 'HEALTHCARE_PROVIDER';
 
 export async function GET(
   req: Request,
@@ -8,8 +11,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const content = await prisma.content.findUnique({
-      where: { id },
+    const content = await prisma.content.findFirst({
+      where: {
+        OR: [{ id }, { slug: id }],
+      },
       include: {
         author: {
           select: { name: true, image: true },
@@ -37,7 +42,7 @@ export async function GET(
 
     // Increment view count
     await prisma.content.update({
-      where: { id },
+      where: { id: content.id },
       data: { viewCount: { increment: 1 } },
     });
 
@@ -46,12 +51,11 @@ export async function GET(
     let userProgress = null;
     
     if (session?.user) {
-      const { id: contentId } = await params;
       userProgress = await prisma.userContentProgress.findUnique({
         where: {
           userId_contentId: {
             userId: session.user.id,
-            contentId,
+            contentId: content.id,
           },
         },
       });
@@ -98,7 +102,7 @@ export async function PUT(
       );
     }
 
-    if (existingContent.authorId !== session.user.id) {
+    if (existingContent.authorId !== session.user.id && !canManageContent(session.user.role)) {
       return NextResponse.json(
         { message: 'Forbidden' },
         { status: 403 }
@@ -109,10 +113,20 @@ export async function PUT(
       where: { id },
       data: {
         ...data,
-        ...(data.isPublished && !existingContent.publishedAt
+        ...(data.isPublished === true && !existingContent.publishedAt
           ? { publishedAt: new Date() }
           : {}),
+        ...(data.isPublished === false ? { publishedAt: null } : {}),
       },
+    });
+
+    await writeAuditLog({
+      action: 'EDUCATION_CONTENT_UPDATED',
+      resource: 'Content',
+      resourceId: updatedContent.id,
+      metadata: { title: updatedContent.title, isPublished: updatedContent.isPublished },
+      request: req,
+      userId: session.user.id,
     });
 
     return NextResponse.json(updatedContent);
@@ -151,7 +165,7 @@ export async function DELETE(
       );
     }
 
-    if (existingContent.authorId !== session.user.id) {
+    if (existingContent.authorId !== session.user.id && !canManageContent(session.user.role)) {
       return NextResponse.json(
         { message: 'Forbidden' },
         { status: 403 }
@@ -170,6 +184,15 @@ export async function DELETE(
     // Delete the content
     await prisma.content.delete({
       where: { id },
+    });
+
+    await writeAuditLog({
+      action: 'EDUCATION_CONTENT_DELETED',
+      resource: 'Content',
+      resourceId: id,
+      metadata: { title: existingContent.title },
+      request: req,
+      userId: session.user.id,
     });
 
     return NextResponse.json({ message: 'Content deleted successfully' });

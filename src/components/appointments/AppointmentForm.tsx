@@ -108,7 +108,7 @@ export function AppointmentForm({ initialData, onSuccess, onCancel, patients }: 
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push('/appointments');
+        router.push('/dashboard/appointments');
       }
     } catch (err) {
       console.error('Error saving appointment:', err);
