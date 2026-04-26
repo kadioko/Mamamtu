@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Prisma } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,8 +7,21 @@ import { Button } from '@/components/ui/button';
 
 export const dynamic = 'force-dynamic';
 
+type RecentMedicalRecord = Prisma.MedicalRecordGetPayload<{
+  include: {
+    patient: { select: { id: true; firstName: true; lastName: true; patientId: true } };
+  };
+}>;
+
 export default async function ReportsPage() {
-  const session = await auth();
+  let session: Awaited<ReturnType<typeof auth>> = null;
+
+  try {
+    session = await auth();
+  } catch (error) {
+    console.warn('Unable to read reports session:', error);
+  }
+
   if (!session?.user || !['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role)) {
     return <div className="p-6 text-muted-foreground">You do not have access to reports.</div>;
   }
@@ -16,41 +30,82 @@ export default async function ReportsPage() {
   const nextMonth = new Date(today);
   nextMonth.setDate(today.getDate() + 30);
 
-  const [
-    patientCount,
-    activePregnancies,
-    highRiskPregnancies,
-    missedAncPregnancies,
-    upcomingAppointments,
-    completedAppointments,
-    newbornCount,
-    dueImmunizations,
-    recentRecords,
-  ] = await Promise.all([
-    prisma.patient.count({ where: { isActive: true } }),
-    prisma.pregnancyEpisode.count({ where: { status: 'ACTIVE' } }),
-    prisma.pregnancyEpisode.count({ where: { riskLevel: { gte: 2 }, status: 'ACTIVE' } }),
-    prisma.pregnancyEpisode.count({ where: { status: 'LOST_TO_FOLLOW_UP' } }),
-    prisma.appointment.count({ where: { startTime: { gte: today }, status: { in: ['SCHEDULED', 'CONFIRMED'] } } }),
-    prisma.appointment.count({ where: { status: 'COMPLETED' } }),
-    prisma.newbornRecord.count(),
-    prisma.immunization.count({ where: { nextDueAt: { gte: today, lte: nextMonth } } }),
-    prisma.medicalRecord.findMany({
-      take: 6,
-      orderBy: { createdAt: 'desc' },
-      include: { patient: { select: { id: true, firstName: true, lastName: true, patientId: true } } },
-    }),
-  ]);
+  let reportData: {
+    patientCount: number;
+    activePregnancies: number;
+    highRiskPregnancies: number;
+    missedAncPregnancies: number;
+    upcomingAppointments: number;
+    completedAppointments: number;
+    newbornCount: number;
+    dueImmunizations: number;
+    recentRecords: RecentMedicalRecord[];
+  };
+
+  try {
+    const [
+      patientCount,
+      activePregnancies,
+      highRiskPregnancies,
+      missedAncPregnancies,
+      upcomingAppointments,
+      completedAppointments,
+      newbornCount,
+      dueImmunizations,
+      recentRecords,
+    ] = await Promise.all([
+      prisma.patient.count({ where: { isActive: true } }),
+      prisma.pregnancyEpisode.count({ where: { status: 'ACTIVE' } }),
+      prisma.pregnancyEpisode.count({ where: { riskLevel: { gte: 2 }, status: 'ACTIVE' } }),
+      prisma.pregnancyEpisode.count({ where: { status: 'LOST_TO_FOLLOW_UP' } }),
+      prisma.appointment.count({ where: { startTime: { gte: today }, status: { in: ['SCHEDULED', 'CONFIRMED'] } } }),
+      prisma.appointment.count({ where: { status: 'COMPLETED' } }),
+      prisma.newbornRecord.count(),
+      prisma.immunization.count({ where: { nextDueAt: { gte: today, lte: nextMonth } } }),
+      prisma.medicalRecord.findMany({
+        take: 6,
+        orderBy: { createdAt: 'desc' },
+        include: { patient: { select: { id: true, firstName: true, lastName: true, patientId: true } } },
+      }),
+    ]);
+
+    reportData = {
+      patientCount,
+      activePregnancies,
+      highRiskPregnancies,
+      missedAncPregnancies,
+      upcomingAppointments,
+      completedAppointments,
+      newbornCount,
+      dueImmunizations,
+      recentRecords,
+    };
+  } catch (error) {
+    console.error('Error loading dashboard reports:', error);
+    return (
+      <div className="space-y-6 p-6">
+        <div>
+          <h1 className="text-3xl font-bold">Reports</h1>
+          <p className="text-muted-foreground">Operational snapshot for maternal, newborn, and appointment workflows.</p>
+        </div>
+        <Card>
+          <CardContent className="py-8 text-muted-foreground">
+            Reports could not be loaded right now. Please refresh in a moment.
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const metrics = [
-    { label: 'Active Patients', value: patientCount, href: '/dashboard/patients' },
-    { label: 'Active Pregnancies', value: activePregnancies, href: '/dashboard/pregnancies' },
-    { label: 'High-Risk Pregnancies', value: highRiskPregnancies, href: '/dashboard/pregnancies' },
-    { label: 'Missed ANC Follow-up', value: missedAncPregnancies, href: '/dashboard/pregnancies' },
-    { label: 'Upcoming Appointments', value: upcomingAppointments, href: '/dashboard/appointments' },
-    { label: 'Completed Appointments', value: completedAppointments, href: '/dashboard/appointments' },
-    { label: 'Newborn Records', value: newbornCount, href: '/dashboard/newborns' },
-    { label: 'Immunizations Due Soon', value: dueImmunizations, href: '/dashboard/immunizations' },
+    { label: 'Active Patients', value: reportData.patientCount, href: '/dashboard/patients' },
+    { label: 'Active Pregnancies', value: reportData.activePregnancies, href: '/dashboard/pregnancies' },
+    { label: 'High-Risk Pregnancies', value: reportData.highRiskPregnancies, href: '/dashboard/pregnancies' },
+    { label: 'Missed ANC Follow-up', value: reportData.missedAncPregnancies, href: '/dashboard/pregnancies' },
+    { label: 'Upcoming Appointments', value: reportData.upcomingAppointments, href: '/dashboard/appointments' },
+    { label: 'Completed Appointments', value: reportData.completedAppointments, href: '/dashboard/appointments' },
+    { label: 'Newborn Records', value: reportData.newbornCount, href: '/dashboard/newborns' },
+    { label: 'Immunizations Due Soon', value: reportData.dueImmunizations, href: '/dashboard/immunizations' },
   ];
 
   return (
@@ -85,9 +140,9 @@ export default async function ReportsPage() {
           <CardTitle>Recent Clinical Records</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {recentRecords.length === 0 ? (
+          {reportData.recentRecords.length === 0 ? (
             <p className="text-sm text-muted-foreground">No clinical records yet.</p>
-          ) : recentRecords.map((record) => (
+          ) : reportData.recentRecords.map((record) => (
             <div key={record.id} className="flex flex-col gap-1 border-b pb-3 last:border-0 last:pb-0 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="font-medium">{record.title}</p>

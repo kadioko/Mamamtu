@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Prisma } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { Button } from '@/components/ui/button';
@@ -7,18 +8,40 @@ import { EducationPublishToggle } from '@/components/dashboard/EducationPublishT
 
 export const dynamic = 'force-dynamic';
 
+type DashboardContent = Prisma.ContentGetPayload<{
+  include: {
+    category: { select: { name: true } };
+    author: { select: { name: true; email: true } };
+  };
+}>;
+
 export default async function DashboardEducationPage() {
-  const session = await auth();
+  let session: Awaited<ReturnType<typeof auth>> = null;
+
+  try {
+    session = await auth();
+  } catch (error) {
+    console.warn('Unable to read dashboard education session:', error);
+  }
+
   const canManage = session?.user && ['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role);
 
-  const contents = await prisma.content.findMany({
-    take: 50,
-    orderBy: { updatedAt: 'desc' },
-    include: {
-      category: { select: { name: true } },
-      author: { select: { name: true, email: true } },
-    },
-  });
+  let contents: DashboardContent[] = [];
+  let loadError = false;
+
+  try {
+    contents = await prisma.content.findMany({
+      take: 50,
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        category: { select: { name: true } },
+        author: { select: { name: true, email: true } },
+      },
+    });
+  } catch (error) {
+    loadError = true;
+    console.error('Error loading dashboard education resources:', error);
+  }
 
   return (
     <div className="space-y-6 p-6">
@@ -35,7 +58,13 @@ export default async function DashboardEducationPage() {
       </div>
 
       <div className="grid gap-4">
-        {contents.length === 0 ? (
+        {loadError ? (
+          <Card>
+            <CardContent className="py-8 text-muted-foreground">
+              Education resources could not be loaded right now. Please refresh in a moment.
+            </CardContent>
+          </Card>
+        ) : contents.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-muted-foreground">
               No education resources yet. Seed the database or add the first resource.
