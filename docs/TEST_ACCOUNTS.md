@@ -16,7 +16,10 @@ Demo2025!
 | --- | --- | --- | --- |
 | Administrator | Dr. Amina Hassan | `admin@mama-tu.health` | `Demo2025!` |
 | Healthcare Provider | Dr. Omar Al-Sayed | `provider@mama-tu.health` | `Demo2025!` |
+| Healthcare Provider | Dr. Grace Wanjiku | `provider2@mama-tu.health` | `Demo2025!` |
 | Receptionist | Sarah Johnson | `reception@mama-tu.health` | `Demo2025!` |
+
+All staff accounts created by `npm run seed:staff` are active and email-verified so preview/demo logins do not get stuck behind verification.
 
 ## Seed Commands
 
@@ -40,6 +43,7 @@ The staff seed script supports these optional overrides:
 SEED_STAFF_PASSWORD="change-this-demo-password"
 SEED_ADMIN_EMAIL="admin@mama-tu.health"
 SEED_PROVIDER_EMAIL="provider@mama-tu.health"
+SEED_PROVIDER_ALT_EMAIL="provider2@mama-tu.health"
 SEED_RECEPTION_EMAIL="reception@mama-tu.health"
 ```
 

@@ -72,7 +72,7 @@ describe('DashboardPage', () => {
   });
 
   it('falls back to demo data when API calls fail', async () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     (globalAny.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
@@ -95,11 +95,11 @@ describe('DashboardPage', () => {
       expect(screen.getByText('Amina Hassan')).toBeInTheDocument();
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Error fetching dashboard data:',
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      'Using fallback dashboard data:',
       expect.any(Error),
     );
 
-    consoleErrorSpy.mockRestore();
+    consoleWarnSpy.mockRestore();
   });
 });

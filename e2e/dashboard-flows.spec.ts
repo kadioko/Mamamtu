@@ -28,6 +28,16 @@ test.describe('dashboard care-team flows', () => {
     await expect(page.getByText(/care reminders/i)).toBeVisible();
   });
 
+  test('medical records and vitals pages render without dashboard errors', async ({ page }) => {
+    await page.goto('/dashboard/records');
+    await expectPageReady(page, /medical records/i);
+    await expect(page.getByText(/clinical notes/i)).toBeVisible();
+
+    await page.goto('/dashboard/vitals');
+    await expectPageReady(page, /vitals/i);
+    await expect(page.getByText(/latest recorded blood pressure/i)).toBeVisible();
+  });
+
   test('upload and education management controls are available', async ({ page }) => {
     await page.goto('/dashboard/education');
     await expectPageReady(page, /education/i);

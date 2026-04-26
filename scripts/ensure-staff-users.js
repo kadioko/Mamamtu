@@ -18,6 +18,8 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: getDatabaseUrlForPgAdapter(), max: 1 }),
 });
 
+const emailVerified = new Date();
+
 async function upsertStaffUser({ email, name, role, password }) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -27,7 +29,7 @@ async function upsertStaffUser({ email, name, role, password }) {
       name,
       role,
       isActive: true,
-      emailVerified: new Date(),
+      emailVerified,
     },
     create: {
       email,
@@ -35,12 +37,14 @@ async function upsertStaffUser({ email, name, role, password }) {
       role,
       hashedPassword,
       isActive: true,
-      emailVerified: new Date(),
+      emailVerified,
     },
     select: {
       email: true,
       name: true,
       role: true,
+      isActive: true,
+      emailVerified: true,
     },
   });
 }
@@ -57,6 +61,12 @@ async function main() {
   users.push(await upsertStaffUser({
       email: process.env.SEED_PROVIDER_EMAIL || 'provider@mama-tu.health',
       name: 'Dr. Omar Al-Sayed',
+      role: UserRole.HEALTHCARE_PROVIDER,
+      password,
+    }));
+  users.push(await upsertStaffUser({
+      email: process.env.SEED_PROVIDER_ALT_EMAIL || 'provider2@mama-tu.health',
+      name: 'Dr. Grace Wanjiku',
       role: UserRole.HEALTHCARE_PROVIDER,
       password,
     }));

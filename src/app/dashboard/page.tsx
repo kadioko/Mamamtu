@@ -66,6 +66,24 @@ interface DashboardData {
   recentAppointments: Appointment[];
 }
 
+interface MetricResponseItem {
+  count?: number;
+}
+
+interface DashboardMetricsResponse {
+  activePatients?: MetricResponseItem;
+  upcomingAppointments?: MetricResponseItem;
+  activePregnancy?: MetricResponseItem;
+  alerts?: MetricResponseItem;
+}
+
+interface AppointmentsApiResponse {
+  data?: AppointmentResponse[];
+}
+
+const getMetricCount = (metric: MetricResponseItem | undefined) =>
+  typeof metric?.count === 'number' ? metric.count : 0;
+
 const MetricCard = ({ title, value, description, icon, isLoading = false }: MetricCardProps) => {
   if (isLoading) {
     return (
@@ -251,7 +269,7 @@ const QuickActions = ({ actions, isLoading }: { actions: QuickAction[], isLoadin
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const userRole = (session?.user as { role?: UserRole } | undefined)?.role;
   const isReceptionist = userRole === 'RECEPTIONIST';
   const [isLoading, setIsLoading] = useState(true);
@@ -260,21 +278,27 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      if (sessionStatus === 'loading') return;
+
       try {
         // Fetch metrics from real API
         const metricsResponse = await fetch('/api/dashboard/metrics');
-        const metrics = await metricsResponse.json();
+        const metrics = metricsResponse.ok
+          ? await metricsResponse.json() as DashboardMetricsResponse
+          : {};
 
         // Fetch recent appointments
         const appointmentsResponse = await fetch('/api/appointments?limit=5&status=SCHEDULED,CONFIRMED');
-        const appointmentsData = await appointmentsResponse.json();
+        const appointmentsData = appointmentsResponse.ok
+          ? await appointmentsResponse.json() as AppointmentsApiResponse
+          : {};
 
         const demoData: DashboardData = {
           metrics: {
-            activePatients: metrics.activePatients.count,
-            upcomingAppointments: metrics.upcomingAppointments.count,
-            activePregnancies: metrics.activePregnancy.count,
-            alerts: metrics.alerts.count,
+            activePatients: getMetricCount(metrics.activePatients),
+            upcomingAppointments: getMetricCount(metrics.upcomingAppointments),
+            activePregnancies: getMetricCount(metrics.activePregnancy),
+            alerts: getMetricCount(metrics.alerts),
           },
           recentAppointments: (appointmentsData.data || []).map((apt: AppointmentResponse) => ({
             id: apt.id,
@@ -293,7 +317,7 @@ export default function DashboardPage() {
         setDashboardData(demoData);
         setError(null);
       } catch (err) {
-        console.error('Error fetching dashboard data:', err);
+        console.warn('Using fallback dashboard data:', err);
         // Fallback to simulated data for demo
         const fallbackData: DashboardData = {
           metrics: {
@@ -336,7 +360,7 @@ export default function DashboardPage() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [sessionStatus]);
 
   const allQuickActions: (QuickAction & { receptionistHidden?: boolean })[] = [
     {
