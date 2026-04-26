@@ -78,3 +78,12 @@ Current decision:
 - Add preview/download management for uploaded attachments.
 - Plan Auth.js or managed-auth migration as a dedicated project, since audit still flags `uuid` through NextAuth v4.
 - Add tests around clinical delete/archive endpoints and attachment previews.
+
+Completed in the current refinement pass:
+
+- Clinical create/edit endpoints now enforce cross-field validation for dates, APGAR scores, gravida/para, and due dates.
+- Admin-only delete endpoints exist for pregnancy episodes, ANC visits, newborn records, and immunizations.
+- Pregnancy episodes can be archived from the edit screen.
+- Patient timelines show role-aware edit links for clinical events.
+- Uploaded medical-record attachments render preview/download controls.
+- Clinical delete/archive and attachment preview tests were added.
