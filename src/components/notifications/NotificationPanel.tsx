@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { Bell, Check, Trash2, Settings, AlertCircle, Calendar, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -56,29 +56,42 @@ export function NotificationPanel({ onMarkAllRead, onNotificationRead }: Notific
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const requestAbortRef = useRef<AbortController | null>(null);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [filter]);
+  const fetchNotifications = useCallback(async () => {
+    requestAbortRef.current?.abort();
+    const controller = new AbortController();
+    requestAbortRef.current = controller;
 
-  const fetchNotifications = async () => {
     try {
       setLoading(true);
       const url = filter === 'unread' 
         ? '/api/notifications?unreadOnly=true&limit=20'
         : '/api/notifications?limit=20';
-      
-      const response = await fetch(url);
+
+      const response = await fetch(url, { signal: controller.signal });
       if (response.ok) {
         const data = await response.json();
         setNotifications(data.data || []);
       }
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       console.error('Error fetching notifications:', error);
     } finally {
-      setLoading(false);
+      if (requestAbortRef.current === controller) {
+        requestAbortRef.current = null;
+        setLoading(false);
+      }
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchNotifications();
+
+    return () => {
+      requestAbortRef.current?.abort();
+    };
+  }, [fetchNotifications]);
 
   const handleMarkAsRead = async (id: string) => {
     try {

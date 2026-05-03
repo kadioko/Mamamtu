@@ -11,6 +11,7 @@ export const GET = withAuth(
       const page = parseInt(searchParams.get('page') || '1');
       const limit = parseInt(searchParams.get('limit') || '20');
       const unreadOnly = searchParams.get('unreadOnly') === 'true';
+      const countOnly = searchParams.get('countOnly') === 'true';
       const typeParam = searchParams.get('type');
 
       const skip = (page - 1) * limit;
@@ -20,6 +21,17 @@ export const GET = withAuth(
         ...(unreadOnly && { readAt: null }),
         ...(typeParam && Object.values(NotificationType).includes(typeParam as NotificationType) && { type: typeParam as NotificationType }),
       };
+
+      if (countOnly) {
+        const unreadCount = await prisma.notification.count({
+          where: {
+            userId: request.user!.id,
+            readAt: null,
+          },
+        });
+
+        return NextResponse.json({ unreadCount });
+      }
 
       const [notifications, total, unreadCount] = await Promise.all([
         prisma.notification.findMany({

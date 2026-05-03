@@ -9,10 +9,24 @@ interface DropdownMenuContextValue {
   setOpen: (open: boolean) => void;
 }
 
+interface DropdownMenuProps {
+  children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
 const DropdownMenuContext = React.createContext<DropdownMenuContextValue | null>(null);
 
-export function DropdownMenu({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(false);
+export function DropdownMenu({ children, open: controlledOpen, onOpenChange }: DropdownMenuProps) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = React.useCallback((nextOpen: boolean) => {
+    onOpenChange?.(nextOpen);
+    if (controlledOpen === undefined) {
+      setUncontrolledOpen(nextOpen);
+    }
+  }, [controlledOpen, onOpenChange]);
+
   return (
     <DropdownMenuContext.Provider value={{ open, setOpen }}>
       <div className="relative inline-block text-left">{children}</div>
