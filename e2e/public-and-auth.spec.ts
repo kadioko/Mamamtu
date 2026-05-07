@@ -29,4 +29,15 @@ test.describe('public and auth flows', () => {
     expect(body).toHaveProperty('status');
     expect(body).toHaveProperty('checks.database');
   });
+
+  test('clinical export endpoint rejects anonymous requests', async ({ request }) => {
+    const response = await request.post('/api/export', {
+      data: {
+        type: 'patients',
+        format: 'csv',
+      },
+    });
+
+    expect(response.status()).toBe(401);
+  });
 });

@@ -264,8 +264,18 @@ describe('patientService', () => {
       const result = await exportPatients('csv');
 
       expect(globalAny.fetch).toHaveBeenCalledWith(
-        '/api/export/patients?format=csv',
-        { credentials: 'include' }
+        '/api/export',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            type: 'patients',
+            format: 'csv',
+          }),
+        }
       );
       expect(result).toBe(mockBlob);
     });
@@ -280,8 +290,18 @@ describe('patientService', () => {
       await exportPatients();
 
       expect(globalAny.fetch).toHaveBeenCalledWith(
-        '/api/export/patients?format=csv',
-        { credentials: 'include' }
+        '/api/export',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            type: 'patients',
+            format: 'csv',
+          }),
+        }
       );
     });
 

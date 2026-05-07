@@ -46,6 +46,23 @@ test.describe('dashboard care-team flows', () => {
     await expect(page.getByText(/database url/i)).toBeVisible();
   });
 
+  test('admin can export patient data as audited CSV', async ({ page }) => {
+    const response = await page.request.post('/api/export', {
+      data: {
+        type: 'patients',
+        format: 'csv',
+      },
+    });
+
+    expect(response.ok()).toBeTruthy();
+    expect(response.headers()['content-type']).toContain('text/csv');
+    expect(response.headers()['content-disposition']).toContain('patients-');
+
+    const body = await response.text();
+    expect(body).toContain('Patient ID');
+    expect(body).toMatch(/DEMO-\d{4}|PAT-\d{4}/);
+  });
+
   test('upload and education management controls are available', async ({ page }) => {
     await page.goto('/dashboard/education');
     await expectPageReady(page, /education/i);

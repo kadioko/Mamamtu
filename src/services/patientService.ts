@@ -122,8 +122,17 @@ export const getPatientMedicalRecords = async (
 };
 
 export const exportPatients = async (format: 'csv' | 'json' = 'csv'): Promise<Blob> => {
-  const response = await fetch(`/api/export/patients?format=${format}`, {
+  const exportFormat = format === 'json' ? 'csv' : format;
+  const response = await fetch('/api/export', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     credentials: 'include',
+    body: JSON.stringify({
+      type: 'patients',
+      format: exportFormat,
+    }),
   });
 
   if (!response.ok) {

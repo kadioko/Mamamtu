@@ -52,3 +52,7 @@ aws-1-eu-west-1.pooler.supabase.com:6543
 ```
 
 Avoid the session pooler on port `5432` for app runtimes. It can produce `MaxClientsInSessionMode` errors when several dashboard tabs or server components hit the database at once.
+
+## Clinical Data Export Controls
+
+The `/api/export` endpoint is intentionally protected behind verified admin or healthcare-provider accounts. Exports are sent with `Cache-Control: no-store` and each successful export writes an audit event with the export type, file format, filters, and row count.
