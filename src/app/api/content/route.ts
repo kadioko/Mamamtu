@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
-import { AuditAction, ContentType, DifficultyLevel } from '@prisma/client';
+import { AuditAction, ContentType, DifficultyLevel, type Prisma } from '@prisma/client';
 import { writeAuditLog } from '@/lib/audit';
 import { NextResponse } from 'next/server';
 
@@ -64,8 +64,21 @@ export async function GET(req: Request) {
     const difficulty = searchParams.get('difficulty') as DifficultyLevel | null;
     const type = searchParams.get('type') as ContentType | null;
     const isFeatured = searchParams.get('featured') === 'true';
+    const sort = searchParams.get('sort') || 'newest';
 
     const skip = (page - 1) * limit;
+    const orderBy: Prisma.ContentOrderByWithRelationInput[] = (() => {
+      switch (sort) {
+        case 'popular':
+          return [{ viewCount: 'desc' }, { createdAt: 'desc' }];
+        case 'title-asc':
+          return [{ title: 'asc' }];
+        case 'title-desc':
+          return [{ title: 'desc' }];
+        default:
+          return [{ createdAt: 'desc' }];
+      }
+    })();
 
     const where = {
       isPublished: true,
@@ -77,7 +90,7 @@ export async function GET(req: Request) {
         OR: [
           { title: { contains: search } },
           { description: { contains: search } },
-          { tags: { hasSome: [search] } },
+          { tags: { hasSome: search.split(/\s+/).filter(Boolean) } },
         ],
       }),
     };
@@ -93,7 +106,7 @@ export async function GET(req: Request) {
             select: { name: true, slug: true },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         skip,
         take: limit,
       }),

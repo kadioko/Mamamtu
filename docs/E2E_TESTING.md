@@ -29,6 +29,7 @@ For protected Vercel previews, configure the automation environment with `VERCEL
 ## Current Coverage
 
 - Public education list and education detail page.
+- Education browser rendering after the automatic search/filter upgrade.
 - Admin credential login.
 - `/api/health`.
 - Dashboard patient and appointment creation entry points.
@@ -56,3 +57,4 @@ These match the seeded staff accounts. Override them for shared environments.
 4. Upload a small test attachment and verify preview/download links.
 5. Submit one clinical form per workflow with generated data.
 6. Add protected-preview GitHub Actions smoke checks once deployment URL discovery is wired in.
+7. Add automatic education search, category filter, sort, and featured-resource checks.

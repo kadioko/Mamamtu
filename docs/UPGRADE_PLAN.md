@@ -27,6 +27,8 @@ Last updated: 2026-05-07
 - Secured `/api/export` behind verified admin/provider access and audit logging.
 - Added Clinical Exports controls to the reports dashboard.
 - Added admin Export History to the reports dashboard.
+- Rebuilt the public education page with automatic search, working category/type/difficulty filters, sorting, featured resources, and stronger empty/error states.
+- Added `docs/EDUCATION_SYSTEM.md`.
 - Confirmed local verification with lint, typecheck, Jest, Playwright, production build, and production audit.
 
 ## Prisma 7 Status
@@ -82,6 +84,7 @@ Current decision:
 - Add automated protected-preview smoke tests using `VERCEL_PROTECTION_BYPASS`.
 - Clean the ESLint warning backlog reported by `npm run lint:all`.
 - Add deeper end-to-end tests for patient creation, appointment creation, uploads, and submitted clinical forms.
+- Add focused education E2E coverage for automatic search, category filters, sorting, featured resources, and publish/unpublish flows.
 - Plan Better Auth migration as a dedicated project.
 - Activate the PostgreSQL baseline only after Supabase backup and restore rehearsal.
 

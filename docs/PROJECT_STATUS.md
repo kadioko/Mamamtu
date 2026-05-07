@@ -41,10 +41,12 @@ Latest local checks:
 - Patient timeline with role-aware clinical edit links.
 - Upload preview/download management for attachments.
 - Education resource publishing controls.
+- Public education browser with automatic search, URL-backed filters, sorting, featured resources, and live result counts.
 - Demo seed data for patients, appointments, records, pregnancies, ANC visits, newborns, immunizations, reports, notifications, audit logs, and long-form education content.
 - Secured clinical export API with verified admin/provider access, no-store download responses, and audit logging.
 - Reports dashboard Clinical Exports panel for patient, appointment, and medical-record downloads.
 - Admin Export History on the reports dashboard for recent audited export activity.
+- Education system documentation covering public browsing, automatic behavior, content management, and API parameters.
 
 ## Best Next Upgrades
 
@@ -61,7 +63,7 @@ Latest local checks:
    Back up Supabase, restore into a rehearsal DB, verify drift, then replace legacy SQLite-era migrations with the generated PostgreSQL baseline.
 
 5. Deepen the E2E tests from smoke coverage into create/update workflows.
-   Current tests verify entry points, rendering, education reading, health, export security, and dashboard export controls. Next add real patient creation, appointment creation, attachment upload, and clinical record submission in an isolated test database.
+   Current tests verify entry points, rendering, education reading, health, export security, dashboard export controls, and dashboard education management presence. Next add automatic education filter checks, real patient creation, appointment creation, attachment upload, and clinical record submission in an isolated test database.
 
 6. Add production observability review.
    Confirm Web Analytics, Speed Insights, logs, health dashboard, upload storage, Redis rate limiting, and email delivery all behave in a preview/prod environment.

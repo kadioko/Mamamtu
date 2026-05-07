@@ -58,3 +58,7 @@ Avoid the session pooler on port `5432` for app runtimes. It can produce `MaxCli
 The `/api/export` endpoint is intentionally protected behind verified admin or healthcare-provider accounts. Exports are sent with `Cache-Control: no-store` and each successful export writes an audit event with the export type, file format, filters, and row count.
 
 Admins can review recent export activity from the reports dashboard Export History panel or the full audit log at `/dashboard/audit`. See `docs/CLINICAL_EXPORTS.md` for the current export workflow and verification coverage.
+
+## Education Readiness
+
+The public `/education` page depends on the content and category APIs. Before production promotion, confirm seeded or managed content exists, `/api/content` returns published resources, and `/api/content/categories` returns category counts. See `docs/EDUCATION_SYSTEM.md` for the current public browser, automatic search, filters, and content-management workflow.

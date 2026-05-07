@@ -5,6 +5,11 @@ test.describe('public and auth flows', () => {
   test('education resources load and a resource can be opened', async ({ page }) => {
     await page.goto('/education');
     await expectPageReady(page, /educational resources/i);
+    await expect(page.getByText(/auto-search/i)).toBeVisible();
+
+    await page.getByLabel(/search/i).fill('pregnancy');
+    await expect(page).toHaveURL(/search=pregnancy/);
+    await expect(page.getByText(/filtered by "pregnancy"/i)).toBeVisible();
 
     const response = await page.request.get('/api/content?page=1&limit=1');
     expect(response.ok()).toBeTruthy();
