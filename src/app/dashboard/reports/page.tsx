@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ClinicalExportPanel } from '@/components/dashboard/ClinicalExportPanel';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,9 +116,11 @@ export default async function ReportsPage() {
           <h1 className="text-3xl font-bold">Reports</h1>
           <p className="text-muted-foreground">Operational snapshot for maternal, newborn, and appointment workflows.</p>
         </div>
-        <Button asChild variant="outline">
-          <Link href="/dashboard/audit">View Audit Log</Link>
-        </Button>
+        {session.user.role === 'ADMIN' ? (
+          <Button asChild variant="outline">
+            <Link href="/dashboard/audit">View Audit Log</Link>
+          </Button>
+        ) : null}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -134,6 +137,8 @@ export default async function ReportsPage() {
           </Link>
         ))}
       </div>
+
+      <ClinicalExportPanel userRole={session.user.role} />
 
       <Card>
         <CardHeader>
