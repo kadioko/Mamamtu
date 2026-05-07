@@ -26,6 +26,7 @@
     "docker:postgres:down": "docker-compose -f docker-compose.postgres.yml down",
     "db:backup": "node scripts/backup-database.js",
     "db:restore": "node scripts/restore-database.js",
+    "env:doctor": "node scripts/env-doctor.js",
     "postinstall": "prisma generate"
   },
   "devDependencies": {

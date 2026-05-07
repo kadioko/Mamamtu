@@ -38,6 +38,14 @@ test.describe('dashboard care-team flows', () => {
     await expect(page.getByText(/latest recorded blood pressure/i)).toBeVisible();
   });
 
+  test('production health dashboard shows readiness checks', async ({ page }) => {
+    await page.goto('/dashboard/production');
+    await expectPageReady(page, /production health/i);
+    await expect(page.getByText(/deployment readiness checks/i)).toBeVisible();
+    await expect(page.getByText(/database connectivity/i)).toBeVisible();
+    await expect(page.getByText(/database url/i)).toBeVisible();
+  });
+
   test('upload and education management controls are available', async ({ page }) => {
     await page.goto('/dashboard/education');
     await expectPageReady(page, /education/i);
