@@ -1,6 +1,6 @@
 # MamaMtu Upgrade Plan
 
-Last updated: 2026-04-26
+Last updated: 2026-05-07
 
 ## Completed
 
@@ -24,6 +24,10 @@ Last updated: 2026-04-26
 - Added patient timeline, admin staff user management, Vercel Blob upload UI, Vercel Analytics/Speed Insights, and production health checks.
 - Completed Tailwind CSS 4, TypeScript 6, ESLint 10, Resend 6, and lucide-react 1.x upgrade lanes.
 - Added `VERCEL_PROTECTION_BYPASS` as the protected preview testing secret name and verified the preview can return HTTP 200 with the bypass header.
+- Secured `/api/export` behind verified admin/provider access and audit logging.
+- Added Clinical Exports controls to the reports dashboard.
+- Added admin Export History to the reports dashboard.
+- Confirmed local verification with lint, typecheck, Jest, Playwright, production build, and production audit.
 
 ## Prisma 7 Status
 
@@ -77,7 +81,7 @@ Current decision:
 
 - Add automated protected-preview smoke tests using `VERCEL_PROTECTION_BYPASS`.
 - Clean the ESLint warning backlog reported by `npm run lint:all`.
-- Add end-to-end tests for login, education reading, patient creation, appointments, uploads, reports, notifications, and clinical forms.
+- Add deeper end-to-end tests for patient creation, appointment creation, uploads, and submitted clinical forms.
 - Plan Better Auth migration as a dedicated project.
 - Activate the PostgreSQL baseline only after Supabase backup and restore rehearsal.
 

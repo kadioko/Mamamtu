@@ -23,6 +23,7 @@ test.describe('dashboard care-team flows', () => {
     await expectPageReady(page, /reports/i);
     await expect(page.getByText(/operational snapshot/i)).toBeVisible();
     await expect(page.getByRole('heading', { name: /clinical exports/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /export history/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /download export/i })).toBeVisible();
 
     await page.goto('/dashboard/notifications');

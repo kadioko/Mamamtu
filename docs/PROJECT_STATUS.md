@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-04-26
+Last updated: 2026-05-07
 
 ## Health Summary
 
@@ -9,9 +9,12 @@ MamaMtu is in a strong post-upgrade state. The major platform migrations are com
 Latest local checks:
 
 - `npm outdated --long`: no outdated packages listed.
-- `npm run lint:all -- --format stylish`: 0 errors, 181 warnings after the first cleanup pass.
-- `npm run e2e -- --project=chromium`: 7 passed.
-- Previous major-roadmap verification passed lint, typecheck, tests, build, and production audit.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm test -- --runInBand --silent`: 177 passed.
+- `npm run e2e -- --project=chromium`: 11 passed.
+- `npm run build`: passed.
+- `npm audit --omit=dev`: 0 vulnerabilities.
 
 ## Completed Platform Work
 
@@ -39,6 +42,9 @@ Latest local checks:
 - Upload preview/download management for attachments.
 - Education resource publishing controls.
 - Demo seed data for patients, appointments, records, pregnancies, ANC visits, newborns, immunizations, reports, notifications, audit logs, and long-form education content.
+- Secured clinical export API with verified admin/provider access, no-store download responses, and audit logging.
+- Reports dashboard Clinical Exports panel for patient, appointment, and medical-record downloads.
+- Admin Export History on the reports dashboard for recent audited export activity.
 
 ## Best Next Upgrades
 
@@ -55,7 +61,7 @@ Latest local checks:
    Back up Supabase, restore into a rehearsal DB, verify drift, then replace legacy SQLite-era migrations with the generated PostgreSQL baseline.
 
 5. Deepen the E2E tests from smoke coverage into create/update workflows.
-   Current tests verify entry points and rendering. Next add real patient creation, appointment creation, attachment upload, and clinical record submission in an isolated test database.
+   Current tests verify entry points, rendering, education reading, health, export security, and dashboard export controls. Next add real patient creation, appointment creation, attachment upload, and clinical record submission in an isolated test database.
 
 6. Add production observability review.
    Confirm Web Analytics, Speed Insights, logs, health dashboard, upload storage, Redis rate limiting, and email delivery all behave in a preview/prod environment.

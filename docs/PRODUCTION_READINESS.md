@@ -56,3 +56,5 @@ Avoid the session pooler on port `5432` for app runtimes. It can produce `MaxCli
 ## Clinical Data Export Controls
 
 The `/api/export` endpoint is intentionally protected behind verified admin or healthcare-provider accounts. Exports are sent with `Cache-Control: no-store` and each successful export writes an audit event with the export type, file format, filters, and row count.
+
+Admins can review recent export activity from the reports dashboard Export History panel or the full audit log at `/dashboard/audit`. See `docs/CLINICAL_EXPORTS.md` for the current export workflow and verification coverage.

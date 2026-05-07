@@ -1,6 +1,6 @@
 # End-to-End Testing
 
-Last updated: 2026-04-26
+Last updated: 2026-05-07
 
 The project uses Playwright for browser-level smoke coverage.
 
@@ -33,6 +33,9 @@ For protected Vercel previews, configure the automation environment with `VERCEL
 - `/api/health`.
 - Dashboard patient and appointment creation entry points.
 - Reports and notifications pages.
+- Clinical Exports and admin Export History on reports.
+- Authenticated patient CSV export.
+- Anonymous clinical export rejection.
 - Education management and upload-adjacent dashboard surfaces.
 - Clinical form entry points for pregnancy episodes, ANC visits, newborn records, and immunizations.
 

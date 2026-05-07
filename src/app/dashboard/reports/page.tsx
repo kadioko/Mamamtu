@@ -14,6 +14,32 @@ type RecentMedicalRecord = Prisma.MedicalRecordGetPayload<{
   };
 }>;
 
+type RecentExportAudit = Prisma.AuditLogGetPayload<{
+  include: {
+    user: { select: { name: true; email: true; role: true } };
+  };
+}>;
+
+function readExportMetadata(metadata: Prisma.JsonValue | null) {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+    return {
+      type: 'Unknown',
+      format: 'Unknown',
+      rowCount: 'Unknown',
+    };
+  }
+
+  const exportType = typeof metadata.type === 'string' ? metadata.type : 'Unknown';
+  const format = typeof metadata.format === 'string' ? metadata.format.toUpperCase() : 'Unknown';
+  const rowCount = typeof metadata.rowCount === 'number' ? metadata.rowCount.toLocaleString() : 'Unknown';
+
+  return {
+    type: exportType.replace(/-/g, ' '),
+    format,
+    rowCount,
+  };
+}
+
 export default async function ReportsPage() {
   let session: Awaited<ReturnType<typeof auth>> = null;
 
@@ -41,9 +67,11 @@ export default async function ReportsPage() {
     newbornCount: number;
     dueImmunizations: number;
     recentRecords: RecentMedicalRecord[];
+    recentExports: RecentExportAudit[];
   };
 
   try {
+    const isAdmin = session.user.role === 'ADMIN';
     const [
       patientCount,
       activePregnancies,
@@ -54,6 +82,7 @@ export default async function ReportsPage() {
       newbornCount,
       dueImmunizations,
       recentRecords,
+      recentExports,
     ] = await Promise.all([
       prisma.patient.count({ where: { isActive: true } }),
       prisma.pregnancyEpisode.count({ where: { status: 'ACTIVE' } }),
@@ -68,6 +97,14 @@ export default async function ReportsPage() {
         orderBy: { createdAt: 'desc' },
         include: { patient: { select: { id: true, firstName: true, lastName: true, patientId: true } } },
       }),
+      isAdmin
+        ? prisma.auditLog.findMany({
+            take: 5,
+            where: { resource: 'Export' },
+            orderBy: { createdAt: 'desc' },
+            include: { user: { select: { name: true, email: true, role: true } } },
+          })
+        : Promise.resolve([]),
     ]);
 
     reportData = {
@@ -80,6 +117,7 @@ export default async function ReportsPage() {
       newbornCount,
       dueImmunizations,
       recentRecords,
+      recentExports,
     };
   } catch (error) {
     console.error('Error loading dashboard reports:', error);
@@ -139,6 +177,52 @@ export default async function ReportsPage() {
       </div>
 
       <ClinicalExportPanel userRole={session.user.role} />
+
+      {session.user.role === 'ADMIN' ? (
+        <Card>
+          <CardHeader className="gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <CardTitle>Export History</CardTitle>
+              <p className="mt-1 text-sm text-muted-foreground">Recent clinical data downloads recorded by the audit system.</p>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/dashboard/audit">Open Full Audit Log</Link>
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {reportData.recentExports.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No exports have been recorded yet.</p>
+            ) : reportData.recentExports.map((event) => {
+              const metadata = readExportMetadata(event.metadata);
+
+              return (
+                <div key={event.id} className="grid gap-3 border-b pb-3 text-sm last:border-0 last:pb-0 md:grid-cols-5">
+                  <div>
+                    <span className="text-muted-foreground">When</span>
+                    <p>{event.createdAt.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Actor</span>
+                    <p className="truncate">{event.user?.email ?? 'System'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Dataset</span>
+                    <p className="capitalize">{metadata.type}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Format</span>
+                    <p>{metadata.format}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Rows</span>
+                    <p>{metadata.rowCount}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>
