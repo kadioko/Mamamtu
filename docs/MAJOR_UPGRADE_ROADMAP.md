@@ -2,7 +2,7 @@
 
 This document tracks the larger dependency and platform migrations that should be handled as dedicated projects.
 
-Last updated: 2026-04-26
+Last updated: 2026-05-17
 
 ## Current Status
 
@@ -19,12 +19,60 @@ Completed:
 - CI database setup note corrected to use `prisma db push`.
 - Vercel preview protection remains enabled, with `VERCEL_PROTECTION_BYPASS` available for automation checks.
 - `npm outdated --long` currently reports no outdated packages.
+- Tanzania-first launch planning has been added in `docs/GOING_LIVE_STRATEGY.md`, including compliance, pilot, revenue, and funding workstreams.
 
 Remaining gated decisions:
 
 - Better Auth migration, now mainly to remove the temporary NextAuth v4 compatibility bridge and own auth lifecycle on a supported path.
 - Replacing legacy migrations with the PostgreSQL baseline after a production backup and restore rehearsal.
 - Adding protected-preview smoke tests that exercise deployed routes with the bypass header.
+- Tanzania go-live hardening: compliance notes, pilot-safe production configuration, localized reporting language, and funding/demo collateral.
+
+## Tanzania Go-Live Hardening
+
+Current decision: add Tanzania launch readiness as a product/platform workstream before scaling beyond pilots.
+
+Reason:
+
+- The launch market is Tanzania first, not Kenya.
+- Health workflows touch sensitive maternal/newborn data and require a clear privacy, consent, audit, retention, and clinical-safety posture before real patient usage.
+- Tanzania-specific partners and funders such as COSTECH, Tanzania Startup Association, UNFPA Tanzania, UNICEF-style innovation calls, and Grand Challenges Canada-style digital health calls expect local relevance, evidence, and compliance readiness.
+
+Recommended project steps:
+
+1. Localize product language and reporting labels:
+   - replace Kenya-specific copy where it appears in product, docs, seed data, demo flows, and pitch collateral;
+   - use Tanzania regions/districts rather than counties;
+   - ensure currency examples support TZS pricing.
+2. Create Tanzania pilot compliance documents:
+   - privacy notice;
+   - patient consent language;
+   - data retention policy;
+   - breach response plan;
+   - clinical safety statement clarifying that MamaMtu supports workflow, records, reminders, and reporting, not diagnosis.
+3. Add production readiness checks for Tanzania pilots:
+   - production Supabase backup and restore test;
+   - audit log verification for patient exports and record reads;
+   - role-based access checks for admin, provider, receptionist, and patient;
+   - demo/seed data separation from real production data.
+4. Prepare funder and partner collateral:
+   - one-page concept note for COSTECH/UNFPA/UNICEF-style conversations;
+   - 10-slide Tanzania pitch deck;
+   - clinic pilot letter of intent template;
+   - impact measurement plan for pregnancies tracked, ANC follow-up, high-risk flags, referrals, and facility usage.
+5. Add pilot-safe E2E coverage:
+   - sign in as Tanzania pilot staff;
+   - create a test patient with Tanzania-style phone/address data;
+   - create pregnancy/ANC/newborn records;
+   - verify exports and audit logging;
+   - verify no demo credentials are displayed in production.
+
+External sources checked:
+
+- UNFPA Tanzania maternal health page: `https://tanzania.unfpa.org/en/topics/maternal-health-9`
+- Grand Challenges Canada digital health portfolio: `https://www.grandchallenges.ca/digital-health/`
+- COSTECH innovation page: `https://crweb.costech.or.tz/costech/innovation`
+- Tanzania Startup Association: `https://tsa.co.tz/`
 
 ## Auth Migration
 
