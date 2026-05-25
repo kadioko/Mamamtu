@@ -13,7 +13,7 @@
 ### Technical Checklist
 
 | Item | Status | Priority | Owner |
-|------|--------|----------|-------|
+| --- | --- | --- | --- |
 | All tests passing (Jest + Playwright) | ⬜ | Critical | Dev |
 | TypeScript zero errors | ⬜ | Critical | Dev |
 | Production build successful | ⬜ | Critical | Dev |
@@ -59,6 +59,7 @@
 ### Recommended: Vercel Pro + Supabase
 
 **Why This Stack:**
+
 - **Vercel**: Optimized for Next.js, global CDN, serverless functions
 - **Supabase**: PostgreSQL with row-level security, auth, storage
 - **Cost**: ~$20-50/month to start, scales with usage
@@ -97,12 +98,14 @@ vercel --prod
 ### Model A: Tanzania Freemium SaaS (Recommended)
 
 **Free Tier:**
+
 - Up to 100 patients
 - Basic appointments
 - Standard reports
 - Community email support
 
 **Pro Tier - TZS 100,000-150,000/month/clinic or USD $39-59/month:**
+
 - Unlimited patients
 - Advanced analytics
 - Custom branding
@@ -111,6 +114,7 @@ vercel --prod
 - Export capabilities
 
 **Enterprise - TZS 400,000+/month or custom NGO/hospital pricing:**
+
 - Multi-location support
 - Dedicated account manager
 - Custom integrations
@@ -176,6 +180,7 @@ vercel --prod
 - **Micro-VCs**: Ventures Platform, Microtraction, Launch Africa, Founders Factory Africa, Health54, Catalyst Fund-style programs
 
 **Pitch Deck Essentials:**
+
 1. Problem: Preventable maternal and newborn mortality and fragmented antenatal/postnatal records in Tanzania
 2. Solution: MamaMtu platform demo (2-min video)
 3. Market: $2B+ African healthtech market
@@ -226,18 +231,20 @@ vercel --prod
 
 ### Launch Strategy: "Land and Expand"
 
-**Month 1-2: Beta Launch**
+#### Month 1-2: Beta Launch
+
 - 3-5 pilot clinics (offer 3 months free)
 - Intensive feedback collection
 - Case studies and testimonials
 - Refine product-market fit
 
-**Month 3-4: Referral Program**
+#### Month 3-4: Referral Program
+
 - Clinics get 1 month free for each referral
 - Target 10 paying clinics
 - Launch basic website with pricing
 
-### Month 5-6: Scale
+#### Month 5-6: Scale
 
 - Digital marketing (Google Ads, Facebook)
 - Health conference/startup ecosystem presence in Tanzania
@@ -275,7 +282,7 @@ vercel --prod
 ### Product Metrics
 
 | Metric | Target (Month 6) | Target (Month 12) |
-|--------|------------------|-------------------|
+| --- | --- | --- |
 | Active Clinics | 25 | 100 |
 | Patient Records | 5,000 | 50,000 |
 | Monthly Active Users | 150 | 600 |
@@ -285,7 +292,7 @@ vercel --prod
 ### Revenue Metrics
 
 | Metric | Month 6 | Month 12 |
-|--------|---------|----------|
+| --- | --- | --- |
 | MRR (Monthly Recurring Revenue) | $1,000 | $8,000 |
 | ARPU (Average Revenue Per User) | $40 | $45 |
 | Churn Rate | <10% | <5% |
@@ -307,7 +314,7 @@ vercel --prod
 ### Technical Risks
 
 | Risk | Mitigation |
-|------|------------|
+| --- | --- |
 | Data breach | Encryption, audit logs, insurance |
 | Downtime | Vercel SLA, database backups, status page |
 | Scaling issues | Monitor, auto-scaling, performance budgets |
@@ -316,7 +323,7 @@ vercel --prod
 ### Business Risks
 
 | Risk | Mitigation |
-|------|------------|
+| --- | --- |
 | Slow sales | Diversify: grants + revenue |
 | Competition | Focus on maternal health niche |
 | Regulatory blocks | Early MOH engagement |
@@ -327,6 +334,7 @@ vercel --prod
 ## Phase 8: Immediate Action Items (This Week)
 
 ### Technical
+
 - [ ] Run full test suite and fix any failures
 - [ ] Perform production build test
 - [ ] Set up Vercel project with production environment
@@ -334,6 +342,7 @@ vercel --prod
 - [ ] Set up error monitoring (Sentry free tier)
 
 ### Business
+
 - [ ] Register domain name
 - [ ] Create simple landing page (can be basic Next.js page)
 - [ ] Draft privacy policy and terms of service
@@ -343,6 +352,7 @@ vercel --prod
 - [ ] Prepare a Tanzania data protection and clinical safety note
 
 ### Grants
+
 - [ ] Identify 3 grant applications to submit this month
 - [ ] Draft initial application for highest-fit opportunity
 - [ ] Collect any pilot data or user testimonials
@@ -351,6 +361,7 @@ vercel --prod
 - [ ] Prepare one-page concept note for UNFPA/UNICEF-style partner conversations
 
 ### Sales
+
 - [ ] List 10 target clinics for pilot program
 - [ ] Draft outreach email template
 - [ ] Prepare pricing page
@@ -361,6 +372,7 @@ vercel --prod
 ## Resources & Templates
 
 ### Pitch Deck Structure
+
 1. Cover: MamaMtu + tagline
 2. Problem: Maternal health statistics + personal story
 3. Solution: 30-second demo video
@@ -375,6 +387,7 @@ vercel --prod
 12. Contact: Email, phone, demo link
 
 ### Grant Application Checklist
+
 - [ ] Organization registration documents
 - [ ] Team CVs/bios
 - [ ] Technical architecture overview
@@ -385,7 +398,7 @@ vercel --prod
 
 ### Pricing Page Template
 
-```
+```text
 MamaMtu Pricing
 
 Free
@@ -421,6 +434,7 @@ For hospital chains & NGOs
 ## Success Milestones
 
 ### Immediate (June 2026) - Foundation
+
 - [ ] Production app live on custom domain (mamamtu.co.tz or similar)
 - [ ] Compliance docs ready (privacy notice, consent forms, data retention policy)
 - [ ] First pilot clinic meeting scheduled
@@ -428,6 +442,7 @@ For hospital chains & NGOs
 - [ ] Basic landing page published
 
 ### 30 Days (July 2026) - First Pilots
+
 - [ ] 3 pilot clinics signed up with agreements
 - [ ] First patient consents collected
 - [ ] First grant application submitted (COSTECH or Grand Challenges Canada)
@@ -435,6 +450,7 @@ For hospital chains & NGOs
 - [ ] Marketing website with pricing page live
 
 ### 90 Days (September 2026) - Validation
+
 - [ ] 5-8 paying clinics (transition from free pilots)
 - [ ] $300-500 MRR
 - [ ] 1 grant awarded or in final review round
@@ -442,6 +458,7 @@ For hospital chains & NGOs
 - [ ] UNFPA/UNICEF partnership conversation in progress
 
 ### 180 Days (December 2026) - Growth
+
 - [ ] 15-20 paying clinics
 - [ ] $1,000-1,500 MRR
 - [ ] First angel investment term sheet or major grant secured
@@ -449,6 +466,7 @@ For hospital chains & NGOs
 - [ ] 5,000+ patient records in system
 
 ### 365 Days (May 2027) - Scale
+
 - [ ] 50-100 paying clinics
 - [ ] $5,000-8,000 MRR
 - [ ] Seed funding raised OR profitable
@@ -460,15 +478,18 @@ For hospital chains & NGOs
 ## Emergency Contacts & Support
 
 **Technical Issues:**
-- Vercel Support: support@vercel.com
-- Supabase Support: support@supabase.io
-- Resend Support: support@resend.com
+
+- Vercel Support: <support@vercel.com>
+- Supabase Support: <support@supabase.io>
+- Resend Support: <support@resend.com>
 
 **Legal/Compliance:**
+
 - Data Protection Officer: [assign someone]
 - Legal counsel: [find healthcare-specialized lawyer]
 
 **Business:**
+
 - Accountant: [find one familiar with SaaS]
 - Bank relationship manager: [assign]
 
