@@ -203,21 +203,22 @@ vercel --prod
 
 ### Target Customer Segments
 
-**Tier 1: Private Clinics (Primary)**
+### Tier 1: Private Clinics (Primary)
 
 - Small-medium private clinics in Dar es Salaam, Dodoma, Mwanza, Arusha, Mbeya, Morogoro, and Zanzibar
 - 5-50 staff members
 - Already use some digital tools
 - Decision maker: Clinic owner/administrator
 
-**Tier 2: Faith-Based Hospitals**
+### Tier 2: Faith-Based Hospitals
 
 - Mission and faith-based hospitals through Christian Social Services Commission (CSSC), BAKWATA-affiliated health providers, and regional hospital networks
 - Already serving maternal health
 - Grant-funded, budget-conscious
 - Decision maker: Hospital administrator
 
-**Tier 3: Public Health Facilities**
+### Tier 3: Public Health Facilities
+
 - Government health centers
 - Longer sales cycle
 - Requires Ministry of Health, PORALG, regional, council, or district health leadership alignment
@@ -236,7 +237,8 @@ vercel --prod
 - Target 10 paying clinics
 - Launch basic website with pricing
 
-**Month 5-6: Scale**
+### Month 5-6: Scale
+
 - Digital marketing (Google Ads, Facebook)
 - Health conference/startup ecosystem presence in Tanzania
 - Partnership with medical associations
@@ -244,14 +246,14 @@ vercel --prod
 
 ### Marketing Channels
 
-**Digital (Low Cost):**
+### Digital (Low Cost)
 
 - SEO: "clinic management system Tanzania", "maternal health software Tanzania", "patient management system Tanzania"
 - Content: Blog on maternal health best practices
 - LinkedIn: Target clinic owners, healthcare administrators
 - WhatsApp Business: Primary support channel
 
-**Partnerships:**
+### Partnerships
 
 - Tanzania Startup Association
 - COSTECH innovation ecosystem
@@ -260,7 +262,8 @@ vercel --prod
 - Tanzania Midwives Association and nursing/midwifery training institutions
 - Digital health implementing NGOs and maternal health programs
 
-**Direct Sales:**
+### Direct Sales
+
 - Cold outreach to clinics in target areas
 - Demo days at medical conferences
 - Webinars on "Digital Transformation for Clinics"
@@ -417,29 +420,40 @@ For hospital chains & NGOs
 
 ## Success Milestones
 
-### 30 Days
-- [ ] Production app live on custom domain
-- [ ] 3 pilot clinics signed up
-- [ ] First grant application submitted
-- [ ] Basic marketing website published
+### Immediate (June 2026) - Foundation
+- [ ] Production app live on custom domain (mamamtu.co.tz or similar)
+- [ ] Compliance docs ready (privacy notice, consent forms, data retention policy)
+- [ ] First pilot clinic meeting scheduled
+- [ ] COSTECH registration or application submitted
+- [ ] Basic landing page published
 
-### 90 Days
-- [ ] 10 paying clinics
-- [ ] $500+ MRR
-- [ ] 2 grants awarded or in final round
-- [ ] 1 case study published
+### 30 Days (July 2026) - First Pilots
+- [ ] 3 pilot clinics signed up with agreements
+- [ ] First patient consents collected
+- [ ] First grant application submitted (COSTECH or Grand Challenges Canada)
+- [ ] Tanzania Startup Association membership secured
+- [ ] Marketing website with pricing page live
 
-### 180 Days
-- [ ] 25 paying clinics
-- [ ] $1,500+ MRR
-- [ ] First angel investment or major grant
-- [ ] Expansion to 2nd Tanzania region
+### 90 Days (September 2026) - Validation
+- [ ] 5-8 paying clinics (transition from free pilots)
+- [ ] $300-500 MRR
+- [ ] 1 grant awarded or in final review round
+- [ ] First case study published (Pilot Clinic #1 success story)
+- [ ] UNFPA/UNICEF partnership conversation in progress
 
-### 365 Days
-- [ ] 100 paying clinics
-- [ ] $8,000+ MRR
-- [ ] Seed funding raised or profitable
+### 180 Days (December 2026) - Growth
+- [ ] 15-20 paying clinics
+- [ ] $1,000-1,500 MRR
+- [ ] First angel investment term sheet or major grant secured
+- [ ] Expansion to 2nd Tanzania region (Mwanza or Dodoma)
+- [ ] 5,000+ patient records in system
+
+### 365 Days (May 2027) - Scale
+- [ ] 50-100 paying clinics
+- [ ] $5,000-8,000 MRR
+- [ ] Seed funding raised OR profitable
 - [ ] Recognition as a leading maternal health platform in Tanzania
+- [ ] Ready for Series A or major NGO partnership
 
 ---
 
