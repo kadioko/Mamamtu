@@ -20,7 +20,7 @@ MamaMtu is a secure digital system designed for clinics and hospitals in Tanzani
 **Why Join the Pilot?**
 
 | You Get | Details |
-|---|---|
+| --- | --- |
 | Free access for 3 months | No cost. No commitment. |
 | Staff training included | 2-hour session — we come to you |
 | WhatsApp support | Priority response within 2 hours |
@@ -31,7 +31,7 @@ MamaMtu is a secure digital system designed for clinics and hospitals in Tanzani
 
 ---
 
-**What MamaMtu Does**
+#### What MamaMtu Does
 
 1. **Patient Registration** — Digital forms replace paper cards
 2. **ANC Visit Tracking** — Schedule and track all antenatal visits
@@ -41,7 +41,7 @@ MamaMtu is a secure digital system designed for clinics and hospitals in Tanzani
 
 ---
 
-**How It Works**
+#### How It Works
 
 - Works on any device: phone, tablet, or computer
 - **Offline capable** — no internet? No problem. Syncs when connection returns.
@@ -50,7 +50,7 @@ MamaMtu is a secure digital system designed for clinics and hospitals in Tanzani
 
 ---
 
-**What We Ask From You**
+#### What We Ask From You
 
 - Designate 1–2 staff to use it daily
 - Enter at least 10 patient records per week
@@ -59,7 +59,7 @@ MamaMtu is a secure digital system designed for clinics and hospitals in Tanzani
 
 ---
 
-**After 3 Months**
+#### After 3 Months
 
 - Continue free (up to 100 patients)
 - Upgrade to Pro: TZS 100,000–150,000/month
@@ -69,11 +69,11 @@ No automatic billing. No surprise charges.
 
 ---
 
-**Contact**
+#### Contact
 
 Godfrey Mariki — Founder & CEO, MamaMtu  
 Phone/WhatsApp: +255743910580  
-Email: gmariki@necuva.com  
+Email: <gmariki@necuva.com>  
 MamaMtu by Necuva Group Limited | Reg. 157487027
 
 ---
@@ -94,7 +94,7 @@ MamaMtu ni mfumo salama wa kidijitali ulioundwa kwa ajili ya kliniki na hospital
 **Kwa nini jiunge na Majaribio?**
 
 | Unapata | Maelezo |
-|---|---|
+| --- | --- |
 | Ufikiaji wa bure kwa miezi 3 | Bila gharama. Bila wajibu. |
 | Mafunzo ya wafanyakazi | Saa 2 — tunakuja kwako |
 | Msaada wa WhatsApp | Majibu ya haraka ndani ya saa 2 |
@@ -105,7 +105,7 @@ MamaMtu ni mfumo salama wa kidijitali ulioundwa kwa ajili ya kliniki na hospital
 
 ---
 
-**MamaMtu Inafanya Nini**
+#### MamaMtu Inafanya Nini
 
 1. **Usajili wa Mgonjwa** — Fomu za kidijitali zinachukua nafasi ya kadi za karatasi
 2. **Ufuatiliaji wa Ziara za ANC** — Panga na ufuatilie ziara zote za ujauzito
@@ -115,7 +115,7 @@ MamaMtu ni mfumo salama wa kidijitali ulioundwa kwa ajili ya kliniki na hospital
 
 ---
 
-**Inavyofanya Kazi**
+#### Inavyofanya Kazi
 
 - Inafanya kazi kwenye kifaa chochote: simu, kompyuta kibao, au kompyuta
 - **Inafanya kazi bila mtandao** — hakuna intaneti? Hakuna tatizo. Inasawazisha mtandao ukipokelewa.
@@ -124,7 +124,7 @@ MamaMtu ni mfumo salama wa kidijitali ulioundwa kwa ajili ya kliniki na hospital
 
 ---
 
-**Tunachoomba Kwako**
+#### Tunachoomba Kwako
 
 - Teua wafanyakazi 1–2 watakaotumia kila siku
 - Ingiza angalau rekodi 10 za wagonjwa kwa wiki
@@ -133,7 +133,7 @@ MamaMtu ni mfumo salama wa kidijitali ulioundwa kwa ajili ya kliniki na hospital
 
 ---
 
-**Baada ya Miezi 3**
+#### Baada ya Miezi 3
 
 - Endelea bila malipo (hadi wagonjwa 100)
 - Panda ngazi hadi Pro: TZS 100,000–150,000/mwezi
@@ -143,9 +143,9 @@ Hakuna malipo ya moja kwa moja. Hakuna malipo ya mshangao.
 
 ---
 
-**Mawasiliano**
+#### Mawasiliano
 
 Godfrey Mariki — Mwanzilishi na Mkurugenzi Mtendaji, MamaMtu  
 Simu/WhatsApp: +255743910580  
-Barua pepe: gmariki@necuva.com  
+Barua pepe: <gmariki@necuva.com>  
 MamaMtu na Necuva Group Limited | Reg. 157487027

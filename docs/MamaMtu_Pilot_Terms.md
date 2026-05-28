@@ -12,7 +12,7 @@
 For the 3-month pilot period, the Pilot Clinic receives at no cost:
 
 | Included | Detail |
-|---|---|
+| --- | --- |
 | Full platform access | All features: patient registration, ANC tracking, appointment scheduling, immunizations, newborns, reports, audit logs, education resources |
 | Staff training | One 2-hour session (in-person or Zoom); up to 5 staff members |
 | WhatsApp support | Priority support via +255743910580; response within 2 hours during business hours |
@@ -27,18 +27,21 @@ For the 3-month pilot period, the Pilot Clinic receives at no cost:
 ## 2. What the Pilot Clinic Agrees To
 
 ### Setup (Week 1)
+
 - Designate 1–2 MamaMtu Champions (staff who will use the system daily)
 - Provide WiFi access, or confirm offline-sync configuration with the MamaMtu team
 - Complete the 2-hour training session within the first week
 - Post the privacy notice in the patient waiting area
 
 ### Ongoing (Months 1–3)
+
 - Use the system with real patients who have signed the patient consent form
 - Enter a minimum of 10 pregnancy records per week during active clinic days
 - Send weekly feedback to the MamaMtu team (a WhatsApp voice note is acceptable)
 - Permit impact measurement: MamaMtu will track appointments kept vs. missed, records entered, and staff time saved (no patient-identifiable data leaves the clinic without consent)
 
 ### Compliance
+
 - Obtain signed patient consent before entering any patient data
 - Keep signed paper consent forms on file at the clinic
 - Ensure only designated staff have login credentials
@@ -51,7 +54,7 @@ For the 3-month pilot period, the Pilot Clinic receives at no cost:
 At the end of the 3-month pilot, the clinic has three options:
 
 | Option | Action |
-|---|---|
+| --- | --- |
 | **Continue on Free Tier** | Up to 100 patients; basic features; no charge |
 | **Upgrade to Pro** | TZS 100,000–150,000/month; unlimited patients; full features; priority support |
 | **Exit** | MamaMtu exports all clinic data (Excel/PDF) within 5 business days; no charge; no obligation |
@@ -66,7 +69,7 @@ There is no automatic charge. The clinic must actively choose to continue on a p
 - Patient data is encrypted at rest and in transit, hosted on EU-based servers (GDPR-compliant), and accessible only to authorized clinic staff.
 - MamaMtu will never sell patient data or share it with third parties without explicit written consent.
 - Anonymized, aggregated statistics (e.g. total ANC visits across clinics) may be used for grant reporting and impact measurement.
-- Full details in the MamaMtu Privacy Notice (available at mamamtu.co.tz/privacy) and the Tanzania Compliance Documentation.
+- Full details in the MamaMtu Privacy Notice (available at <https://mamamtu.co.tz/privacy>) and the Tanzania Compliance Documentation.
 
 ---
 
@@ -86,10 +89,10 @@ All clinical decisions remain the responsibility of qualified healthcare profess
 ## 6. Support Commitments
 
 | Issue Type | Channel | Response Time |
-|---|---|---|
+| --- | --- | --- |
 | Can't log in | WhatsApp +255743910580 | 15 minutes |
 | Patient data question | WhatsApp +255743910580 | 2 hours |
-| Feature request | Email gmariki@necuva.com | 24 hours |
+| Feature request | Email <gmariki@necuva.com> | 24 hours |
 | System down (urgent) | Call +255743910580 | Immediate |
 
 **Support hours:** Monday–Saturday, 8:00 am–8:00 pm  
@@ -109,7 +112,7 @@ On termination, MamaMtu will provide a full data export within 5 business days.
 By signing below, both parties agree to these terms.
 
 | | Necuva Group Limited (MamaMtu) | Pilot Clinic |
-|---|---|---|
+| --- | --- | --- |
 | **Name** | Godfrey Mariki | |
 | **Title** | Founder & CEO | |
 | **Signature** | | |
@@ -123,4 +126,4 @@ By signing below, both parties agree to these terms.
 
 *MamaMtu by Necuva Group Limited*  
 *P.O. Box 6972, Dar es Salaam, Tanzania | Registered: 157487027*  
-*gmariki@necuva.com | +255743910580*
+*<gmariki@necuva.com> | +255743910580*
