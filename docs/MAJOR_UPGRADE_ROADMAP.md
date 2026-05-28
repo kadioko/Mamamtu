@@ -2,23 +2,32 @@
 
 This document tracks the larger dependency and platform migrations that should be handled as dedicated projects.
 
-Last updated: 2026-05-17
+Last updated: 2026-05-28
 
 ## Current Status
 
 Completed:
 
-- `lucide-react` upgraded to `1.11.0`.
-- `resend` upgraded to `6.12.2`.
-- Tailwind CSS upgraded to `4.2.4`.
+- **Full dependency update pass — 2026-05-28.** 31 packages updated to latest semver-compatible versions. Key moves:
+  - next 16.2.4 → 16.2.6, react/react-dom 19.2.5 → 19.2.6
+  - tailwindcss/@tailwindcss/postcss 4.2.4 → 4.3.0
+  - eslint 10.2.1 → 10.4.0, typescript-eslint 8.59.0 → 8.60.0, @eslint/compat 2.0.5 → 2.1.0
+  - @playwright/test 1.59.1 → 1.60.0, jest 30.3.0 → 30.4.2, ts-jest 29.4.9 → 29.4.11
+  - lucide-react 1.11.0 → 1.17.0, framer-motion 12.38.0 → 12.40.0, zod 4.3.6 → 4.4.3
+  - react-hook-form 7.74.0 → 7.76.1, date-fns 4.1.0 → 4.3.0, @upstash/redis 1.37.0 → 1.38.0
+  - @vercel/blob 2.3.3 → 2.4.0, pg 8.20.0 → 8.21.0, msw 2.13.6 → 2.14.6, postcss → 8.5.15, resend → 6.12.4
+  - Post-update: lint ✓, typecheck ✓, 177/177 tests ✓, build ✓, 0 audit vulnerabilities ✓. Net: 4 added, 14 removed, 195 changed.
+- `lucide-react` at `1.17.0` (latest after update pass).
+- `resend` at `6.12.4` (latest).
+- Tailwind CSS at `4.3.0` (latest).
 - TypeScript upgraded to `6.0.3`.
-- ESLint upgraded to `10.2.1`.
+- ESLint at `10.4.0` (latest).
 - `lint` and `typecheck` scripts added.
 - Production audit is clean with temporary transitive overrides for `postcss`, `svix`, and `uuid`.
 - A clean PostgreSQL baseline SQL artifact was generated at `prisma/baseline/postgresql-baseline.sql`.
 - CI database setup note corrected to use `prisma db push`.
 - Vercel preview protection remains enabled, with `VERCEL_PROTECTION_BYPASS` available for automation checks.
-- `npm outdated --long` currently reports no outdated packages.
+- `npm outdated` currently reports 0 outdated packages.
 - Tanzania-first launch planning has been added in `docs/GOING_LIVE_STRATEGY.md`, including compliance, pilot, revenue, and funding workstreams.
 
 Remaining gated decisions:

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-05-28
+Last updated: 2026-05-28 (dependency update pass)
 
 ## Team Update
 
@@ -19,14 +19,14 @@ Last updated: 2026-05-28
 
 MamaMtu is in a strong post-upgrade state. The major platform migrations are complete, the dependency tree is current, CI uses a PostgreSQL service, and protected Vercel preview testing now has a bypass-token path for automation.
 
-Latest local checks:
+Latest local checks (2026-05-28):
 
-- `npm outdated --long`: no outdated packages listed.
+- `npm outdated`: 0 outdated packages — full update pass completed (31 packages updated).
 - `npm run lint`: passed.
 - `npm run typecheck`: passed.
-- `npm test -- --runInBand --silent`: 177 passed.
+- `npm test -- --runInBand --silent`: 177 passed (22 suites).
 - `npm run e2e -- --project=chromium`: 11 passed.
-- `npm run build`: passed.
+- `npm run build`: passed (Next.js 16.2.6, Prisma 7.8.0).
 - `npm audit --omit=dev`: 0 vulnerabilities.
 
 ## Completed Platform Work
