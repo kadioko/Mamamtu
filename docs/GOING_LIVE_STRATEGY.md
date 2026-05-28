@@ -170,6 +170,23 @@ vercel --prod
 - Include Ministry of Health alignment, clinic letters of intent, and a data protection plan
 - Do not apply as “an app idea”; apply as a maternal/newborn health workflow and data quality improvement intervention
 
+### Health Science Specialist
+
+**Dr. Jade Wiles Jr., DHA** has joined MamaMtu as Health Science Specialist.
+
+Dr. Wiles brings over a decade of cross-sector experience across government, nonprofit, academic, and civic health systems. His advisory role covers:
+
+- Health policy alignment and stakeholder engagement strategy for Tanzania pilots
+- Coalition-building with faith-based health networks (CSSC, BAKWATA, and similar bodies)
+- Ethical leadership frameworks and community transformation guidance for clinical staff
+- Grant narrative development emphasizing health equity, maternal health access, and reconciliation
+- Academic and institutional partnerships for research validation and co-publication
+- Bridge between public health strategy and community healing — particularly relevant for rural and underserved populations
+
+Dr. Wiles' background spans Momentum Health Development Corporation, AFSCME, The Outreach Team, the Baltimore Mayor's Office of Government Relations, and Awaken Millennial LLC. He has taught healthcare administration at university level and is a published author and speaker on leadership, reconciliation, faith, and community health transformation.
+
+---
+
 ### Short-term (3-6 months): Angel & Pre-Seed
 
 **Target Investors:**

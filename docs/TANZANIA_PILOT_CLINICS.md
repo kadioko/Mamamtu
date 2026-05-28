@@ -2,7 +2,7 @@
 
 **Purpose:** Target clinics for MamaMtu beta pilot program (free for 3 months, then transition to paid).
 
-**Last Updated:** 2026-05-25
+**Last Updated:** 2026-05-28
 
 ---
 
@@ -52,6 +52,74 @@
 | **Approach** | Efficiency and patient experience angle |
 | **Contact Strategy** | Website contact form + LinkedIn |
 | **Status** | ⬜ Not contacted |
+
+### Dar IVF
+| | |
+|---|---|
+| **Location** | Dar es Salaam |
+| **Type** | Private fertility and women's health clinic |
+| **Why Target** | Women's health focus, experienced with maternal patient base |
+| **Decision Maker** | Clinic Director or Administrator |
+| **Approach** | Patient records continuity and ANC tracking efficiency |
+| **Contact Strategy** | Email sent via initial outreach round |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
+
+### Hans Mgaya Hospital
+| | |
+|---|---|
+| **Location** | Dar es Salaam |
+| **Type** | Private hospital |
+| **Why Target** | Community-established hospital with maternity services |
+| **Decision Maker** | Hospital Administrator or Medical Superintendent |
+| **Approach** | Operational efficiency and MoH reporting compliance |
+| **Contact Strategy** | Email sent via initial outreach round |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
+
+### NuLife
+| | |
+|---|---|
+| **Location** | Dar es Salaam |
+| **Type** | Private clinic |
+| **Why Target** | Modern brand positioning suggests digital readiness |
+| **Decision Maker** | Clinic Director or Owner |
+| **Approach** | Patient experience and digital workflow modernization |
+| **Contact Strategy** | Email sent via initial outreach round |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
+
+### Komakoma Polyclinic
+| | |
+|---|---|
+| **Location** | Dar es Salaam |
+| **Type** | Private polyclinic |
+| **Why Target** | Multi-service clinic likely handling maternal cases |
+| **Decision Maker** | Administrator or Medical Director |
+| **Approach** | Reduce admin burden across multiple service lines |
+| **Contact Strategy** | Email sent via initial outreach round |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
+
+### Kairuki Hospital
+| | |
+|---|---|
+| **Location** | Dar es Salaam |
+| **Type** | Private hospital |
+| **Why Target** | Established private hospital with maternity ward; recognized name |
+| **Decision Maker** | Hospital Administrator |
+| **Approach** | Quality of care story; reporting, audit, and compliance features |
+| **Contact Strategy** | Email sent via initial outreach round |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
+
+### Columbia Africa IST Clinic
+| | |
+|---|---|
+| **Location** | Dar es Salaam |
+| **Type** | International-standard private clinic |
+| **Why Target** | High digital readiness; international quality standards; tech-forward |
+| **Decision Maker** | Clinic Director or Administrator |
+| **Approach** | Premium reporting, audit trails, and integration with international standards |
+| **Contact Strategy** | Email sent via initial outreach round |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
+
+---
 
 ### Various Small Private Clinics (Target 10-15)
 
@@ -275,17 +343,19 @@ MamaMtu (Necuva Group Limited)
 
 ## Action Plan: Next 30 Days
 
-### Week 1: Preparation
-- [ ] Finalize pilot terms (what's free, what happens after 3 months)
-- [ ] Create one-page pilot information sheet (English + Swahili)
-- [ ] Set up tracking spreadsheet for outreach
-- [ ] Draft and customize email templates
+### Week 1: Preparation ✅ COMPLETE
+- [x] Finalize pilot terms (what's free, what happens after 3 months)
+- [x] Create one-page pilot information sheet (English + Swahili)
+- [x] Set up tracking spreadsheet for outreach
+- [x] Draft and customize email templates
 
-### Week 2: Outreach Begins
-- [ ] Send 5 emails to private clinics
-- [ ] Send 2 emails to faith-based networks (CSSC, BAKWATA)
-- [ ] Send 2 emails to NGOs (MDH, Amref, Jhpiego)
-- [ ] Make 3 follow-up phone calls
+### Week 2: Outreach Begins ✅ COMPLETE
+- [x] Send emails to private clinics — **9 sent** (Aga Khan, Shree Hindu Mandal, Premier Care, Dar IVF, Hans Mgaya Hospital, NuLife, Komakoma Polyclinic, Kairuki Hospital, Columbia Africa IST Clinic)
+- [x] Send 2 emails to faith-based networks (CSSC + BAKWATA)
+- [x] Send 3 emails to NGOs (MDH, Amref, Jhpiego)
+- [x] Make 3 follow-up phone calls
+- [x] All emails CC'd gmariki@necuva.com; recipients can reply-all or directly to that address
+- **Total sent: 14** (9 private clinics + 2 faith-based + 3 NGOs)
 
 ### Week 3: Follow-Up
 - [ ] Follow up on non-responses
@@ -301,19 +371,26 @@ MamaMtu (Necuva Group Limited)
 
 ---
 
-## Tracking Spreadsheet Template
+## Tracking Spreadsheet
 
-| Clinic Name | Type | Location | Contact | Date Contacted | Response | Meeting Scheduled | Status |
-|-------------|------|----------|---------|---------------|----------|-------------------|--------|
-| Example Hospital | Private | Dar - Ilala | admin@example.com | 2026-05-25 | Interested | 2026-05-30 | Meeting set |
-| | | | | | | | |
-| | | | | | | | |
+**Live tracker:** `docs/MamaMtu_Outreach_Tracker.csv` — all 14 contacts with date, category, response status, and notes.
+
+**Current counts (2026-05-28):**
+
+| Category | Count | Clinics / Orgs |
+|---|---|---|
+| Private clinics | 9 | Aga Khan, Shree Hindu Mandal, Premier Care, Dar IVF, Hans Mgaya, NuLife, Komakoma Polyclinic, Kairuki Hospital, Columbia Africa IST Clinic |
+| Faith-based networks | 2 | CSSC, BAKWATA |
+| NGOs | 3 | MDH, Amref, Jhpiego |
+| **Total** | **14** | |
+
+**Status key:** Awaiting / Responded — Interested / Responded — Not Interested / Meeting Scheduled / Agreement Signed / Live
 
 ---
 
 ## Success Metrics for Outreach
 
-- **Week 2:** 10 emails sent, 2 phone calls made
+- **Week 2:** ✅ **14 emails sent** (9 private clinics, 2 faith-based networks, 3 NGOs) + 3 follow-up phone calls — DONE. All emails CC'd gmariki@necuva.com.
 - **Week 3:** 3 responses received, 2 meetings scheduled
 - **Week 4:** First pilot agreement signed
 - **Month 1:** 3-5 pilot clinics committed
@@ -353,12 +430,13 @@ MamaMtu (Necuva Group Limited)
 
 ---
 
-## Next Steps
+## Next Steps (Current — Week 3)
 
-1. **Today:** Customize email templates with your details
-2. **This Week:** Identify 10 specific clinics to target
-3. **Next Week:** Send first batch of outreach emails
-4. **This Month:** Schedule 2-3 clinic visits/demos
-5. **Goal:** Sign first pilot agreement within 30 days
+1. **Follow up** on the 14 sent emails — 3–5 day cadence; WhatsApp follow-up where email address is uncertain
+2. **Schedule 2–3 demo meetings** with any respondents — bring tablet, show live demo
+3. **Visit 1–2 clinics in person** for those who have not replied to email
+4. **Refine pitch** based on objections and questions heard so far
+5. **Goal:** Sign first pilot agreement before end of Week 4
+6. **Leverage Dr. Jade Wiles Jr.** for faith-based clinic (CSSC, BAKWATA) engagement strategy and NGO partnership framing
 
 **Remember:** The first 3 clinics are the hardest. After that, referrals and testimonials make the rest easier.

@@ -33,7 +33,8 @@ Fill in these details to customize all compliance and outreach documents
 
 - **Team Size**: 3-5 (1 developer + health consultants)
 - **Developers**: Godfrey Mariki (Full-stack developer, Tanzania-based)
-- **Health Advisors**: [Add health consultant names/backgrounds]
+- **Health Advisors**:
+  - **Dr. Jade Wiles Jr., DHA** — Health Science Specialist. Doctor of Health Administration, public health leader, educator, and global reconciliation advocate. Specializes in health policy, coalition-building, stakeholder engagement, health equity, and ethical leadership. Over a decade of experience across government, nonprofit, academic, and civic sectors. Taught healthcare administration and health sciences at university level. Founder of Awaken Millennial LLC (faith-driven leadership, reconciliation, and social impact). Prior roles include Momentum Health Development Corporation, AFSCME, The Outreach Team, and Baltimore Mayor's Office of Government Relations. Author and speaker on leadership, reconciliation, faith, and community health transformation.
 - **Tanzania Presence**: Yes, fully Tanzania-based
 
 ## Business Information

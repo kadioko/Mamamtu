@@ -174,6 +174,14 @@ If system is down during patient care:
 
 ---
 
+---
+
+## Health Science Advisory
+
+MamaMtu is supported by **Dr. Jade Wiles Jr., DHA** as Health Science Specialist. Dr. Wiles is a Doctor of Health Administration, public health leader, educator, and global reconciliation advocate with over a decade of experience across government, nonprofit, academic, and civic health sectors. He specializes in health policy, coalition-building, stakeholder engagement, health equity, and ethical leadership. His involvement ensures that MamaMtu's clinical workflows, compliance posture, and community engagement approach reflect best practice in public health and ethical healthcare delivery.
+
+---
+
 *MamaMtu by Necuva Group Limited*  
 *P.O. Box 6972, Dar es Salaam, Tanzania*  
 *Registered: 157487027*
