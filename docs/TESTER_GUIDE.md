@@ -209,7 +209,7 @@ When you leave a review or send feedback, these are the things that help us most
 | Were there any errors or broken pages? | Catches bugs before real patients are entered |
 | What one thing would you add or change? | Guides our next features |
 
-You can send feedback to: **gmariki@necuva.com** or WhatsApp **+255743910580**
+You can send feedback to: **<gmariki@necuva.com>** or WhatsApp **+255743910580**
 
 ---
 
@@ -240,4 +240,4 @@ We appreciate your time.
 
 ---
 
-*MamaMtu by Necuva Group Limited | gmariki@necuva.com | +255743910580*
+*MamaMtu by Necuva Group Limited | <gmariki@necuva.com> | +255743910580*
