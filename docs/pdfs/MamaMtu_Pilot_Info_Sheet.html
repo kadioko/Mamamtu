@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MamaMtu — Pilot Information Sheet / Karatasi ya Habari za Majaribio</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm 14mm 16mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #1f2937;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      background: #fff;
+    }
+
+    /* ── Header banner ── */
+    .header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #0e7490 100%);
+      color: #fff;
+      border-radius: 10px;
+      padding: 20px 24px 16px;
+      margin-bottom: 24px;
+      page-break-inside: avoid;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .brand {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .brand span { color: #93c5fd; }
+    .version-badge {
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .header-tagline {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.92;
+      margin-bottom: 3px;
+    }
+    .header-sub {
+      font-size: 11.5px;
+      opacity: 0.75;
+    }
+
+    /* ── Two-column layout ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      page-break-inside: avoid;
+    }
+    .col-en {
+      padding: 18px 18px 16px;
+      border-right: 1.5px solid #e5e7eb;
+      background: #fff;
+    }
+    .col-sw {
+      padding: 18px 18px 16px;
+      background: #f8fafc;
+    }
+    .col-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1.5px solid #e5e7eb;
+    }
+    .col-label.sw { color: #0e7490; border-color: #a5f3fc; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1d4ed8;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin: 14px 0 8px;
+    }
+    h2:first-of-type { margin-top: 0; }
+
+    /* ── Body text ── */
+    p { margin-bottom: 8px; font-size: 12.5px; }
+    .intro { font-size: 13px; font-weight: 500; color: #111827; margin-bottom: 10px; }
+
+    /* ── Benefit list ── */
+    .benefit-list {
+      list-style: none;
+      margin: 0 0 10px;
+      padding: 0;
+    }
+    .benefit-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+    .benefit-list li .icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .benefit-list li .icon.sw { background: #cffafe; color: #0e7490; }
+    .benefit-list li strong { color: #111827; }
+
+    /* ── Numbered steps ── */
+    .steps {
+      list-style: none;
+      margin: 0 0 10px;
+      padding: 0;
+      counter-reset: step;
+    }
+    .steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 5px;
+      font-size: 12px;
+      counter-increment: step;
+    }
+    .steps li::before {
+      content: counter(step);
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: #1d4ed8;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .steps.sw li::before { background: #0e7490; }
+
+    /* ── Pills row ── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 8px 0 10px;
+    }
+    .pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .pill.sw { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
+
+    /* ── Ask box ── */
+    .ask-box {
+      background: #fff7ed;
+      border: 1.5px solid #fed7aa;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .ask-box .ask-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #c2410c;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 6px;
+    }
+    .ask-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .ask-box ul li {
+      font-size: 12px;
+      margin-bottom: 4px;
+      padding-left: 14px;
+      position: relative;
+    }
+    .ask-box ul li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #ea580c;
+      font-weight: 700;
+    }
+
+    /* ── After pilot options ── */
+    .options-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin: 8px 0 10px;
+    }
+    .option-card {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 7px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .option-card .price {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1d4ed8;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .option-card .price.free { color: #059669; }
+    .option-card .price.pro { color: #7c3aed; }
+    .option-card .tier {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6b7280;
+      letter-spacing: 0.07em;
+      margin-bottom: 3px;
+    }
+    .option-card .detail {
+      font-size: 10.5px;
+      color: #4b5563;
+    }
+
+    /* ── Footer contact bar ── */
+    .contact-bar {
+      background: #1f2937;
+      color: #f9fafb;
+      border-radius: 8px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+      page-break-inside: avoid;
+    }
+    .contact-bar .contact-name {
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .contact-bar .contact-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .contact-bar .contact-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .contact-bar .contact-item {
+      font-size: 11.5px;
+      color: #d1d5db;
+    }
+    .contact-bar .contact-item strong { color: #fff; }
+
+    /* ── Disclaimer strip ── */
+    .disclaimer {
+      font-size: 10px;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    /* ── Print overrides ── */
+    @media print {
+      body { max-width: none; padding: 0; }
+      .two-col { page-break-inside: avoid; }
+      .contact-bar { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">Mama<span>Mtu</span></div>
+      <div class="version-badge">PILOT INFORMATION SHEET · v1.0 · June 2026</div>
+    </div>
+    <div class="header-tagline">Free 3-Month Pilot Programme — Clinic Information Sheet</div>
+    <div class="header-sub">Programu ya Majaribio ya Bure ya Miezi 3 — Karatasi ya Habari za Kliniki</div>
+  </div>
+
+  <!-- Two-column bilingual body -->
+  <div class="two-col">
+
+    <!-- ENGLISH -->
+    <div class="col-en">
+      <div class="col-label">English</div>
+
+      <h2>What is MamaMtu?</h2>
+      <p class="intro">A secure digital platform for clinics and hospitals in Tanzania to manage maternity patient records, track antenatal care (ANC) visits, send appointment reminders, and generate Ministry of Health reports.</p>
+
+      <h2>What You Get — Free for 3 Months</h2>
+      <ul class="benefit-list">
+        <li><span class="icon">✓</span><div><strong>Full platform access</strong> — all features, no restrictions</div></li>
+        <li><span class="icon">✓</span><div><strong>Staff training</strong> — 2-hour session, we come to you</div></li>
+        <li><span class="icon">✓</span><div><strong>WhatsApp support</strong> — priority response within 2 hours</div></li>
+        <li><span class="icon">✓</span><div><strong>Patient consent forms</strong> — printed, English + Swahili</div></li>
+        <li><span class="icon">✓</span><div><strong>Privacy notice poster</strong> — for your waiting area</div></li>
+        <li><span class="icon">✓</span><div><strong>Tablet provided</strong> — 1–2 devices if needed</div></li>
+        <li><span class="icon">✓</span><div><strong>Full data export on exit</strong> — all your data returned, free</div></li>
+      </ul>
+
+      <h2>What MamaMtu Does</h2>
+      <ol class="steps">
+        <li><strong>Patient Registration</strong> — digital forms replace paper cards</li>
+        <li><strong>ANC Visit Tracking</strong> — schedule and record all antenatal visits</li>
+        <li><strong>High-Risk Flagging</strong> — automatically highlights at-risk pregnancies</li>
+        <li><strong>Appointment Reminders</strong> — SMS sent to patients automatically</li>
+        <li><strong>MoH Reports</strong> — generate Ministry of Health compliance reports</li>
+      </ol>
+
+      <h2>How It Works</h2>
+      <div class="pills">
+        <span class="pill">Any device</span>
+        <span class="pill">Works offline</span>
+        <span class="pill">Swahili + English</span>
+        <span class="pill">Encrypted</span>
+        <span class="pill">Role-based access</span>
+      </div>
+
+      <h2>What We Ask From You</h2>
+      <div class="ask-box">
+        <div class="ask-title">Your commitment during the pilot</div>
+        <ul>
+          <li>Designate 1–2 staff members to use it daily</li>
+          <li>Enter at least 10 patient records per week</li>
+          <li>Send brief weekly feedback (voice note is fine)</li>
+          <li>Use with real patients who have signed consent forms</li>
+        </ul>
+      </div>
+
+      <h2>After 3 Months — Your Choice</h2>
+      <div class="options-row">
+        <div class="option-card">
+          <div class="tier">Free</div>
+          <span class="price free">TZS 0</span>
+          <div class="detail">Up to 100 patients. No commitment.</div>
+        </div>
+        <div class="option-card">
+          <div class="tier">Pro</div>
+          <span class="price pro">100–150K<br><small>TZS/month</small></span>
+          <div class="detail">Unlimited patients. Full features.</div>
+        </div>
+        <div class="option-card">
+          <div class="tier">Exit</div>
+          <span class="price">Free</span>
+          <div class="detail">We return all your data. No charge.</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:#6b7280;"><strong>No automatic billing. No surprise charges.</strong></p>
+
+    </div><!-- /col-en -->
+
+    <!-- SWAHILI -->
+    <div class="col-sw">
+      <div class="col-label sw">Kiswahili</div>
+
+      <h2>MamaMtu ni nini?</h2>
+      <p class="intro">Mfumo salama wa kidijitali kwa kliniki na hospitali Tanzania kusimamia rekodi za wajawazito, kufuatilia ziara za ANC, kutuma ukumbusho wa miadi, na kutengeneza ripoti za Wizara ya Afya.</p>
+
+      <h2>Unachopata — Bure kwa Miezi 3</h2>
+      <ul class="benefit-list">
+        <li><span class="icon sw">✓</span><div><strong>Ufikiaji kamili wa mfumo</strong> — vipengele vyote, bila vikwazo</div></li>
+        <li><span class="icon sw">✓</span><div><strong>Mafunzo ya wafanyakazi</strong> — saa 2, tunakuja kwako</div></li>
+        <li><span class="icon sw">✓</span><div><strong>Msaada wa WhatsApp</strong> — majibu ya haraka ndani ya saa 2</div></li>
+        <li><span class="icon sw">✓</span><div><strong>Fomu za idhini</strong> — zilizochapishwa, Kiswahili + Kiingereza</div></li>
+        <li><span class="icon sw">✓</span><div><strong>Bango la faragha</strong> — kwa chumba cha kusubiri</div></li>
+        <li><span class="icon sw">✓</span><div><strong>Kompyuta kibao</strong> — vifaa 1–2 vikihitajika</div></li>
+        <li><span class="icon sw">✓</span><div><strong>Data yako itarudishwa</strong> — yote, bila malipo</div></li>
+      </ul>
+
+      <h2>MamaMtu Inafanya Nini</h2>
+      <ol class="steps sw">
+        <li><strong>Usajili wa Mgonjwa</strong> — fomu za kidijitali badala ya kadi za karatasi</li>
+        <li><strong>Ufuatiliaji wa Ziara za ANC</strong> — panga na rekodi ziara zote za ujauzito</li>
+        <li><strong>Alama ya Hatari</strong> — inaonyesha mimba zenye hatari moja kwa moja</li>
+        <li><strong>Ukumbusho wa Miadi</strong> — SMS unatumwa kwa wagonjwa moja kwa moja</li>
+        <li><strong>Ripoti za Wizara</strong> — tengeneza ripoti za Wizara ya Afya</li>
+      </ol>
+
+      <h2>Inavyofanya Kazi</h2>
+      <div class="pills">
+        <span class="pill sw">Kifaa chochote</span>
+        <span class="pill sw">Inafanya kazi bila mtandao</span>
+        <span class="pill sw">Kiswahili + Kiingereza</span>
+        <span class="pill sw">Imesimbwa</span>
+      </div>
+
+      <h2>Tunachoomba Kwako</h2>
+      <div class="ask-box">
+        <div class="ask-title">Ahadi yako wakati wa majaribio</div>
+        <ul>
+          <li>Teua wafanyakazi 1–2 watakaotumia kila siku</li>
+          <li>Ingiza rekodi 10 za wagonjwa kwa wiki</li>
+          <li>Tuma maoni mafupi kila wiki (sauti inafaa)</li>
+          <li>Tumia na wagonjwa waliosaini fomu za idhini</li>
+        </ul>
+      </div>
+
+      <h2>Baada ya Miezi 3 — Chaguo Lako</h2>
+      <div class="options-row">
+        <div class="option-card">
+          <div class="tier">Bure</div>
+          <span class="price free">TZS 0</span>
+          <div class="detail">Hadi wagonjwa 100. Bila wajibu.</div>
+        </div>
+        <div class="option-card">
+          <div class="tier">Pro</div>
+          <span class="price pro">100–150K<br><small>TZS/mwezi</small></span>
+          <div class="detail">Wagonjwa wasio na kikomo. Vipengele vyote.</div>
+        </div>
+        <div class="option-card">
+          <div class="tier">Toka</div>
+          <span class="price">Bure</span>
+          <div class="detail">Tutarudisha data yako yote. Bila malipo.</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:#6b7280;"><strong>Hakuna malipo ya moja kwa moja. Hakuna mshangao.</strong></p>
+
+    </div><!-- /col-sw -->
+
+  </div><!-- /two-col -->
+
+  <!-- Contact bar -->
+  <div class="contact-bar">
+    <div>
+      <div class="contact-name">Godfrey Mariki</div>
+      <div class="contact-sub">Founder &amp; CEO, MamaMtu &bull; Necuva Group Limited &bull; Reg. 157487027</div>
+      <div class="contact-sub">P.O. Box 6972, Dar es Salaam, Tanzania</div>
+    </div>
+    <div class="contact-details">
+      <div class="contact-item"><strong>WhatsApp / Call:</strong> +255 743 910 580</div>
+      <div class="contact-item"><strong>Email:</strong> gmariki@necuva.com</div>
+      <div class="contact-item"><strong>App:</strong> mamamtu.vercel.app</div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    MamaMtu is a record-keeping, workflow, and reporting tool. It is not a diagnostic system or a replacement for clinical judgment. &bull;
+    Patient data is encrypted and hosted on GDPR-compliant EU servers. &bull;
+    No automatic billing after the pilot period.
+  </div>
+
+</body>
+</html>
