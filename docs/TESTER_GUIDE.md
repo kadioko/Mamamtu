@@ -25,12 +25,12 @@ Go to the app and sign in at `/auth/signin`.
 
 **All test accounts use the same password:**
 
-```
+```text
 Demo2025!
 ```
 
 | Account | Email | Role | What it's for |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Administrator** | `admin@mama-tu.health` | Admin | Full access to everything |
 | **Doctor (primary)** | `provider@mama-tu.health` | Healthcare Provider | Clinical workflows, patient care |
 | **Doctor (secondary)** | `provider2@mama-tu.health` | Healthcare Provider | Same as above, second doctor |
@@ -45,10 +45,11 @@ Demo2025!
 Different staff see different menu items and have different permissions. This is intentional — it mirrors how real clinics work.
 
 ### Administrator (`admin@mama-tu.health`)
+
 Full access to everything. Use this account to explore the whole system.
 
 | Area | Can do |
-|---|---|
+| --- | --- |
 | Dashboard Overview | View clinic-wide stats and activity |
 | Patients | View, add, edit, search all patients |
 | Appointments | View, schedule, manage all appointments |
@@ -67,10 +68,11 @@ Full access to everything. Use this account to explore the whole system.
 | Settings | Account and system settings |
 
 ### Healthcare Provider (`provider@mama-tu.health` or `provider2@mama-tu.health`)
+
 Full clinical access. Cannot manage staff or see the audit log.
 
 | Area | Can do |
-|---|---|
+| --- | --- |
 | Dashboard Overview | ✅ |
 | Patients | ✅ View, add, edit |
 | Appointments | ✅ |
@@ -89,10 +91,11 @@ Full clinical access. Cannot manage staff or see the audit log.
 | Settings | ✅ |
 
 ### Receptionist (`reception@mama-tu.health`)
+
 Front-desk access. Can see patients and appointments but not clinical records.
 
 | Area | Can do |
-|---|---|
+| --- | --- |
 | Dashboard Overview | ✅ |
 | Patients | ✅ View and register patients |
 | Appointments | ✅ Schedule and manage |
@@ -116,7 +119,7 @@ Front-desk access. Can see patients and appointments but not clinical records.
 The system has real-feeling demo patient records ready to explore. You do not need to create anything from scratch.
 
 | Patient ID | Scenario | What to explore |
-|---|---|---|
+| --- | --- | --- |
 | `DEMO-0001` | High-risk active pregnancy | Risk flagging, ANC visit history, pregnancy timeline |
 | `DEMO-0002` | Teen first pregnancy with anaemia support | Sensitive case handling, ANC scheduling |
 | `DEMO-0003` | Postpartum and newborn follow-up | Newborn record, postnatal workflow |
@@ -133,51 +136,61 @@ Search for these patients in **Patients → Search** or browse directly from the
 Here are the key areas we'd love your feedback on:
 
 ### 1. Patient Registration & Search
+
 - Register a new patient (Patients → New Patient)
 - Search by name, ID, or phone number
 - Open a patient profile and view their timeline
 
 ### 2. Pregnancy & ANC Workflow
+
 - Open `DEMO-0001` — view the high-risk pregnancy
 - Add an ANC visit (Pregnancies → select episode → Add Visit)
 - Check that the timeline updates
 
 ### 3. Appointments
+
 - Schedule a new appointment
 - Change an appointment status (confirm, cancel, complete)
 - View the calendar view
 
 ### 4. Newborns & Immunizations
+
 - Open `DEMO-0003` — view the newborn record linked to the mother
 - Browse immunization records for `DEMO-0006`
 - Add a new immunization
 
 ### 5. Reports & Exports (Admin / Provider only)
+
 - Go to Reports in the sidebar
 - Download a patient list export (CSV or PDF)
 - Check the Export History — every download is logged for compliance
 
 ### 6. Audit Log (Admin only)
+
 - Go to Audit Log
 - See who has accessed or changed what, and when
 - This is the compliance trail for the clinic
 
 ### 7. Education Resources
+
 - Go to Education from the sidebar
 - Browse and open health articles
 - As Admin, try publishing or unpublishing a resource
 
 ### 8. Notifications
+
 - Bell icon (top right) shows live notifications
 - Go to Notifications in the sidebar for the full list
 - Mark notifications as read
 
 ### 9. Role Switching
+
 - Log out and log back in as a different role
 - Notice which menu items appear or disappear
 - Try accessing `/dashboard/audit` as a Receptionist — you should be blocked
 
 ### 10. Mobile / Tablet View
+
 - Resize your browser or test on a phone/tablet
 - The system is designed for clinic devices, including tablets with limited screen space
 
@@ -188,7 +201,7 @@ Here are the key areas we'd love your feedback on:
 When you leave a review or send feedback, these are the things that help us most:
 
 | Question | Why it matters |
-|---|---|
+| --- | --- |
 | Was it clear what each screen was for? | Helps us improve labels and layout |
 | Did anything confuse you or slow you down? | Reveals friction in real workflows |
 | Did role permissions feel right? | Confirms staff access is correct for clinical use |
