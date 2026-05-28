@@ -200,7 +200,7 @@ npm run db:restore backups/backup-<timestamp>.json
 
 ```
 
-2. **Revert Schema**
+1. **Revert Schema**
 
 ```bash
 cp prisma/schema-sqlite-backup.prisma prisma/schema.prisma
@@ -209,7 +209,7 @@ npm run prisma:migrate
 
 ```
 
-3. **Update Environment**
+1. **Update Environment**
 
 ```env
 DATABASE_URL="file:./prisma/dev.db"
@@ -219,6 +219,7 @@ DATABASE_URL="file:./prisma/dev.db"
 ## Production Deployment
 
 ### 1. Database Provider
+
 - **AWS RDS**: Managed PostgreSQL
 - **Google Cloud SQL**: Managed PostgreSQL
 - **Heroku Postgres**: Easy setup
