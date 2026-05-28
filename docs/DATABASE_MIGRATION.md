@@ -30,15 +30,18 @@ This guide walks through migrating from SQLite to PostgreSQL for production depl
 ### 1. Setup PostgreSQL
 
 #### Option A: Docker (Recommended)
+
 ```bash
 # Start PostgreSQL with Docker
 npm run docker:postgres
 
 # Or manually
 docker-compose -f docker-compose.postgres.yml up -d postgres
+
 ```
 
 #### Option B: Local Installation
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get install postgresql postgresql-contrib
@@ -53,6 +56,7 @@ CREATE DATABASE mamamtu;
 CREATE USER mamamtu WITH PASSWORD 'mamamtu123';
 GRANT ALL PRIVILEGES ON DATABASE mamamtu TO mamamtu;
 \q
+
 ```
 
 ### 2. Backup Current Data
@@ -60,14 +64,17 @@ GRANT ALL PRIVILEGES ON DATABASE mamamtu TO mamamtu;
 ```bash
 # Create backup before migration
 npm run db:backup
+
 ```
 
 ### 3. Update Environment Variables
 
 Create `.env.local` with PostgreSQL connection:
+
 ```env
 DATABASE_URL="postgresql://mamamtu:mamamtu123@localhost:5432/mamamtu"
 POSTGRES_DATABASE_URL="postgresql://mamamtu:mamamtu123@localhost:5432/mamamtu"
+
 ```
 
 ### 4. Run Migration
@@ -75,6 +82,7 @@ POSTGRES_DATABASE_URL="postgresql://mamamtu:mamamtu123@localhost:5432/mamamtu"
 ```bash
 # Run the migration script
 npm run prisma:migrate:postgres
+
 ```
 
 ### 5. Update Schema
@@ -89,6 +97,7 @@ npm run prisma:generate
 
 # Create initial migration
 npm run prisma:migrate
+
 ```
 
 ### 6. Verify Migration
@@ -101,6 +110,7 @@ npm run dev
 # - Users count
 # - Patients count
 # - Appointments count
+
 ```
 
 ## Migration Script Details
@@ -118,32 +128,39 @@ The migration script (`scripts/migrate-to-postgres.js`) handles:
 ## Key Differences in Schema
 
 ### Arrays
+
 ```sql
 -- SQLite (stored as JSON string)
 allergies TEXT DEFAULT '[]'
 
 -- PostgreSQL (native array)
 allergies String[]
+
 ```
 
 ### JSON Columns
+
 ```sql
 -- SQLite (TEXT column)
 vitals TEXT
 
 -- PostgreSQL (JSON column)
 vitals Json?
+
 ```
 
 ### UUID Support
+
 ```sql
 -- PostgreSQL has native UUID support
 id String @id @default(uuid())
+
 ```
 
 ## Testing the Migration
 
 ### 1. Test Environment
+
 ```bash
 # Create test database
 docker-compose -f docker-compose.postgres.yml up -d postgres pgadmin
@@ -151,9 +168,11 @@ docker-compose -f docker-compose.postgres.yml up -d postgres pgadmin
 # Access pgAdmin at http://localhost:5050
 # Email: admin@mamamtu.com
 # Password: admin123
+
 ```
 
 ### 2. Data Validation
+
 ```bash
 # Compare record counts
 node -e "
@@ -167,6 +186,7 @@ const postgres = new PrismaClient({datasources: {db: {provider: 'postgresql', ur
   console.log('Users:', {sqlite: sqliteUsers, postgres: postgresUsers});
 })();
 "
+
 ```
 
 ## Rollback Plan
@@ -174,20 +194,26 @@ const postgres = new PrismaClient({datasources: {db: {provider: 'postgresql', ur
 If migration fails:
 
 1. **Restore from Backup**
+
 ```bash
 npm run db:restore backups/backup-<timestamp>.json
+
 ```
 
 2. **Revert Schema**
+
 ```bash
 cp prisma/schema-sqlite-backup.prisma prisma/schema.prisma
 npm run prisma:generate
 npm run prisma:migrate
+
 ```
 
 3. **Update Environment**
+
 ```env
 DATABASE_URL="file:./prisma/dev.db"
+
 ```
 
 ## Production Deployment
@@ -199,29 +225,36 @@ DATABASE_URL="file:./prisma/dev.db"
 - **DigitalOcean**: Managed PostgreSQL
 
 ### 2. Connection Pooling
+
 ```env
 DATABASE_URL="postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeout=20"
+
 ```
 
 ### 3. Backups
+
 ```bash
 # Automated backups
 pg_dump mamamtu > backup.sql
 
 # For managed providers, use their backup features
+
 ```
 
 ## Performance Optimizations
 
 ### 1. Indexes
+
 ```sql
 -- Additional indexes for performance
 CREATE INDEX CONCURRENTLY idx_patients_search ON patients (last_name, first_name);
 CREATE INDEX CONCURRENTLY idx_appointments_range ON appointments (start_time, end_time);
 CREATE INDEX CONCURRENTLY idx_notifications_queue ON notifications (status, scheduled_for);
+
 ```
 
 ### 2. Connection Pool
+
 ```javascript
 // In lib/prisma.js
 const { PrismaClient } = require('@prisma/client');
@@ -247,6 +280,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = { prisma };
+
 ```
 
 ## Troubleshooting
@@ -269,6 +303,7 @@ module.exports = { prisma };
    - Use transactions
 
 ### Debug Commands
+
 ```bash
 # Check PostgreSQL status
 docker-compose -f docker-compose.postgres.yml ps postgres
@@ -285,6 +320,7 @@ docker-compose -f docker-compose.postgres.yml exec postgres psql -U mamamtu -d m
 # Check data
 SELECT COUNT(*) FROM users;
 SELECT COUNT(*) FROM patients;
+
 ```
 
 ## Next Steps
