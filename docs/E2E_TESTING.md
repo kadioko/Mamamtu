@@ -1,6 +1,6 @@
 # End-to-End Testing
 
-Last updated: 2026-05-07
+Last updated: 2026-05-28
 
 The project uses Playwright for browser-level smoke coverage.
 

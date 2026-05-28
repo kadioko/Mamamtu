@@ -1,6 +1,6 @@
 # Education System
 
-Last updated: 2026-05-07
+Last updated: 2026-05-28
 
 The education area is the public learning library for patients, families, and care teams.
 

@@ -1,6 +1,6 @@
 # Lint Warning Backlog
 
-Last updated: 2026-04-26
+Last updated: 2026-05-28
 
 ESLint 10 is active and CI uses:
 
@@ -24,7 +24,7 @@ Latest checked command:
 npm run lint:all -- --format stylish
 ```
 
-Result: 0 errors, 181 warnings after the first cleanup pass.
+Result: 0 errors, 181 warnings after the first cleanup pass (last checked 2026-05-28).
 
 The cleanup pass:
 

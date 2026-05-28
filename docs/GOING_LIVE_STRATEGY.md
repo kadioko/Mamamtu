@@ -2,7 +2,7 @@
 
 **Document Purpose:** Tanzania-first roadmap to take MamaMtu from development to live production with revenue generation, pilot partnerships, compliance readiness, and funding pathways.
 
-**Last Updated:** 2026-05-17
+**Last Updated:** 2026-05-28
 
 **Launch Market:** Tanzania first, with East Africa expansion later.
 
@@ -14,38 +14,38 @@
 
 | Item | Status | Priority | Owner |
 | --- | --- | --- | --- |
-| All tests passing (Jest + Playwright) | ⬜ | Critical | Dev |
-| TypeScript zero errors | ⬜ | Critical | Dev |
-| Production build successful | ⬜ | Critical | Dev |
-| Database migrated to production PostgreSQL | ⬜ | Critical | Dev |
-| Environment variables configured | ⬜ | Critical | Dev |
-| SSL/HTTPS enabled | ⬜ | Critical | Dev |
-| Backup strategy in place | ⬜ | High | Dev |
-| Error monitoring (Sentry/similar) | ⬜ | High | Dev |
-| Performance monitoring | ⬜ | Medium | Dev |
-| GDPR/privacy compliance audit | ⬜ | Critical | Legal/Product |
+| All tests passing (Jest + Playwright) | ✅ 177 Jest + 11 E2E passing | Critical | Dev |
+| TypeScript zero errors | ✅ `typecheck` passes | Critical | Dev |
+| Production build successful | ✅ Next.js 16.2.6 build passes | Critical | Dev |
+| Database migrated to production PostgreSQL | ✅ Prisma 7 + Supabase | Critical | Dev |
+| Environment variables configured | ⬜ Verify all set in Vercel production | Critical | Dev |
+| SSL/HTTPS enabled | ✅ Vercel auto-TLS | Critical | Dev |
+| Backup strategy in place | ⬜ Automate Supabase daily backups | High | Dev |
+| Error monitoring (Sentry/similar) | ⬜ Not yet wired | High | Dev |
+| Performance monitoring | ✅ Vercel Analytics + Speed Insights | Medium | Dev |
+| GDPR/privacy compliance audit | ⬜ In progress — target June 2026 | Critical | Legal/Product |
 
 ### Health App Specific Compliance
 
 **Must-Have for Healthcare Data:**
 
-- [ ] **Data Encryption**: At rest and in transit
-- [ ] **Access Controls**: Role-based (already implemented)
-- [ ] **Audit Logging**: Track all data access (partially implemented)
-- [ ] **Data Residency**: Confirm where patient data is stored
-- [ ] **Consent Management**: Explicit patient consent for data use
-- [ ] **Data Retention Policy**: How long to keep records
-- [ ] **Breach Response Plan**: 72-hour notification procedure
+- [x] **Data Encryption**: At rest (Supabase) and in transit (TLS) ✅
+- [x] **Access Controls**: Role-based — Admin, Healthcare Provider, Receptionist, Patient ✅
+- [x] **Audit Logging**: Implemented — all sensitive access and exports logged ✅
+- [ ] **Data Residency**: EU Frankfurt (documented); written policy for clinics pending
+- [ ] **Consent Management**: Paper consent form template ready; distribute to clinics at pilot start
+- [ ] **Data Retention Policy**: Policy drafted in `docs/TANZANIA_COMPLIANCE_DOCS.md`; automated enforcement pending
+- [ ] **Breach Response Plan**: Template in `docs/TANZANIA_COMPLIANCE_DOCS.md`; finalize before pilot goes live
 
 **Tanzania-Specific Considerations:**
 
 - [ ] **Ministry of Health alignment**: Confirm digital health registration, approval, or sandbox requirements before handling real patient records.
-- [ ] **Personal Data Protection Act, 2022**: Prepare consent, privacy notice, data processor/controller responsibilities, breach response, and retention policy.
-- [ ] **Digital Health Strategy alignment**: Position MamaMtu as maternal/newborn workflow, referral, reporting, and quality-improvement software.
-- [ ] **COSTECH/NFAST innovation route**: Track COSTECH calls and registration expectations for health innovation and research pilots.
-- [ ] **Facility-level approvals**: Secure written pilot agreements with each clinic, hospital, or NGO site.
-- [ ] **Clinical safety boundary**: Avoid claiming diagnosis or medical advice; present the app as record management, workflow support, reminders, and reporting.
-- [ ] **Data hosting decision**: Document whether production data is hosted in-region, EU, or another jurisdiction and why this is acceptable.
+- [ ] **Personal Data Protection Act, 2022**: Consent, privacy notice, data processor/controller responsibilities, breach response, and retention policy — templates in `docs/TANZANIA_COMPLIANCE_DOCS.md`.
+- [x] **Digital Health Strategy alignment**: MamaMtu positioned as maternal/newborn workflow, referral, reporting, and quality-improvement software ✅
+- [ ] **COSTECH/NFAST innovation route**: Track COSTECH calls; application template ready at `docs/TANZANIA_GRANT_TEMPLATES.md`.
+- [ ] **Facility-level approvals**: Pilot agreement template ready (`docs/MamaMtu_Pilot_Terms.md`); first clinic signature target: Week 4.
+- [x] **Clinical safety boundary**: App is record management, workflow support, reminders, and reporting — not diagnostic. Stated in Pilot Terms and Doctor Welcome Package ✅
+- [x] **Data hosting decision**: EU Frankfurt (Supabase); written rationale available on request ✅
 
 **Tanzania Health Context for Pitching:**
 

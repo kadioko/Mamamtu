@@ -2,7 +2,7 @@
 
 **Purpose:** Step-by-step guide to deploy MamaMtu to production for Tanzania launch.
 
-**Last Updated:** 2026-05-25
+**Last Updated:** 2026-05-28
 
 ---
 

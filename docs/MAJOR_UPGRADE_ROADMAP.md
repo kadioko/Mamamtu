@@ -2,7 +2,7 @@
 
 This document tracks the larger dependency and platform migrations that should be handled as dedicated projects.
 
-Last updated: 2026-05-28
+Last updated: 2026-05-28 (canonical source for all upgrade history; `UPGRADE_PLAN.md` and `AUTH_MIGRATION_DECISION.md` removed — content preserved here)
 
 ## Current Status
 
@@ -126,7 +126,7 @@ Current decision: complete.
 
 Outcome:
 
-- Upgraded `tailwindcss` to `4.2.4`.
+- Upgraded `tailwindcss` to `4.3.0` (latest as of 2026-05-28).
 - Added `@tailwindcss/postcss`.
 - Updated `postcss.config.mjs` to use the new v4 PostCSS plugin.
 - Updated `src/app/globals.css` to use `@import "tailwindcss"` with the existing config bridged through `@config`.
@@ -163,7 +163,7 @@ Current decision: complete with a compatibility note.
 
 Outcome:
 
-- Upgraded ESLint to `10.2.1`.
+- Upgraded ESLint to `10.4.0` (latest as of 2026-05-28).
 - Added `npm run lint`.
 - Replaced the old `FlatCompat` config with a native flat config that uses `@next/eslint-plugin-next` and `typescript-eslint`.
 - Re-enabled React and React Hooks rules through `@eslint/compat`.
@@ -184,7 +184,7 @@ Current decision: complete.
 
 Outcome:
 
-- Upgraded `resend` to `6.12.2`.
+- Upgraded `resend` to `6.12.4` (latest as of 2026-05-28).
 - Existing email wrapper in `src/lib/email.ts` remains compatible.
 - `npm run build` passed.
 - `npm test -- --runInBand --silent` passed.

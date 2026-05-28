@@ -1,6 +1,6 @@
 # Clinical Exports
 
-Last updated: 2026-05-07
+Last updated: 2026-05-28
 
 Clinical exports are available from `/dashboard/reports` for verified admin and healthcare-provider accounts.
 

@@ -1,6 +1,6 @@
 # Database Migration: SQLite to PostgreSQL
 
-Last updated: 2026-04-26
+Last updated: 2026-05-28 (retained as migration history and recovery reference — migration is complete)
 
 ## Current Status
 

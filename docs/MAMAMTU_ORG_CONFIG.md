@@ -49,61 +49,60 @@ Fill in these details to customize all compliance and outreach documents
 
 ## Compliance
 
-- **Data Protection Officer Assigned**: Yes - Godfrey Mariki (May 2026)
-- **Privacy Policy Published**: Not yet - target June 2026
-- **Patient Consent Process**: Paper forms initially (digital later)
-- **Breach Response Plan**: In progress - target June 2026
+- **Data Protection Officer Assigned**: Yes — Godfrey Mariki (interim, May 2026); formalize before pilot goes live
+- **Privacy Policy Published**: Not yet — target June 2026; template in `docs/TANZANIA_COMPLIANCE_DOCS.md`
+- **Patient Consent Process**: Paper forms ready (bilingual template); distribute at pilot start
+- **Breach Response Plan**: In progress — template in `docs/TANZANIA_COMPLIANCE_DOCS.md`; finalize before pilot goes live
 
 ## Funding Status
 
 - **Current Funding**: Bootstrapped
-- **Grants Applied**: None yet - preparing COSTECH application
-- **Pitch Deck Ready**: No - in development
-- **Demo Video Ready**: No - planned for June 2026
+- **Grants Applied**: None yet — COSTECH concept note template ready (`docs/TANZANIA_GRANT_TEMPLATES.md`)
+- **Pitch Deck Ready**: No — in development; target June 2026
+- **Demo Video Ready**: No — planned June 2026
 
 ---
 
 ## Quick Customization Checklist
 
-Fill in the bracketed [ ] sections above, then:
-
-- [ ] Replace all [bracketed placeholders] in TANZANIA_COMPLIANCE_DOCS.md
-- [ ] Replace all [bracketed placeholders] in TANZANIA_GRANT_TEMPLATES.md
-- [ ] Replace all [bracketed placeholders] in TANZANIA_PILOT_CLINICS.md
-- [ ] Customize email signatures
-- [ ] Set up business email (info@, privacy@ your domain)
-- [ ] Register domain name
-- [ ] Create simple landing page
-
----
-
-## Priority Actions (This Week)
-
-### Monday-Tuesday: Legal & Compliance
-
-- [ ] Fill in this config file
-- [ ] Customize compliance docs with your details
-- [ ] Print privacy notice poster for clinics
-- [ ] Prepare consent forms (English + Swahili)
-
-### Wednesday-Thursday: Technical
-
-- [ ] Purchase domain name (.co.tz preferred)
-- [ ] Set up Vercel production project
-- [ ] Configure production Supabase
-- [ ] Test deployment pipeline
-
-### Friday: Outreach
-
-- [ ] Identify 5 specific clinics to target
-- [ ] Customize email template
-- [ ] Send first 2-3 outreach emails
-- [ ] Join Tanzania Startup Association
+- [x] Org details filled in (name, registration, address, contacts)
+- [x] Health advisor added (Dr. Jade Wiles Jr., DHA)
+- [x] Pilot outreach targets identified — `docs/TANZANIA_PILOT_CLINICS.md`
+- [x] Pilot agreement template created — `docs/MamaMtu_Pilot_Terms.md`
+- [x] Bilingual pilot info sheet created — `docs/MamaMtu_Pilot_Info_Sheet_EN_SW.md`
+- [ ] Replace remaining [bracketed placeholders] in `docs/TANZANIA_COMPLIANCE_DOCS.md`
+- [ ] Replace remaining [bracketed placeholders] in `docs/TANZANIA_GRANT_TEMPLATES.md`
+- [ ] Set up business email addresses (`info@`, `privacy@` on custom domain)
+- [ ] Register domain name (`mamamtu.co.tz` preferred)
+- [ ] Create simple landing page on custom domain
 
 ---
 
-**Next Steps:**
+## Current Priority Actions (Week 3 of Pilot Outreach)
 
-1. Fill in the bracketed fields above
-2. I'll help you customize the actual compliance documents
-3. Then we'll create the production deployment checklist
+### Outreach (Active)
+
+- [ ] Follow up on all 14 sent emails (3–5 day cadence)
+- [ ] Schedule 2–3 demo meetings with interested clinics
+- [ ] Visit 1–2 clinics in person if email has gone cold
+- [ ] Close first signed pilot agreement by end of Week 4
+
+### Compliance (Before First Clinic Goes Live)
+
+- [ ] Finalize privacy policy — publish at `mamamtu.co.tz/privacy`
+- [ ] Print consent forms — 20 copies per clinic (English + Swahili)
+- [ ] Print privacy notice posters — A4 laminated, 1 per clinic
+- [ ] Finalize breach response plan
+
+### Technical
+
+- [ ] Register `mamamtu.co.tz` domain
+- [ ] Confirm all Vercel production env vars are set
+- [ ] Set up `info@` and `privacy@` email addresses on custom domain
+- [ ] Wire Playwright E2E into GitHub Actions (protected-preview CI)
+
+### Funding
+
+- [ ] Complete 10-slide Tanzania pitch deck
+- [ ] Record 2-minute demo video
+- [ ] Draft COSTECH concept note (template ready at `docs/TANZANIA_GRANT_TEMPLATES.md`)

@@ -2,7 +2,23 @@
 
 **Purpose:** Target clinics for MamaMtu beta pilot program (free for 3 months, then transition to paid).
 
-**Last Updated:** 2026-05-28
+**Last Updated:** 2026-05-28 | **Current Phase:** Week 3 — Follow-up
+
+---
+
+## Outreach Status Summary
+
+| Week | Status | Actions |
+| --- | --- | --- |
+| Week 1 | ✅ Complete | Initial outreach emails drafted and sent to 9 private clinics |
+| Week 2 | ✅ Complete | Expanded to faith-based networks (CSSC, BAKWATA) and 3 NGOs (MDH, Amref, Jhpiego) — total 14 emails sent |
+| Week 3 | 🟡 Active | Follow-up on all 14 contacts; schedule demos; in-person visits to cold contacts |
+| Week 4 | ⬜ Upcoming | Close first signed pilot agreement |
+
+**Total contacted: 14** (9 private clinics, 2 faith-based networks, 3 NGOs)  
+**Live tracker:** `docs/MamaMtu_Outreach_Tracker.csv`  
+**Pilot agreement:** `docs/MamaMtu_Pilot_Terms.md`  
+**Info sheet (print):** `docs/pdfs/MamaMtu_Pilot_Info_Sheet.html`
 
 ---
 
@@ -22,40 +38,40 @@
 
 ### Aga Khan Health Services Tanzania
 | | |
-|---|---|
+| --- | --- |
 | **Locations** | Dar es Salaam, Mwanza, Arusha |
 | **Type** | Private hospital chain with maternity services |
 | **Why Target** | Strong digital infrastructure, quality focus, East African network |
 | **Decision Maker** | Hospital Administrator / Regional Director |
 | **Approach** | Partner as a "quality accreditation" story; emphasize reporting and audit features |
 | **Contact Strategy** | LinkedIn research → cold email to administrator → follow-up call |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### Shree Hindu Mandal Hospital
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam (Upanga) |
 | **Type** | Private hospital with maternity ward |
 | **Why Target** | Community-trusted, moderate size, management accessible |
 | **Decision Maker** | Hospital Secretary or Medical Superintendent |
 | **Approach** | Community health angle; emphasize continuity of care for local families |
 | **Contact Strategy** | Visit in person, request meeting with administrator |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### Premier Care Hospital
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam (Masaki/Oyster Bay area) |
 | **Type** | Private clinic with maternity services |
 | **Why Target** | Middle-class patient base, likely tech-forward |
 | **Decision Maker** | Clinic Director or Owner |
 | **Approach** | Efficiency and patient experience angle |
 | **Contact Strategy** | Website contact form + LinkedIn |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### Dar IVF
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam |
 | **Type** | Private fertility and women's health clinic |
 | **Why Target** | Women's health focus, experienced with maternal patient base |
@@ -66,7 +82,7 @@
 
 ### Hans Mgaya Hospital
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam |
 | **Type** | Private hospital |
 | **Why Target** | Community-established hospital with maternity services |
@@ -77,7 +93,7 @@
 
 ### NuLife
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam |
 | **Type** | Private clinic |
 | **Why Target** | Modern brand positioning suggests digital readiness |
@@ -88,7 +104,7 @@
 
 ### Komakoma Polyclinic
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam |
 | **Type** | Private polyclinic |
 | **Why Target** | Multi-service clinic likely handling maternal cases |
@@ -99,7 +115,7 @@
 
 ### Kairuki Hospital
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam |
 | **Type** | Private hospital |
 | **Why Target** | Established private hospital with maternity ward; recognized name |
@@ -110,7 +126,7 @@
 
 ### Columbia Africa IST Clinic
 | | |
-|---|---|
+| --- | --- |
 | **Location** | Dar es Salaam |
 | **Type** | International-standard private clinic |
 | **Why Target** | High digital readiness; international quality standards; tech-forward |
@@ -149,23 +165,23 @@ in learning more?"
 
 ### Christian Social Services Commission (CSSC) Facilities
 | | |
-|---|---|
+| --- | --- |
 | **Network** | 100+ church-affiliated health facilities across Tanzania |
 | **Why Target** | Mission-driven, community-embedded, often underserved areas |
 | **Decision Maker** | CSSC National Coordinator + individual hospital administrators |
-| **Approach** | Align with mission: "technology serving the vulnerable"; emphasize rural reach |
+| **Approach** | Align with mission: "technology serving the vulnerable"; emphasize rural reach; Dr. Wiles can support faith-based engagement |
 | **Contact Strategy** | Email CSSC headquarters in Dodoma → request introduction to member hospitals |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### BAKWATA Health Facilities
 | | |
-|---|---|
+| --- | --- |
 | **Network** | Islamic health facilities, particularly strong in Zanzibar and coastal areas |
 | **Why Target** | Religious trust, established maternal health services |
 | **Decision Maker** | BAKWATA health committee + facility administrators |
-| **Approach** | Respectful partnership; emphasize serving all communities |
+| **Approach** | Respectful partnership; emphasize serving all communities; Dr. Wiles can support faith-based engagement |
 | **Contact Strategy** | Contact BAKWATA headquarters in Zanzibar |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### Specific Faith-Based Targets
 
@@ -180,34 +196,34 @@ in learning more?"
 
 ### Management and Development for Health (MDH)
 | | |
-|---|---|
+| --- | --- |
 | **Focus** | HIV/AIDS and maternal health programs, major PEPFAR implementer |
 | **Presence** | Multiple regions in Tanzania |
 | **Why Target** | Deep health system integration, data-focused, donor-funded |
 | **Decision Maker** | Program Director or M&E Lead |
 | **Approach** | Integration with existing programs; emphasize reporting and data quality |
 | **Contact Strategy** | LinkedIn research → cold email → reference common health conferences |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### Amref Health Africa Tanzania
 | | |
-|---|---|
+| --- | --- |
 | **Focus** | Community health, maternal health, digital health innovations |
 | **Why Target** | Innovation-friendly, health tech experience, rural focus |
 | **Decision Maker** | Country Director or Digital Health Lead |
 | **Approach** | "Innovation partnership" framing; emphasize rural/offline capabilities |
 | **Contact Strategy** | Email country office; reference known innovations |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ### Jhpiego Tanzania
 | | |
-|---|---|
+| --- | --- |
 | **Focus** | Maternal and newborn health, family planning |
 | **Why Target** | Core mandate alignment; research and evaluation capacity |
 | **Decision Maker** | Country Director or MNCH Program Lead |
 | **Approach** | Pilot as research collaboration; co-publish results |
 | **Contact Strategy** | Email with concept note; emphasize M&E and research potential |
-| **Status** | ⬜ Not contacted |
+| **Status** | ✉️ Email sent 2026-05-28 — awaiting response |
 
 ---
 

@@ -1,6 +1,6 @@
 # PostgreSQL Baseline Migration
 
-Last updated: 2026-04-26
+Last updated: 2026-05-28
 
 A clean PostgreSQL baseline SQL file has been generated at:
 

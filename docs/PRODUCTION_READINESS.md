@@ -1,6 +1,6 @@
 # Production Readiness
 
-Last updated: 2026-05-07
+Last updated: 2026-05-28
 
 Use this checklist before preview promotion or production deploys.
 
