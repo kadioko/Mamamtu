@@ -43,6 +43,49 @@ Check the public health endpoint:
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob uploads |
 | `RESEND_API_KEY` | Real email delivery |
 
+## Supabase Keepalive (Free Tier)
+
+Supabase free-tier projects **auto-pause after 7 days of inactivity**. When paused, the database rejects all connections and users cannot log in.
+
+Two keepalive mechanisms are active:
+
+### 1. Vercel Cron Job (server-side)
+
+`vercel.json` schedules a cron that hits `/api/ping` every 3 days at 08:00 UTC:
+
+```json
+"crons": [{ "path": "/api/ping", "schedule": "0 8 */3 * *" }]
+```
+
+`/api/ping` runs `SELECT 1` against the database and returns `200 { ok: true }` when healthy, `503` when unreachable. Vercel crons require the **Pro or Hobby plan** — if the project is on the free Vercel plan, use UptimeRobot below instead.
+
+### 2. UptimeRobot Monitor (external, recommended)
+
+Set up a free UptimeRobot monitor at <https://uptimerobot.com>:
+
+1. Sign up free at <https://uptimerobot.com>
+2. **Add New Monitor** → type: **HTTP(s)**
+3. **Friendly Name:** MamaMtu DB Keepalive
+4. **URL:** `https://mamamtu.vercel.app/api/ping`
+5. **Monitoring Interval:** every 5 minutes
+6. Save — UptimeRobot pings every 5 minutes, which keeps Supabase active indefinitely
+
+UptimeRobot also sends an email alert if the ping fails (database down or app error), giving early warning of any outage.
+
+### Re-seeding after an accidental pause
+
+If the project pauses anyway and users cannot log in, restore test accounts by calling:
+
+```bash
+curl -X POST https://mamamtu.vercel.app/api/seed \
+  -H "x-seed-token: <SEED_DATABASE_TOKEN from .env>" \
+  -H "Content-Type: application/json"
+```
+
+This upserts all 4 test accounts with `emailVerified` and `isActive: true`.
+
+---
+
 ## Supabase Pooler Note
 
 Use the transaction pooler URL:

@@ -4,5 +4,11 @@
   "framework": "nextjs",
   "env": {
     "SKIP_ENV_VALIDATION": "true"
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/ping",
+      "schedule": "0 8 */3 * *"
+    }
+  ]
 }
