@@ -79,6 +79,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.15",
+    "@sentry/nextjs": "^10.56.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/socket.io-client": "^1.4.36",
     "@upstash/redis": "^1.37.0",

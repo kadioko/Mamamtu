@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,8 +17,7 @@ export default function Error({
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Application error:', error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (
@@ -35,9 +35,7 @@ export default function Error({
         <CardContent className="space-y-4">
           {process.env.NODE_ENV === 'development' && (
             <div className="rounded-md bg-muted p-4 overflow-auto max-h-48">
-              <p className="text-sm font-mono text-destructive">
-                {error.message}
-              </p>
+              <p className="text-sm font-mono text-destructive">{error.message}</p>
               {error.digest && (
                 <p className="mt-2 text-xs text-muted-foreground">
                   {t('errors.errorId')} {error.digest}
@@ -45,14 +43,14 @@ export default function Error({
               )}
             </div>
           )}
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
             <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="mr-2 h-4 w-4" />
               {t('errors.tryAgain')}
             </Button>
             <Button
-              onClick={() => window.location.href = '/'}
+              onClick={() => { window.location.href = '/'; }}
               className="flex-1"
               variant="outline"
             >

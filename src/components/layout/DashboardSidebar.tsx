@@ -57,7 +57,7 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     titleKey: 'sidebar.appointments',
-    href: '/dashboard/appointments',
+    href: '/appointments',
     icon: Calendar,
     gradient: 'radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(147,51,234,0.08) 55%, rgba(126,34,206,0) 100%)',
     iconColor: 'text-violet-500',
