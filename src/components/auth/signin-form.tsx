@@ -12,19 +12,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Icons } from '@/components/ui/icons';
-
-const signInSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
-
-type SignInValues = z.infer<typeof signInSchema>;
+import { useTranslation } from '@/lib/i18n';
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard';
+  const { t } = useTranslation();
+
+  const signInSchema = z.object({
+    email: z.string().email(t('auth.validation.emailInvalid')),
+    password: z.string().min(1, t('auth.validation.passwordRequired')),
+  });
+
+  type SignInValues = z.infer<typeof signInSchema>;
 
   const {
     register,
@@ -48,7 +50,7 @@ export function SignInForm() {
       const userData = await userCheck.json();
 
       if (userCheck.status === 404) {
-        throw new Error('No account found with this email address');
+        throw new Error(t('auth.errors.noAccount'));
       }
 
       if (userData && !userData.emailVerified) {
@@ -64,7 +66,7 @@ export function SignInForm() {
 
       if (result?.error) {
         if (result.error === 'CredentialsSignin') {
-          throw new Error('Invalid email or password');
+          throw new Error(t('auth.errors.invalidCredentials'));
         }
         throw new Error(result.error);
       }
@@ -77,10 +79,10 @@ export function SignInForm() {
         if (error.message === 'email-not-verified') {
           const emailValue = getValues('email');
           toast({
-            title: 'Email Not Verified',
+            title: t('auth.emailNotVerified'),
             description: (
               <div>
-                <p>Please verify your email address before signing in.</p>
+                <p>{t('auth.emailNotVerifiedDesc')}</p>
                 <p className="mt-2">
                   <button
                     className="font-medium text-primary hover:underline"
@@ -93,22 +95,22 @@ export function SignInForm() {
                         });
                         if (res.ok) {
                           toast({
-                            title: 'Verification Email Sent',
-                            description: 'Please check your email for the verification link.',
+                            title: t('auth.verificationSent'),
+                            description: t('auth.verificationSentDesc'),
                           });
                         } else {
-                          throw new Error('Failed to resend verification email');
+                          throw new Error(t('auth.resendFailed'));
                         }
                       } catch {
                         toast({
-                          title: 'Error',
-                          description: 'Failed to resend verification email. Please try again later.',
+                          title: t('common.error'),
+                          description: t('auth.resendFailedDesc'),
                           variant: 'destructive',
                         });
                       }
                     }}
                   >
-                    Resend verification email
+                    {t('auth.resendVerification')}
                   </button>
                 </p>
               </div>
@@ -117,15 +119,15 @@ export function SignInForm() {
           });
         } else {
           toast({
-            title: 'Error',
+            title: t('common.error'),
             description: error.message,
             variant: 'destructive',
           });
         }
       } else {
         toast({
-          title: 'Error',
-          description: 'An error occurred during sign in',
+          title: t('common.error'),
+          description: t('auth.signInError'),
           variant: 'destructive',
         });
       }
@@ -140,8 +142,8 @@ export function SignInForm() {
       await signIn(provider, { callbackUrl });
     } catch {
       toast({
-        title: 'Error',
-        description: `Failed to sign in with ${provider}. Please try again.`,
+        title: t('common.error'),
+        description: t('auth.errors.oauthError').replace('{provider}', provider),
         variant: 'destructive',
       });
     } finally {
@@ -154,10 +156,10 @@ export function SignInForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-1">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -172,17 +174,17 @@ export function SignInForm() {
           </div>
           <div className="grid gap-1">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('auth.password')}</Label>
               <a
                 href="/auth/forgot-password"
                 className="text-sm text-primary hover:underline"
               >
-                Forgot password?
+                {t('auth.forgotPassword')}
               </a>
             </div>
             <Input
               id="password"
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               type="password"
               autoComplete="current-password"
               disabled={isLoading}
@@ -197,7 +199,7 @@ export function SignInForm() {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign In
+            {t('auth.signin.button')}
           </Button>
         </div>
       </form>
@@ -207,7 +209,7 @@ export function SignInForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            {t('auth.orContinueWith')}
           </span>
         </div>
       </div>
@@ -223,7 +225,7 @@ export function SignInForm() {
           ) : (
             <Icons.google className="mr-2 h-4 w-4" />
           )}
-          Google
+          {t('auth.google')}
         </Button>
         <Button
           variant="outline"
@@ -236,7 +238,7 @@ export function SignInForm() {
           ) : (
             <Icons.github className="mr-2 h-4 w-4" />
           )}
-          GitHub
+          {t('auth.github')}
         </Button>
       </div>
     </div>

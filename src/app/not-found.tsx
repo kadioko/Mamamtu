@@ -4,10 +4,13 @@ import Link from 'next/link';
 import { FileQuestion, Home, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="max-w-lg w-full">
@@ -18,9 +21,9 @@ export default function NotFound() {
           <CardTitle className="text-6xl font-bold text-muted-foreground/30">
             404
           </CardTitle>
-          <CardTitle className="text-2xl mt-2">Page Not Found</CardTitle>
+          <CardTitle className="text-2xl mt-2">{t('errors.pageNotFound')}</CardTitle>
           <CardDescription>
-            The page you are looking for does not exist or has been moved.
+            {t('errors.pageNotFoundDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -28,7 +31,7 @@ export default function NotFound() {
             <Button asChild className="flex-1" variant="default">
               <Link href="/">
                 <Home className="mr-2 h-4 w-4" />
-                Go Home
+                {t('errors.goHome')}
               </Link>
             </Button>
             <Button
@@ -37,7 +40,7 @@ export default function NotFound() {
               variant="outline"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Go Back
+              {t('errors.goBack')}
             </Button>
           </div>
         </CardContent>

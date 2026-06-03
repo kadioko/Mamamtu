@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { Patient, PatientsResponse } from '@/types/patient';
 import { getPatients, deletePatient } from '@/services/patientService';
+import { useTranslation } from '@/lib/i18n';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -39,6 +40,7 @@ export function PatientList({
   basePath = '/patients',
   readOnly = false,
 }: PatientListProps) {
+  const { t } = useTranslation();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(propLoading);
   const [error, setError] = useState<string | null>(null);
@@ -94,13 +96,13 @@ export function PatientList({
         totalPages: data.pagination.totalPages,
       });
     } catch (err) {
-      setError('Failed to load patients');
+      setError(t('patients.loadFailed'));
       console.error(err);
-      toast.error('Failed to load patients');
+      toast.error(t('patients.loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, internalSearchTerm, onDataLoaded]);
+  }, [pagination.page, pagination.limit, internalSearchTerm, onDataLoaded, t]);
 
   useEffect(() => {
     fetchPatients();
@@ -127,14 +129,14 @@ export function PatientList({
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this patient?')) {
+    if (window.confirm(t('patients.deleteConfirm'))) {
       try {
         await deletePatient(id);
-        toast.success('Patient deleted successfully');
+        toast.success(t('patients.deleteSuccess'));
         fetchPatients();
       } catch (error) {
         console.error('Error deleting patient:', error);
-        toast.error('Failed to delete patient');
+        toast.error(t('patients.deleteFailed'));
       }
     }
   };
@@ -147,7 +149,7 @@ export function PatientList({
         <div className="flex-1 max-w-md">
           <Input
             type="search"
-            placeholder="Search patients..."
+            placeholder={t('patients.searchPatients')}
             value={internalSearchTerm}
             onChange={handleSearchChange}
             className="w-full"
@@ -157,22 +159,22 @@ export function PatientList({
           <Link href={`${basePath}/new` as any}>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              New Patient
+              {t('patients.newPatient')}
             </Button>
           </Link>
         )}
       </div>
 
       {loading ? (
-        <div>Loading patients...</div>
+        <div>{t('patients.loading')}</div>
       ) : error ? (
         <div className="text-red-500">{error}</div>
       ) : patients.length === 0 ? (
         <div className="text-center py-8">
-          <p>No patients found</p>
+          <p>{t('patients.noPatients')}</p>
           {!readOnly && (
             <Link href={`${basePath}/new` as any}>
-              <Button variant="link">Add your first patient</Button>
+              <Button variant="link">{t('patients.addFirst')}</Button>
             </Link>
           )}
         </div>
@@ -182,11 +184,11 @@ export function PatientList({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Last Visit</TableHead>
-                  <TableHead className="w-[120px]">Actions</TableHead>
+                  <TableHead>{t('patients.columnName')}</TableHead>
+                  <TableHead>{t('patients.columnId')}</TableHead>
+                  <TableHead>{t('patients.columnPhone')}</TableHead>
+                  <TableHead>{t('patients.columnLastVisit')}</TableHead>
+                  <TableHead className="w-[120px]">{t('patients.columnActions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -200,10 +202,10 @@ export function PatientList({
                         {`${patient.firstName} ${patient.lastName}`}
                       </Link>
                     </TableCell>
-                    <TableCell>{patient.patientId || 'N/A'}</TableCell>
-                    <TableCell>{patient.phone || 'N/A'}</TableCell>
+                    <TableCell>{patient.patientId || t('common.notAvailable')}</TableCell>
+                    <TableCell>{patient.phone || t('common.notAvailable')}</TableCell>
                     <TableCell>
-                      {patient.lastVisit ? new Date(patient.lastVisit).toLocaleDateString() : 'N/A'}
+                      {patient.lastVisit ? new Date(patient.lastVisit).toLocaleDateString() : t('common.notAvailable')}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -211,7 +213,7 @@ export function PatientList({
                           <Button
                             variant="ghost"
                             size="icon"
-                            aria-label="View patient"
+                            aria-label={t('patients.viewButton')}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -222,7 +224,7 @@ export function PatientList({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                aria-label="Edit patient"
+                                aria-label={t('patients.editButton')}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
@@ -231,7 +233,7 @@ export function PatientList({
                               variant="ghost"
                               size="icon"
                               onClick={() => handleDelete(patient.id)}
-                              aria-label="Delete patient"
+                              aria-label={t('patients.deleteButton')}
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
@@ -255,10 +257,12 @@ export function PatientList({
             onClick={() => handleGoToPage(Math.max(1, pagination.page - 1))}
             disabled={pagination.page === 1}
           >
-            Previous
+            {t('common.previous')}
           </Button>
           <span className="text-sm text-gray-600">
-            Page {pagination.page} of {pagination.totalPages}
+            {t('common.pagination')
+              .replace('{page}', String(pagination.page))
+              .replace('{totalPages}', String(pagination.totalPages))}
           </span>
           <Button
             variant="outline"
@@ -266,7 +270,7 @@ export function PatientList({
             onClick={() => handleGoToPage(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
           >
-            Next
+            {t('common.next')}
           </Button>
         </div>
       )}

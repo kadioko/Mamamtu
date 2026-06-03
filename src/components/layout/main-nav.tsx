@@ -7,53 +7,57 @@ import { MenuBar } from '@/components/ui/glow-menu';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { BookOpen, Calendar, Heart, LayoutDashboard, Menu, Shield, Users, X } from 'lucide-react';
 import { useState } from 'react';
 
-const navLinks = [
-  {
-    href: '/dashboard',
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-    gradient: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, rgba(37,99,235,0.1) 50%, rgba(29,78,216,0) 100%)',
-    iconColor: 'text-blue-500',
-  },
-  {
-    href: '/appointments',
-    label: 'Appointments',
-    icon: Calendar,
-    gradient: 'radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(147,51,234,0.08) 50%, rgba(126,34,206,0) 100%)',
-    iconColor: 'text-violet-500',
-  },
-  {
-    href: '/dashboard/patients',
-    label: 'Patients',
-    icon: Users,
-    gradient: 'radial-gradient(circle, rgba(236,72,153,0.2) 0%, rgba(219,39,119,0.08) 50%, rgba(190,24,93,0) 100%)',
-    iconColor: 'text-pink-500',
-  },
-  {
-    href: '/education',
-    label: 'Education',
-    icon: BookOpen,
-    gradient: 'radial-gradient(circle, rgba(34,197,94,0.2) 0%, rgba(22,163,74,0.08) 50%, rgba(21,128,61,0) 100%)',
-    iconColor: 'text-green-500',
-  },
-];
-
 export function MainNav() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const { t } = useTranslation();
   const isLoading = status === 'loading';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    {
+      href: '/dashboard',
+      label: t('nav.dashboard'),
+      icon: LayoutDashboard,
+      gradient: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, rgba(37,99,235,0.1) 50%, rgba(29,78,216,0) 100%)',
+      iconColor: 'text-blue-500',
+    },
+    {
+      href: '/appointments',
+      label: t('nav.appointments'),
+      icon: Calendar,
+      gradient: 'radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(147,51,234,0.08) 50%, rgba(126,34,206,0) 100%)',
+      iconColor: 'text-violet-500',
+    },
+    {
+      href: '/dashboard/patients',
+      label: t('nav.patients'),
+      icon: Users,
+      gradient: 'radial-gradient(circle, rgba(236,72,153,0.2) 0%, rgba(219,39,119,0.08) 50%, rgba(190,24,93,0) 100%)',
+      iconColor: 'text-pink-500',
+    },
+    {
+      href: '/education',
+      label: t('nav.education'),
+      icon: BookOpen,
+      gradient: 'radial-gradient(circle, rgba(34,197,94,0.2) 0%, rgba(22,163,74,0.08) 50%, rgba(21,128,61,0) 100%)',
+      iconColor: 'text-green-500',
+    },
+  ];
+
   const desktopMenuItems = session?.user.role === 'ADMIN'
     ? [
         ...navLinks,
         {
           href: '/admin',
-          label: 'Admin',
+          label: t('nav.admin'),
           icon: Shield,
           gradient: 'radial-gradient(circle, rgba(249,115,22,0.2) 0%, rgba(234,88,12,0.08) 50%, rgba(194,65,12,0) 100%)',
           iconColor: 'text-orange-500',
@@ -76,6 +80,7 @@ export function MainNav() {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           
           {session && <NotificationBell />}
@@ -92,17 +97,17 @@ export function MainNav() {
               </Link>
               <form action="/api/auth/signout" method="POST">
                 <Button variant="outline" size="sm">
-                  Sign out
+                  {t('nav.signOut')}
                 </Button>
               </form>
             </div>
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <Button variant="ghost" size="sm" asChild>
-                <Link href={'/auth/signin' as any}>Sign in</Link>
+                <Link href={'/auth/signin' as any}>{t('nav.signIn')}</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link href={'/auth/register' as any}>Get Started</Link>
+                <Link href={'/auth/register' as any}>{t('nav.getStarted')}</Link>
               </Button>
             </div>
           )}
@@ -112,7 +117,7 @@ export function MainNav() {
             size="icon"
             className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={t('nav.toggleMenu')}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -155,12 +160,12 @@ export function MainNav() {
               <div className="mt-4 flex flex-col gap-2 border-t border-border/60 pt-4">
                 <Button variant="outline" asChild>
                   <Link href={'/auth/signin' as any} onClick={() => setMobileMenuOpen(false)}>
-                    Sign in
+                    {t('nav.signIn')}
                   </Link>
                 </Button>
                 <Button asChild>
                   <Link href={'/auth/register' as any} onClick={() => setMobileMenuOpen(false)}>
-                    Get Started
+                    {t('nav.getStarted')}
                   </Link>
                 </Button>
               </div>
@@ -169,11 +174,11 @@ export function MainNav() {
             {session && (
               <div className="mt-4 rounded-2xl border border-border/60 bg-background/45 p-4 shadow-[0_10px_28px_-20px_rgba(0,0,0,0.45)] backdrop-blur-xl">
                 <p className="mb-2 text-sm text-muted-foreground">
-                  Signed in as {session.user.name || session.user.email}
+                  {t('nav.signedInAs')} {session.user.name || session.user.email}
                 </p>
                 <form action="/api/auth/signout" method="POST">
                   <Button variant="outline" className="w-full rounded-xl">
-                    Sign out
+                    {t('nav.signOut')}
                   </Button>
                 </form>
               </div>

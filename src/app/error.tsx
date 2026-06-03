@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 export default function Error({
   error,
@@ -12,6 +13,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useTranslation();
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Application error:', error);
@@ -24,9 +27,9 @@ export default function Error({
           <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
             <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
-          <CardTitle className="text-2xl">Something went wrong</CardTitle>
+          <CardTitle className="text-2xl">{t('errors.somethingWentWrong')}</CardTitle>
           <CardDescription>
-            We apologize for the inconvenience. An unexpected error has occurred.
+            {t('errors.unexpectedError')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -37,7 +40,7 @@ export default function Error({
               </p>
               {error.digest && (
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Error ID: {error.digest}
+                  {t('errors.errorId')} {error.digest}
                 </p>
               )}
             </div>
@@ -46,7 +49,7 @@ export default function Error({
           <div className="flex flex-col sm:flex-row gap-3">
             <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="mr-2 h-4 w-4" />
-              Try Again
+              {t('errors.tryAgain')}
             </Button>
             <Button
               onClick={() => window.location.href = '/'}
@@ -54,7 +57,7 @@ export default function Error({
               variant="outline"
             >
               <Home className="mr-2 h-4 w-4" />
-              Go Home
+              {t('errors.goHome')}
             </Button>
           </div>
         </CardContent>

@@ -6,6 +6,7 @@ import './globals.css';
 import { WebSocketProvider } from '@/components/providers/WebSocketProvider';
 import { SessionProvider } from '@/components/providers/SessionProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { I18nProvider } from '@/components/providers/I18nProvider';
 import { MainNav } from '@/components/layout/main-nav';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui';
@@ -26,7 +27,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'MamaMtu - Maternal & Newborn Health Support',
   description: 'Comprehensive healthcare management for mothers and newborns',
-  keywords: ['maternal health', 'newborn care', 'healthcare', 'Kenya', 'prenatal care'],
+  keywords: ['maternal health', 'newborn care', 'healthcare', 'Tanzania', 'prenatal care', 'afya ya mama', 'mtoto mchanga'],
   authors: [{ name: 'MamaMtu Team' }],
   manifest: '/manifest.json',
   icons: {
@@ -53,20 +54,22 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <SessionProvider>
-            <WebSocketProvider>
-              <div className="relative flex min-h-screen flex-col">
-                <MainNav />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-              </div>
-              <Toaster />
-              <Analytics />
-              <SpeedInsights />
-            </WebSocketProvider>
-          </SessionProvider>
+          <I18nProvider>
+            <SessionProvider>
+              <WebSocketProvider>
+                <div className="relative flex min-h-screen flex-col">
+                  <MainNav />
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+                <Toaster />
+                <Analytics />
+                <SpeedInsights />
+              </WebSocketProvider>
+            </SessionProvider>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,5 +1,8 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
 import { 
   Heart, 
   Calendar, 
@@ -13,56 +16,58 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
-const features = [
-  {
-    icon: Calendar,
-    title: 'Easy Appointments',
-    description: 'Book and manage appointments with healthcare providers. Get reminders and never miss a visit.',
-  },
-  {
-    icon: FileText,
-    title: 'Health Records',
-    description: 'Access complete medical history, lab results, and prescriptions in one secure place.',
-  },
-  {
-    icon: Bell,
-    title: 'Smart Notifications',
-    description: 'Receive timely reminders for appointments, medications, and important health updates.',
-  },
-  {
-    icon: Activity,
-    title: 'Vitals Tracking',
-    description: 'Monitor vital signs and health metrics with easy-to-read charts and trends.',
-  },
-  {
-    icon: Shield,
-    title: 'Secure & Private',
-    description: 'Your health data is protected with enterprise-grade security and encryption.',
-  },
-  {
-    icon: Users,
-    title: 'Care Team',
-    description: 'Connect with your healthcare providers and receive personalized care plans.',
-  },
-];
-
-const stats = [
-  { value: '10,000+', label: 'Mothers Served' },
-  { value: '50+', label: 'Healthcare Partners' },
-  { value: '98%', label: 'Satisfaction Rate' },
-  { value: '24/7', label: 'Support Available' },
-];
-
-const benefits = [
-  'Track your pregnancy journey week by week',
-  'Get personalized health recommendations',
-  'Access educational resources anytime',
-  'Connect with experienced healthcare providers',
-  'Manage all family health records',
-  'Receive emergency alerts and guidance',
-];
-
 export default function Home() {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      icon: Calendar,
+      title: t('home.features.appointments.title'),
+      description: t('home.features.appointments.desc'),
+    },
+    {
+      icon: FileText,
+      title: t('home.features.records.title'),
+      description: t('home.features.records.desc'),
+    },
+    {
+      icon: Bell,
+      title: t('home.features.notifications.title'),
+      description: t('home.features.notifications.desc'),
+    },
+    {
+      icon: Activity,
+      title: t('home.features.vitals.title'),
+      description: t('home.features.vitals.desc'),
+    },
+    {
+      icon: Shield,
+      title: t('home.features.security.title'),
+      description: t('home.features.security.desc'),
+    },
+    {
+      icon: Users,
+      title: t('home.features.careTeam.title'),
+      description: t('home.features.careTeam.desc'),
+    },
+  ];
+
+  const stats = [
+    { value: t('home.stats.mothers.value'), label: t('home.stats.mothers.label') },
+    { value: t('home.stats.partners.value'), label: t('home.stats.partners.label') },
+    { value: t('home.stats.satisfaction.value'), label: t('home.stats.satisfaction.label') },
+    { value: t('home.stats.support.value'), label: t('home.stats.support.label') },
+  ];
+
+  const benefits = [
+    t('home.benefits.item1'),
+    t('home.benefits.item2'),
+    t('home.benefits.item3'),
+    t('home.benefits.item4'),
+    t('home.benefits.item5'),
+    t('home.benefits.item6'),
+  ];
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -71,31 +76,30 @@ export default function Home() {
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Heart className="h-4 w-4" />
-              <span>Caring for mothers & newborns</span>
+              <span>{t('home.badge')}</span>
             </div>
             
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              Your Partner in{' '}
+              {t('home.hero.title').replace(t('home.hero.titleHighlight'), '')}{' '}
               <span className="bg-gradient-to-r from-primary to-pink-500 bg-clip-text text-transparent">
-                Maternal Health
+                {t('home.hero.titleHighlight')}
               </span>
             </h1>
             
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-              Comprehensive healthcare management for mothers and newborns. Schedule appointments, 
-              track health records, receive timely reminders, and get the care you deserve.
+              {t('home.hero.description')}
             </p>
             
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" className="gap-2 text-base" asChild>
                 <Link href="/auth/register">
-                  Get Started Free
+                  {t('home.hero.cta1')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="text-base" asChild>
                 <Link href="/auth/signin">
-                  Sign In
+                  {t('home.hero.cta2')}
                 </Link>
               </Button>
             </div>
@@ -125,10 +129,10 @@ export default function Home() {
       <section className="container py-20 md:py-28">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            Everything You Need for Better Health
+            {t('home.features.title')}
           </h2>
           <p className="mt-4 text-muted-foreground">
-            A complete platform designed to support you throughout your maternal health journey.
+            {t('home.features.subtitle')}
           </p>
         </div>
 
@@ -154,11 +158,10 @@ export default function Home() {
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             <div>
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Why Choose MamaMtu?
+                {t('home.benefits.title')}
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                We&apos;re committed to providing the best possible care for mothers and their babies. 
-                Our platform makes it easy to stay on top of your health.
+                {t('home.benefits.description')}
               </p>
               
               <ul className="mt-8 space-y-4">
@@ -172,7 +175,7 @@ export default function Home() {
               
               <Button className="mt-8 gap-2" size="lg" asChild>
                 <Link href="/auth/register">
-                  Start Your Journey
+                  {t('home.benefits.cta')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -183,23 +186,23 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
                   <div className="rounded-xl bg-background p-4 shadow-lg">
                     <Clock className="h-8 w-8 text-primary mb-2" />
-                    <div className="text-sm font-medium">Next Appointment</div>
-                    <div className="text-xs text-muted-foreground">Tomorrow, 10:00 AM</div>
+                    <div className="text-sm font-medium">{t('home.demo.nextAppointment')}</div>
+                    <div className="text-xs text-muted-foreground">{t('home.demo.appointmentTime')}</div>
                   </div>
                   <div className="rounded-xl bg-background p-4 shadow-lg">
                     <Activity className="h-8 w-8 text-green-500 mb-2" />
-                    <div className="text-sm font-medium">Vitals</div>
-                    <div className="text-xs text-muted-foreground">All Normal</div>
+                    <div className="text-sm font-medium">{t('home.demo.vitals')}</div>
+                    <div className="text-xs text-muted-foreground">{t('home.demo.vitalsStatus')}</div>
                   </div>
                   <div className="rounded-xl bg-background p-4 shadow-lg">
                     <Bell className="h-8 w-8 text-yellow-500 mb-2" />
-                    <div className="text-sm font-medium">Reminders</div>
-                    <div className="text-xs text-muted-foreground">2 Active</div>
+                    <div className="text-sm font-medium">{t('home.demo.reminders')}</div>
+                    <div className="text-xs text-muted-foreground">{t('home.demo.remindersCount')}</div>
                   </div>
                   <div className="rounded-xl bg-background p-4 shadow-lg">
                     <FileText className="h-8 w-8 text-blue-500 mb-2" />
-                    <div className="text-sm font-medium">Records</div>
-                    <div className="text-xs text-muted-foreground">Up to date</div>
+                    <div className="text-sm font-medium">{t('home.demo.records')}</div>
+                    <div className="text-xs text-muted-foreground">{t('home.demo.recordsStatus')}</div>
                   </div>
                 </div>
               </div>
@@ -210,24 +213,23 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="container py-20 md:py-28">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            Ready to Take Control of Your Health?
+            {t('home.cta.title')}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Join thousands of mothers who trust MamaMtu for their maternal healthcare needs.
-            Get started today - it&apos;s free!
+            {t('home.cta.description')}
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button size="lg" className="gap-2 text-base" asChild>
               <Link href="/auth/register">
-                Create Free Account
+                {t('home.cta.button1')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="text-base" asChild>
               <Link href="/education">
-                Learn More
+                {t('home.cta.button2')}
               </Link>
             </Button>
           </div>

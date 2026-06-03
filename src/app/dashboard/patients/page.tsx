@@ -2,10 +2,12 @@
 
 import { useSession } from 'next-auth/react';
 import { PatientList } from '@/components/patients/PatientList';
+import { useTranslation } from '@/lib/i18n';
 import type { UserRole } from '@/types/roles';
 
 export default function PatientsPage() {
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const userRole = (session?.user as { role?: UserRole } | undefined)?.role;
   const readOnly = userRole === 'RECEPTIONIST';
 
@@ -13,9 +15,9 @@ export default function PatientsPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Patients</h1>
+          <h1 className="text-3xl font-bold">{t('patients.title')}</h1>
           <p className="text-muted-foreground">
-            {readOnly ? 'View patient records' : 'Manage patient records'}
+            {readOnly ? t('patients.viewOnly') : t('patients.manage')}
           </p>
         </div>
       </div>

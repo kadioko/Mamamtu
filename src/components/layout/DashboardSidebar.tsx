@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 import type { UserRole } from '@/types/roles';
 import {
   LayoutDashboard,
@@ -30,7 +31,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface SidebarItem {
-  title: string;
+  titleKey: string;
   href: string;
   icon: React.ElementType;
   gradient: string;
@@ -40,14 +41,14 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   {
-    title: 'Overview',
+    titleKey: 'sidebar.overview',
     href: '/dashboard',
     icon: LayoutDashboard,
     gradient: 'radial-gradient(circle, rgba(59,130,246,0.24) 0%, rgba(37,99,235,0.1) 55%, rgba(29,78,216,0) 100%)',
     iconColor: 'text-blue-500',
   },
   {
-    title: 'Patients',
+    titleKey: 'sidebar.patients',
     href: '/dashboard/patients',
     icon: Users,
     gradient: 'radial-gradient(circle, rgba(236,72,153,0.22) 0%, rgba(219,39,119,0.08) 55%, rgba(190,24,93,0) 100%)',
@@ -55,14 +56,14 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
   },
   {
-    title: 'Appointments',
+    titleKey: 'sidebar.appointments',
     href: '/dashboard/appointments',
     icon: Calendar,
     gradient: 'radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(147,51,234,0.08) 55%, rgba(126,34,206,0) 100%)',
     iconColor: 'text-violet-500',
   },
   {
-    title: 'Medical Records',
+    titleKey: 'sidebar.medicalRecords',
     href: '/dashboard/records',
     icon: FileText,
     gradient: 'radial-gradient(circle, rgba(14,165,233,0.22) 0%, rgba(2,132,199,0.08) 55%, rgba(3,105,161,0) 100%)',
@@ -70,7 +71,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'Vitals',
+    titleKey: 'sidebar.vitals',
     href: '/dashboard/vitals',
     icon: Activity,
     gradient: 'radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.08) 55%, rgba(185,28,28,0) 100%)',
@@ -78,7 +79,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'Pregnancies',
+    titleKey: 'sidebar.pregnancies',
     href: '/dashboard/pregnancies',
     icon: Heart,
     gradient: 'radial-gradient(circle, rgba(244,63,94,0.2) 0%, rgba(225,29,72,0.08) 55%, rgba(190,18,60,0) 100%)',
@@ -86,7 +87,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'ANC Visits',
+    titleKey: 'sidebar.ancVisits',
     href: '/dashboard/antenatal',
     icon: ClipboardList,
     gradient: 'radial-gradient(circle, rgba(20,184,166,0.2) 0%, rgba(13,148,136,0.08) 55%, rgba(15,118,110,0) 100%)',
@@ -94,7 +95,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'Newborns',
+    titleKey: 'sidebar.newborns',
     href: '/dashboard/newborns',
     icon: Baby,
     gradient: 'radial-gradient(circle, rgba(56,189,248,0.2) 0%, rgba(14,165,233,0.08) 55%, rgba(2,132,199,0) 100%)',
@@ -102,7 +103,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'Immunizations',
+    titleKey: 'sidebar.immunizations',
     href: '/dashboard/immunizations',
     icon: Syringe,
     gradient: 'radial-gradient(circle, rgba(132,204,22,0.2) 0%, rgba(101,163,13,0.08) 55%, rgba(77,124,15,0) 100%)',
@@ -110,7 +111,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'Reports',
+    titleKey: 'sidebar.reports',
     href: '/dashboard/reports',
     icon: ClipboardList,
     gradient: 'radial-gradient(circle, rgba(245,158,11,0.22) 0%, rgba(217,119,6,0.08) 55%, rgba(180,83,9,0) 100%)',
@@ -118,14 +119,14 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN', 'HEALTHCARE_PROVIDER'],
   },
   {
-    title: 'Education',
+    titleKey: 'sidebar.education',
     href: '/dashboard/education',
     icon: BookOpen,
     gradient: 'radial-gradient(circle, rgba(34,197,94,0.2) 0%, rgba(22,163,74,0.08) 55%, rgba(21,128,61,0) 100%)',
     iconColor: 'text-green-500',
   },
   {
-    title: 'Audit Log',
+    titleKey: 'sidebar.auditLog',
     href: '/dashboard/audit',
     icon: ShieldCheck,
     gradient: 'radial-gradient(circle, rgba(100,116,139,0.2) 0%, rgba(71,85,105,0.08) 55%, rgba(51,65,85,0) 100%)',
@@ -133,7 +134,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN'],
   },
   {
-    title: 'Staff Users',
+    titleKey: 'sidebar.staffUsers',
     href: '/dashboard/users',
     icon: UserCog,
     gradient: 'radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(37,99,235,0.08) 55%, rgba(29,78,216,0) 100%)',
@@ -141,7 +142,7 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN'],
   },
   {
-    title: 'Production',
+    titleKey: 'sidebar.production',
     href: '/dashboard/production',
     icon: Gauge,
     gradient: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.08) 55%, rgba(4,120,87,0) 100%)',
@@ -149,14 +150,14 @@ const sidebarItems: SidebarItem[] = [
     allowedRoles: ['ADMIN'],
   },
   {
-    title: 'Notifications',
+    titleKey: 'sidebar.notifications',
     href: '/dashboard/notifications',
     icon: Bell,
     gradient: 'radial-gradient(circle, rgba(249,115,22,0.22) 0%, rgba(234,88,12,0.08) 55%, rgba(194,65,12,0) 100%)',
     iconColor: 'text-orange-500',
   },
   {
-    title: 'Settings',
+    titleKey: 'sidebar.settings',
     href: '/dashboard/settings',
     icon: Settings,
     gradient: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(79,70,229,0.08) 55%, rgba(67,56,202,0) 100%)',
@@ -168,6 +169,7 @@ const sidebarItems: SidebarItem[] = [
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const userRole = (session?.user as { role?: UserRole } | undefined)?.role;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -201,8 +203,8 @@ export function DashboardSidebar() {
                 <Sparkles className="h-4 w-4 text-primary" />
               ) : (
                 <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Care workspace</p>
-                  <p className="text-sm font-medium text-foreground">Maternal health operations</p>
+                  <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{t('sidebar.careWorkspace')}</p>
+                  <p className="text-sm font-medium text-foreground">{t('sidebar.maternalHealthOps')}</p>
                 </div>
               )}
             </div>
@@ -210,12 +212,13 @@ export function DashboardSidebar() {
           <nav className="space-y-2 px-2">
             {visibleItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              const title = t(item.titleKey);
               return (
                 <Link
                   key={item.href}
                   href={item.href as any}
                   className="block"
-                  title={isCollapsed ? item.title : undefined}
+                  title={isCollapsed ? title : undefined}
                 >
                   <motion.div
                     whileHover={{ x: isCollapsed ? 0 : 4 }}
@@ -227,17 +230,25 @@ export function DashboardSidebar() {
                         : 'border-transparent text-muted-foreground hover:border-border/50 hover:bg-background/55 hover:text-foreground hover:shadow-[0_10px_24px_-18px_rgba(0,0,0,0.35)]'
                     )}
                   >
+                    {isActive && (
+                      <div
+                        className="pointer-events-none absolute inset-0 rounded-2xl opacity-100 blur-xl"
+                        style={{ background: item.gradient }}
+                      />
+                    )}
                     <div
-                      className={cn(
-                        'pointer-events-none absolute inset-0 rounded-2xl opacity-0 blur-xl transition-opacity duration-300',
-                        isActive ? 'opacity-100' : 'group-hover:opacity-100'
-                      )}
+                      className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
                       style={{ background: item.gradient }}
                     />
-                    <div className="relative z-10 flex items-center gap-3">
-                      <item.icon className={cn('h-5 w-5 flex-shrink-0 transition-colors duration-300', isActive ? item.iconColor : 'text-foreground/80')} />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </div>
+                    <item.icon
+                      className={cn(
+                        'relative z-10 h-4 w-4 flex-shrink-0 transition-colors duration-300',
+                        isActive ? item.iconColor : 'text-muted-foreground group-hover:' + item.iconColor
+                      )}
+                    />
+                    {!isCollapsed && (
+                      <span className="relative z-10 truncate">{title}</span>
+                    )}
                   </motion.div>
                 </Link>
               );
@@ -245,38 +256,21 @@ export function DashboardSidebar() {
           </nav>
         </div>
 
-        <div className="border-t border-border/60 p-2">
+        <div className="border-t border-border/60 p-3">
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-center rounded-xl border border-border/50 bg-background/40 backdrop-blur-xl hover:bg-background/70"
             onClick={toggleCollapse}
+            className="w-full justify-center rounded-xl hover:bg-background/55"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
             ) : (
-              <>
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                <span>Collapse</span>
-              </>
+              <ChevronLeft className="h-4 w-4" />
             )}
           </Button>
         </div>
-
-        {!isCollapsed && (
-          <div className="border-t border-border/60 p-4">
-            <div className="rounded-2xl border border-border/60 bg-background/45 px-3 py-3 shadow-[0_10px_28px_-20px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Heart className="h-3 w-3 text-primary" />
-                <span>MamaMtu v1.0</span>
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground/90">
-                A calmer dashboard for scheduling, monitoring, and patient follow-up.
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </aside>
   );

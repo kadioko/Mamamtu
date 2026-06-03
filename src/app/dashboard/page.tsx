@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { UserRole } from '@/types/roles';
+import { useTranslation } from '@/lib/i18n';
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { cn } from "@/lib/utils";
 import {
@@ -132,6 +133,8 @@ const MetricCard = ({ title, value, description, icon, isLoading = false }: Metr
 };
 
 const RecentAppointments = ({ appointments, isLoading }: { appointments: Appointment[], isLoading: boolean }) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <div className="space-y-3" role="status" aria-live="polite" aria-busy="true">
@@ -149,7 +152,7 @@ const RecentAppointments = ({ appointments, isLoading }: { appointments: Appoint
             <div className="h-4 w-1/2 bg-gray-100 rounded mt-2"></div>
           </div>
         ))}
-        <span className="sr-only">Loading appointments...</span>
+        <span className="sr-only">{t('dashboard.loadingAppointments')}</span>
       </div>
     );
   }
@@ -158,8 +161,8 @@ const RecentAppointments = ({ appointments, isLoading }: { appointments: Appoint
     return (
       <div className="text-center py-6">
         <CalendarX className="mx-auto h-12 w-12 text-muted-foreground" aria-hidden="true" />
-        <h3 className="mt-2 text-sm font-medium">No appointments</h3>
-        <p className="mt-1 text-sm text-muted-foreground">Get started by scheduling a new appointment.</p>
+        <h3 className="mt-2 text-sm font-medium">{t('dashboard.noAppointments')}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{t('dashboard.noAppointmentsDesc')}</p>
       </div>
     );
   }
@@ -177,8 +180,17 @@ const RecentAppointments = ({ appointments, isLoading }: { appointments: Appoint
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'upcoming': return t('dashboard.appointmentStatus.upcoming');
+      case 'completed': return t('dashboard.appointmentStatus.completed');
+      case 'cancelled': return t('dashboard.appointmentStatus.cancelled');
+      default: return t('dashboard.appointmentStatus.scheduled');
+    }
+  };
+
   return (
-    <div className="space-y-3 sm:space-y-4" role="list" aria-label="Recent appointments">
+    <div className="space-y-3 sm:space-y-4" role="list" aria-label={t('dashboard.recentAppointments')}>
       {appointments.map((appointment) => (
         <article 
           key={appointment.id} 
@@ -209,7 +221,7 @@ const RecentAppointments = ({ appointments, isLoading }: { appointments: Appoint
               getStatusStyles(appointment.status || '')
             )}
           >
-            {appointment.status || 'Scheduled'}
+            {getStatusLabel(appointment.status || '')}
           </span>
         </article>
       ))}
@@ -218,6 +230,8 @@ const RecentAppointments = ({ appointments, isLoading }: { appointments: Appoint
 };
 
 const QuickActions = ({ actions, isLoading }: { actions: QuickAction[], isLoading: boolean }) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-3" role="status" aria-live="polite" aria-busy="true">
@@ -231,13 +245,13 @@ const QuickActions = ({ actions, isLoading }: { actions: QuickAction[], isLoadin
             <div className="h-4 w-3/4 bg-gray-200 rounded"></div>
           </div>
         ))}
-        <span className="sr-only">Loading quick actions...</span>
+        <span className="sr-only">{t('dashboard.loadingQuickActions')}</span>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3" role="menu" aria-label="Quick actions">
+    <div className="grid grid-cols-2 gap-3" role="menu" aria-label={t('dashboard.quickActions')}>
       {actions.map((action) => (
         <button
           key={action.id}
@@ -270,6 +284,7 @@ const QuickActions = ({ actions, isLoading }: { actions: QuickAction[], isLoadin
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
+  const { t } = useTranslation();
   const userRole = (session?.user as { role?: UserRole } | undefined)?.role;
   const isReceptionist = userRole === 'RECEPTIONIST';
   const [isLoading, setIsLoading] = useState(true);
@@ -365,30 +380,30 @@ export default function DashboardPage() {
   const allQuickActions: (QuickAction & { receptionistHidden?: boolean })[] = [
     {
       id: 'add-patient',
-      label: 'View Patients',
-      ariaLabel: isReceptionist ? 'View patient list' : 'Add a new patient to the system',
+      label: t('dashboard.quickAction.viewPatients'),
+      ariaLabel: isReceptionist ? t('dashboard.quickAction.viewPatientsDesc') : t('dashboard.quickAction.addPatientDesc'),
       icon: <UserPlus className="h-6 w-6" />,
       onClick: () => router.push('/dashboard/patients' as any),
     },
     {
       id: 'schedule-appointment',
-      label: 'Schedule',
-      ariaLabel: 'Schedule a new appointment',
+      label: t('dashboard.quickAction.schedule'),
+      ariaLabel: t('dashboard.quickAction.scheduleDesc'),
       icon: <CalendarPlus className="h-6 w-6" />,
       onClick: () => router.push('/dashboard/appointments' as any),
     },
     {
       id: 'view-records',
-      label: 'Records',
-      ariaLabel: 'View and manage patient records',
+      label: t('dashboard.quickAction.records'),
+      ariaLabel: t('dashboard.quickAction.recordsDesc'),
       icon: <FileText className="h-6 w-6" />,
       onClick: () => router.push('/dashboard/records' as any),
       receptionistHidden: true,
     },
     {
       id: 'health-education',
-      label: 'Education',
-      ariaLabel: 'Access health education materials',
+      label: t('dashboard.quickAction.education'),
+      ariaLabel: t('dashboard.quickAction.educationDesc'),
       icon: <BookOpen className="h-6 w-6" />,
       onClick: () => router.push('/dashboard/education' as any),
     },
@@ -405,13 +420,13 @@ export default function DashboardPage() {
           <div className="flex gap-3">
             <Bell className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div>
-              <h3 className="text-sm font-medium text-destructive">Error loading dashboard</h3>
+              <h3 className="text-sm font-medium text-destructive">{t('dashboard.errorLoading')}</h3>
               <p className="mt-1 text-sm text-destructive/80">{error}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="mt-3 rounded-md border border-destructive/30 px-2 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2"
               >
-                Try again
+                {t('dashboard.tryAgain')}
               </button>
             </div>
           </div>
@@ -424,83 +439,78 @@ export default function DashboardPage() {
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-2xl sm:text-3xl font-bold">MamaMtu Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t('dashboard.title')}</h1>
           {isReceptionist && (
             <span className="inline-flex items-center rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-600/20">
-              Receptionist View
+              {t('dashboard.receptionistView')}
             </span>
           )}
         </div>
         <p className="text-sm sm:text-base text-muted-foreground mt-1">
           {isReceptionist
-            ? 'Appointments and patient scheduling'
-            : 'Overview of your maternal health clinic'}
+            ? t('dashboard.receptionistDesc')
+            : t('dashboard.overviewDesc')}
         </p>
       </div>
       
-      {/* Metrics Grid - Single column on mobile, 2 columns on md, 4 columns on lg+ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+      {/* Metrics Grid */}
+      <div 
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
+        role="region"
+        aria-label={t('dashboard.healthMetrics')}
+      >
         <MetricCard
-          title="Active Patients"
+          title={t('dashboard.metric.activePatients')}
           value={dashboardData?.metrics.activePatients ?? 0}
-          description="+5 from last month"
-          icon={<Users className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />}
+          description={t('dashboard.metric.activePatientsTrend')}
+          icon={<Users className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
         <MetricCard
-          title="Upcoming Appointments"
+          title={t('dashboard.metric.upcomingAppointments')}
           value={dashboardData?.metrics.upcomingAppointments ?? 0}
-          description="2 today"
-          icon={<Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />}
+          description={t('dashboard.metric.appointmentsToday')}
+          icon={<Calendar className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
         <MetricCard
-          title="Active Pregnancies"
+          title={t('dashboard.metric.activePregnancies')}
           value={dashboardData?.metrics.activePregnancies ?? 0}
-          description="3 in third trimester"
-          icon={<Baby className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />}
+          description={t('dashboard.metric.pregnanciesTrimester')}
+          icon={<Baby className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
         <MetricCard
-          title="Alerts"
+          title={t('dashboard.metric.alerts')}
           value={dashboardData?.metrics.alerts ?? 0}
-          description="Requires attention"
-          icon={<Bell className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />}
+          description={t('dashboard.metric.alertsDesc')}
+          icon={<Bell className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
       </div>
 
-      {/* Main Content Grid - Single column on mobile, 2 columns on md+ */}
-      <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 sm:gap-6">
-        {/* Recent Appointments - Full width on mobile, 2/3 on md+ */}
-        <div className="lg:col-span-4">
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg sm:text-xl">Recent Appointments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecentAppointments 
-                appointments={dashboardData?.recentAppointments ?? []} 
-                isLoading={isLoading} 
-              />
-            </CardContent>
-          </Card>
-        </div>
+      {/* Recent Appointments + Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg sm:text-xl">{t('dashboard.recentAppointments')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RecentAppointments
+              appointments={dashboardData?.recentAppointments ?? []}
+              isLoading={isLoading}
+            />
+          </CardContent>
+        </Card>
 
-        {/* Quick Actions - Full width on mobile, 1/3 on md+ */}
-        <div className="lg:col-span-3">
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg sm:text-xl">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <QuickActions 
-                actions={quickActions} 
-                isLoading={isLoading} 
-              />
-            </CardContent>
-          </Card>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg sm:text-xl">{t('dashboard.quickActions')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <QuickActions actions={quickActions} isLoading={isLoading} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

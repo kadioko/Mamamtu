@@ -1,23 +1,27 @@
+'use client';
+
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   const footerLinks = {
     product: [
-      { name: 'Dashboard', href: '/dashboard' },
-      { name: 'Patients', href: '/dashboard/patients' },
-      { name: 'Appointments', href: '/dashboard/appointments' },
+      { name: t('nav.dashboard'), href: '/dashboard' },
+      { name: t('nav.patients'), href: '/dashboard/patients' },
+      { name: t('nav.appointments'), href: '/dashboard/appointments' },
     ],
     resources: [
-      { name: 'Education', href: '/education' },
-      { name: 'Sign In', href: '/auth/signin' },
-      { name: 'Register', href: '/auth/register' },
+      { name: t('nav.education'), href: '/education' },
+      { name: t('nav.signIn'), href: '/auth/signin' },
+      { name: t('nav.register'), href: '/auth/register' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
+      { name: t('footer.legal.privacy'), href: '#' },
+      { name: t('footer.legal.terms'), href: '#' },
     ],
   };
 
@@ -31,15 +35,15 @@ export function Footer() {
               <span className="font-bold text-xl">MamaMtu</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-              Comprehensive healthcare management for mothers and newborns. Quality care for every family.
+              {t('footer.description')}
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Product</h3>
+            <h3 className="font-semibold mb-4">{t('footer.section.product')}</h3>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
-                <li key={link.name}>
+                <li key={link.href}>
                   <Link
                     href={link.href as any}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -52,10 +56,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Resources</h3>
+            <h3 className="font-semibold mb-4">{t('footer.section.resources')}</h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
-                <li key={link.name}>
+                <li key={link.href}>
                   <Link
                     href={link.href as any}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -68,10 +72,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
+            <h3 className="font-semibold mb-4">{t('footer.section.legal')}</h3>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
-                <li key={link.name}>
+                <li key={link.href}>
                   <Link
                     href={link.href as any}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -86,10 +90,10 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} MamaMtu. All rights reserved.
+            © {currentYear} MamaMtu. {t('footer.copyright')}
           </p>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            Made with <Heart className="h-4 w-4 text-primary mx-1" /> in Tanzania
+            {t('footer.madeWith')} <Heart className="h-4 w-4 text-primary mx-1" /> {t('footer.country')}
           </div>
         </div>
       </div>

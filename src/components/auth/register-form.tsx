@@ -10,28 +10,30 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Icons } from '@/components/ui/icons';
-
-const registerSchema = z
-  .object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Please enter a valid email address'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-      .regex(/[0-9]/, 'Password must contain at least one number'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
-
-type RegisterValues = z.infer<typeof registerSchema>;
+import { useTranslation } from '@/lib/i18n';
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
+
+  const registerSchema = z
+    .object({
+      name: z.string().min(2, t('auth.validation.nameMinLength')),
+      email: z.string().email(t('auth.validation.emailInvalid')),
+      password: z
+        .string()
+        .min(8, t('auth.validation.passwordMinLength'))
+        .regex(/[A-Z]/, t('auth.validation.passwordUppercase'))
+        .regex(/[0-9]/, t('auth.validation.passwordNumber')),
+      confirmPassword: z.string().min(1, t('auth.validation.confirmPasswordRequired')),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t('auth.validation.passwordMismatch'),
+      path: ['confirmPassword'],
+    });
+
+  type RegisterValues = z.infer<typeof registerSchema>;
 
   const {
     register,
@@ -57,19 +59,19 @@ export function RegisterForm() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Registration failed');
+        throw new Error(error.message || t('auth.errors.registrationFailed'));
       }
 
       toast({
-        title: 'Success',
-        description: 'Registration successful! Please sign in.',
+        title: t('auth.register.successTitle'),
+        description: t('auth.register.successDesc'),
       });
 
       router.push('/auth/signin');
     } catch (error) {
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Registration failed',
+        title: t('common.error'),
+        description: error instanceof Error ? error.message : t('auth.errors.registrationFailed'),
         variant: 'destructive',
       });
     } finally {
@@ -82,10 +84,10 @@ export function RegisterForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-1">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{t('auth.fullName')}</Label>
             <Input
               id="name"
-              placeholder="John Doe"
+              placeholder={t('auth.namePlaceholder')}
               type="text"
               autoCapitalize="words"
               autoComplete="name"
@@ -99,10 +101,10 @@ export function RegisterForm() {
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -116,10 +118,10 @@ export function RegisterForm() {
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.password')}</Label>
             <Input
               id="password"
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
@@ -131,10 +133,10 @@ export function RegisterForm() {
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
             <Input
               id="confirmPassword"
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
@@ -149,7 +151,7 @@ export function RegisterForm() {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Create Account
+            {t('auth.register.button')}
           </Button>
         </div>
       </form>
@@ -159,7 +161,7 @@ export function RegisterForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Already have an account?
+            {t('auth.hasAccount')}
           </span>
         </div>
       </div>
@@ -169,7 +171,7 @@ export function RegisterForm() {
         disabled={isLoading}
         onClick={() => router.push('/auth/signin')}
       >
-        Sign In
+        {t('auth.signIn')}
       </Button>
     </div>
   );
