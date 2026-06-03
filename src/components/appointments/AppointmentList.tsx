@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   Table,
   TableBody,
@@ -54,29 +55,36 @@ export function AppointmentList({
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>(appointments);
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<Record<string, boolean>>({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setFilteredAppointments(appointments);
     } else {
       const searchLower = searchTerm.toLowerCase();
-      const filtered = appointments.filter(
-        (appt) =>
-          appt.title.toLowerCase().includes(searchLower) ||
-          appt.patient.firstName.toLowerCase().includes(searchLower) ||
-          appt.patient.lastName.toLowerCase().includes(searchLower) ||
-          appt.type.toLowerCase().includes(searchLower) ||
-          appt.status.toLowerCase().includes(searchLower)
+      setFilteredAppointments(
+        appointments.filter(
+          (appt) =>
+            appt.title.toLowerCase().includes(searchLower) ||
+            appt.patient.firstName.toLowerCase().includes(searchLower) ||
+            appt.patient.lastName.toLowerCase().includes(searchLower) ||
+            appt.type.toLowerCase().includes(searchLower) ||
+            appt.status.toLowerCase().includes(searchLower)
+        )
       );
-      setFilteredAppointments(filtered);
     }
   }, [searchTerm, appointments]);
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this appointment?')) {
-      return;
-    }
+  const requestDelete = (id: string) => {
+    setPendingDeleteId(id);
+    setDeleteDialogOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    setPendingDeleteId(null);
     try {
       setIsDeleting((prev) => ({ ...prev, [id]: true }));
       await onDelete(id);
@@ -152,6 +160,16 @@ export function AppointmentList({
 
   return (
     <div className="space-y-4">
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete appointment"
+        description="Are you sure you want to delete this appointment? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+      />
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="relative w-full sm:max-w-md">
           <Input
@@ -230,51 +248,61 @@ export function AppointmentList({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className={`${statusVariantMap[appointment.status]} capitalize`}
-                      variant="outline"
-                    >
-                      {appointment.status.toLowerCase().replace(/_/g, ' ')}
+                    <Badge className={statusVariantMap[appointment.status]}>
+                      {appointment.status.replace(/_/g, ' ')}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={isDeleting[appointment.id] || isUpdatingStatus[appointment.id]}
+                        >
                           <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => onEdit(appointment)}>
                           Edit
                         </DropdownMenuItem>
-                        {appointment.status !== AppointmentStatus.COMPLETED && (
+                        {appointment.status === AppointmentStatus.SCHEDULED && (
                           <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(appointment.id, AppointmentStatus.COMPLETED)
-                            }
-                            disabled={isUpdatingStatus[appointment.id]}
+                            onClick={() => handleStatusChange(appointment.id, AppointmentStatus.CONFIRMED)}
                           >
-                            {isUpdatingStatus[appointment.id] ? 'Updating...' : 'Mark as Completed'}
+                            Confirm
                           </DropdownMenuItem>
                         )}
-                        {appointment.status !== AppointmentStatus.CANCELLED && (
+                        {appointment.status === AppointmentStatus.CONFIRMED && (
                           <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(appointment.id, AppointmentStatus.CANCELLED)
-                            }
-                            disabled={isUpdatingStatus[appointment.id]}
+                            onClick={() => handleStatusChange(appointment.id, AppointmentStatus.IN_PROGRESS)}
                           >
-                            {isUpdatingStatus[appointment.id] ? 'Updating...' : 'Cancel Appointment'}
+                            Start
+                          </DropdownMenuItem>
+                        )}
+                        {appointment.status === AppointmentStatus.IN_PROGRESS && (
+                          <DropdownMenuItem
+                            onClick={() => handleStatusChange(appointment.id, AppointmentStatus.COMPLETED)}
+                          >
+                            Complete
+                          </DropdownMenuItem>
+                        )}
+                        {[AppointmentStatus.SCHEDULED, AppointmentStatus.CONFIRMED].includes(
+                          appointment.status
+                        ) && (
+                          <DropdownMenuItem
+                            onClick={() => handleStatusChange(appointment.id, AppointmentStatus.CANCELLED)}
+                          >
+                            Cancel
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuItem
-                          onClick={() => handleDelete(appointment.id)}
-                          className="text-red-600 focus:text-red-600"
-                          disabled={isDeleting[appointment.id]}
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => requestDelete(appointment.id)}
                         >
-                          {isDeleting[appointment.id] ? 'Deleting...' : 'Delete'}
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -284,7 +312,7 @@ export function AppointmentList({
             ) : (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                  No appointments found matching your search.
+                  No appointments match your search.
                 </TableCell>
               </TableRow>
             )}

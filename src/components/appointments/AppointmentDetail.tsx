@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Appointment, AppointmentStatus } from '@/types/appointment';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AppointmentStatusBadge } from './AppointmentStatusBadge';
@@ -29,6 +30,7 @@ export function AppointmentDetail({
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const formatDateTime = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? parseISO(dateString) : dateString;
@@ -38,15 +40,14 @@ export function AppointmentDetail({
   const formatDuration = (start: string | Date, end: string | Date) => {
     const startDate = typeof start === 'string' ? new Date(start) : start;
     const endDate = typeof end === 'string' ? new Date(end) : end;
-    const durationInMinutes = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
-    const hours = Math.floor(durationInMinutes / 60);
-    const minutes = durationInMinutes % 60;
-    return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
+    const mins = Math.round((endDate.getTime() - startDate.getTime()) / 60000);
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h > 0 ? `${h}h ` : ''}${m}m`;
   };
 
   const handleStatusChange = async (status: AppointmentStatus) => {
     if (!onStatusChange) return;
-    
     try {
       setIsUpdatingStatus(true);
       await onStatusChange(status);
@@ -55,94 +56,102 @@ export function AppointmentDetail({
     }
   };
 
-  const handleDelete = async () => {
+  const confirmDelete = async () => {
     if (!onDelete) return;
-    
-    if (!window.confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
-      return;
-    }
-
     try {
       setIsDeleting(true);
       await onDelete();
       router.push('/appointments');
-    } catch (error) {
-      console.error('Error deleting appointment:', error);
+    } catch (err) {
+      console.error('Error deleting appointment:', err);
     } finally {
       setIsDeleting(false);
     }
   };
 
   const isPastAppointment = new Date(appointment.endTime) < new Date();
-  const isCancellable = [
-    AppointmentStatus.SCHEDULED,
-    AppointmentStatus.CONFIRMED,
-  ].includes(appointment.status);
+  const isCancellable = [AppointmentStatus.SCHEDULED, AppointmentStatus.CONFIRMED].includes(
+    appointment.status
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header with title and actions */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete appointment"
+        description="Are you sure you want to delete this appointment? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+      />
+
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {appointment.title}
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight">{appointment.title}</h1>
           <p className="text-muted-foreground">
-            {formatDateTime(appointment.startTime)} - {formatDateTime(appointment.endTime)}
+            {formatDateTime(appointment.startTime)} – {formatDateTime(appointment.endTime)}
           </p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <Button 
-            variant="outline" 
-            onClick={onEdit}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={onEdit} disabled={isLoading}>
             Edit
           </Button>
-          
+
           {appointment.status === AppointmentStatus.SCHEDULED && (
-            <Button 
+            <Button
               variant="default"
               onClick={() => handleStatusChange(AppointmentStatus.CONFIRMED)}
               disabled={isLoading || isUpdatingStatus}
             >
-              {isUpdatingStatus ? 'Confirming...' : 'Confirm'}
+              {isUpdatingStatus ? 'Confirming…' : 'Confirm'}
             </Button>
           )}
-          
+
           {appointment.status === AppointmentStatus.CONFIRMED && (
-            <Button 
+            <Button
               variant="default"
               onClick={() => handleStatusChange(AppointmentStatus.IN_PROGRESS)}
               disabled={isLoading || isUpdatingStatus}
             >
-              {isUpdatingStatus ? 'Updating...' : 'Start Appointment'}
+              {isUpdatingStatus ? 'Updating…' : 'Start Appointment'}
             </Button>
           )}
-          
+
           {appointment.status === AppointmentStatus.IN_PROGRESS && (
-            <Button 
+            <Button
               variant="default"
               onClick={() => handleStatusChange(AppointmentStatus.COMPLETED)}
               disabled={isLoading || isUpdatingStatus}
             >
-              {isUpdatingStatus ? 'Completing...' : 'Complete'}
+              {isUpdatingStatus ? 'Completing…' : 'Complete'}
             </Button>
           )}
-          
+
           {isCancellable && (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => handleStatusChange(AppointmentStatus.CANCELLED)}
               disabled={isLoading || isUpdatingStatus}
             >
-              {isUpdatingStatus ? 'Cancelling...' : 'Cancel'}
+              {isUpdatingStatus ? 'Cancelling…' : 'Cancel'}
+            </Button>
+          )}
+
+          {onDelete && (
+            <Button
+              variant="destructive"
+              onClick={() => setDeleteDialogOpen(true)}
+              disabled={isLoading || isDeleting}
+            >
+              {isDeleting ? 'Deleting…' : 'Delete'}
             </Button>
           )}
         </div>
       </div>
 
-      {/* Status Alert */}
+      {/* Missed-appointment alert */}
       {isPastAppointment && appointment.status === AppointmentStatus.SCHEDULED && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -153,11 +162,10 @@ export function AppointmentDetail({
         </Alert>
       )}
 
-      {/* Main Content */}
+      {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
+        {/* Left column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Appointment Details */}
           <Card>
             <CardHeader>
               <CardTitle>Appointment Details</CardTitle>
@@ -176,7 +184,7 @@ export function AppointmentDetail({
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-1">
                   <div className="text-sm font-medium text-muted-foreground flex items-center">
                     <Stethoscope className="mr-2 h-4 w-4" />
@@ -184,7 +192,7 @@ export function AppointmentDetail({
                   </div>
                   <div>{appointment.type.replace(/_/g, ' ')}</div>
                 </div>
-                
+
                 <div className="space-y-1">
                   <div className="text-sm font-medium text-muted-foreground flex items-center">
                     <MapPin className="mr-2 h-4 w-4" />
@@ -192,15 +200,13 @@ export function AppointmentDetail({
                   </div>
                   <div>{appointment.location || 'Not specified'}</div>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Status
-                  </div>
+                  <div className="text-sm font-medium text-muted-foreground">Status</div>
                   <AppointmentStatusBadge status={appointment.status} />
                 </div>
               </div>
-              
+
               {appointment.description && (
                 <div className="space-y-1 pt-2 border-t">
                   <div className="text-sm font-medium text-muted-foreground flex items-center">
@@ -212,8 +218,7 @@ export function AppointmentDetail({
               )}
             </CardContent>
           </Card>
-          
-          {/* Notes */}
+
           {appointment.notes && (
             <Card>
               <CardHeader>
@@ -229,90 +234,33 @@ export function AppointmentDetail({
             </Card>
           )}
         </div>
-        
-        {/* Right Column */}
+
+        {/* Right column */}
         <div className="space-y-6">
-          {/* Patient Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Patient Information</CardTitle>
+              <CardTitle>Patient</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                  <User className="h-6 w-6" />
+            <CardContent>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium">
+                  <div className="font-medium">
                     {appointment.patient.firstName} {appointment.patient.lastName}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {appointment.patient.phone}
-                  </p>
+                  </div>
+                  {appointment.patient.dateOfBirth && (
+                    <div className="text-sm text-muted-foreground">
+                      DOB:{' '}
+                      {format(
+                        parseISO(String(appointment.patient.dateOfBirth)),
+                        'MMM d, yyyy'
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Date of Birth:</span>{' '}
-                  {appointment.patient.dateOfBirth 
-                    ? format(new Date(appointment.patient.dateOfBirth), 'MMMM d, yyyy')
-                    : 'Not specified'}
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Gender:</span>{' '}
-                  {appointment.patient.gender || 'Not specified'}
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Email:</span>{' '}
-                  {appointment.patient.email || 'Not specified'}
-                </div>
-              </div>
-              
-              <Button 
-                variant="outline" 
-                className="w-full mt-2"
-                onClick={() => router.push(`/patients/${appointment.patient.id}`)}
-              >
-                View Patient Details
-              </Button>
-            </CardContent>
-          </Card>
-          
-          {/* Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={onEdit}
-                disabled={isLoading}
-              >
-                Edit Appointment
-              </Button>
-              
-              {isCancellable && (
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => handleStatusChange(AppointmentStatus.CANCELLED)}
-                  disabled={isLoading || isUpdatingStatus}
-                >
-                  {isUpdatingStatus ? 'Cancelling...' : 'Cancel Appointment'}
-                </Button>
-              )}
-              
-              <Button 
-                variant="outline" 
-                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-                onClick={handleDelete}
-                disabled={isLoading || isDeleting}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete Appointment'}
-              </Button>
             </CardContent>
           </Card>
         </div>

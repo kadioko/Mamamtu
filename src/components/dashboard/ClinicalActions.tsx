@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 export function DeleteClinicalButton({
   endpoint,
@@ -15,10 +16,10 @@ export function DeleteClinicalButton({
   label?: string;
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
-  async function remove() {
-    if (!window.confirm('Delete this item? This cannot be undone.')) return;
+  const confirmDelete = async () => {
     setIsDeleting(true);
     try {
       const response = await fetch(endpoint, { method: 'DELETE' });
@@ -34,12 +35,28 @@ export function DeleteClinicalButton({
     } finally {
       setIsDeleting(false);
     }
-  }
+  };
 
   return (
-    <Button type="button" variant="destructive" onClick={remove} disabled={isDeleting}>
-      {isDeleting ? 'Deleting...' : label}
-    </Button>
+    <>
+      <ConfirmDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title="Delete this item"
+        description="This action cannot be undone. Are you sure you want to proceed?"
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+      />
+      <Button
+        type="button"
+        variant="destructive"
+        onClick={() => setDialogOpen(true)}
+        disabled={isDeleting}
+      >
+        {isDeleting ? 'Deleting...' : label}
+      </Button>
+    </>
   );
 }
 

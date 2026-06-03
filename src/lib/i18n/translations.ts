@@ -358,6 +358,23 @@ export const translations = {
       madeWith: 'Made with',
       country: 'in Tanzania',
     },
+    dialog: {
+      cancel: 'Cancel',
+      delete: 'Delete',
+      confirm: 'Confirm',
+      deletePatient: {
+        title: 'Delete patient',
+        description: 'Are you sure you want to delete this patient? All associated records will be permanently removed. This action cannot be undone.',
+      },
+      deleteAppointment: {
+        title: 'Delete appointment',
+        description: 'Are you sure you want to delete this appointment? This action cannot be undone.',
+      },
+      deleteItem: {
+        title: 'Delete this item',
+        description: 'This action cannot be undone. Are you sure you want to proceed?',
+      },
+    },
     errors: {
       somethingWentWrong: 'Something went wrong',
       unexpectedError: 'We apologize for the inconvenience. An unexpected error has occurred.',
@@ -732,6 +749,23 @@ export const translations = {
       copyright: 'Haki zote zimehifadhiwa.',
       madeWith: 'Imetengenezwa kwa',
       country: 'Tanzania',
+    },
+    dialog: {
+      cancel: 'Ghairi',
+      delete: 'Futa',
+      confirm: 'Thibitisha',
+      deletePatient: {
+        title: 'Futa mgonjwa',
+        description: 'Una uhakika unataka kufuta mgonjwa huyu? Rekodi zote zinazohusiana zitafutwa kabisa. Hatua hii haiwezi kutenduliwa.',
+      },
+      deleteAppointment: {
+        title: 'Futa miadi',
+        description: 'Una uhakika unataka kufuta miadi hii? Hatua hii haiwezi kutenduliwa.',
+      },
+      deleteItem: {
+        title: 'Futa kipengele hiki',
+        description: 'Hatua hii haiwezi kutenduliwa. Una uhakika unataka kuendelea?',
+      },
     },
     errors: {
       somethingWentWrong: 'Kuna hitilafu imetokea',
