@@ -90,7 +90,7 @@ export function MainNav() {
           ) : session ? (
             <div className="hidden md:flex items-center gap-3">
               <Link
-                href={'/profile' as any}
+                href="/profile"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {session.user.name || session.user.email}

@@ -22,10 +22,10 @@ describe('DashboardPage', () => {
 
   it('renders metrics and recent appointments from API data', async () => {
     const metricsResponse = {
-      activePatients: { count: 10 },
-      upcomingAppointments: { count: 3 },
-      activePregnancy: { count: 2 },
-      alerts: { count: 1 },
+      mothersRegistered: { count: 48 },
+      ancVisitsRecorded: { count: 124 },
+      followUpsScheduled: { count: 31 },
+      activePregnancies: { count: 22 },
     };
 
     const appointmentsResponse = {
@@ -83,11 +83,11 @@ describe('DashboardPage', () => {
 
     await waitFor(() => {
       // Fallback metric values
-      expect(screen.getByText('Active Patients')).toBeInTheDocument();
-      expect(screen.getByText('142')).toBeInTheDocument();
-      expect(screen.getByText('12')).toBeInTheDocument();
-      expect(screen.getByText('23')).toBeInTheDocument();
-      expect(screen.getByText('5')).toBeInTheDocument();
+      expect(screen.getByText('Mothers Registered')).toBeInTheDocument();
+      expect(screen.getByText('48')).toBeInTheDocument();
+      expect(screen.getByText('124')).toBeInTheDocument();
+      expect(screen.getByText('31')).toBeInTheDocument();
+      expect(screen.getByText('22')).toBeInTheDocument();
 
       // Fallback recent appointments
       expect(screen.getByText('Fatima Al-Rashid')).toBeInTheDocument();

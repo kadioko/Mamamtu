@@ -221,6 +221,10 @@ export const translations = {
       metric: {
         activePatients: 'Active Patients',
         activePatientsTrend: '+5 from last month',
+        mothersRegistered: 'Mothers Registered',
+        ancVisitsRecorded: 'ANC Visits Recorded',
+        followUpsScheduled: 'Follow-Ups Scheduled',
+        demoEnvironmentData: 'Demo environment data',
         upcomingAppointments: 'Upcoming Appointments',
         appointmentsToday: '2 today',
         activePregnancies: 'Active Pregnancies',
@@ -613,6 +617,10 @@ export const translations = {
       metric: {
         activePatients: 'Wagonjwa Wanaoendelea',
         activePatientsTrend: '+5 kutoka mwezi uliopita',
+        mothersRegistered: 'Akina Mama Waliosajiliwa',
+        ancVisitsRecorded: 'Ziara za ANC Zilizorekodiwa',
+        followUpsScheduled: 'Ufuatiliaji Uliopangwa',
+        demoEnvironmentData: 'Data ya mazingira ya demo',
         upcomingAppointments: 'Miadi Ijayo',
         appointmentsToday: '2 leo',
         activePregnancies: 'Ujauzito Unaoendelea',

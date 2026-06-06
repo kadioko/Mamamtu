@@ -11,25 +11,29 @@ export async function GET() {
     }
 
     // Parallel queries for better performance
+    const now = new Date();
     const [
-      activePatientsResult,
-      upcomingAppointmentsResult,
-      activePregnancyResult,
-      alertsResult,
+      mothersRegisteredResult,
+      ancVisitsRecordedResult,
+      followUpsScheduledResult,
+      activePregnanciesResult,
       totalPatientsResult,
       recentAppointmentsResult,
     ] = await Promise.all([
-      // Active patients count
+      // Active mother records
       prisma.patient.count({
-        where: { isActive: true }
+        where: { isActive: true, gender: 'FEMALE' }
       }),
 
-      // Upcoming appointments count (next 7 days)
+      // All ANC visits recorded in the demo environment
+      prisma.antenatalVisit.count(),
+
+      // Future scheduled follow-up appointments
       prisma.appointment.count({
         where: {
+          type: 'FOLLOW_UP',
           startTime: {
-            gte: new Date(),
-            lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next 7 days
+            gte: now,
           },
           status: {
             in: ['SCHEDULED', 'CONFIRMED'],
@@ -37,28 +41,8 @@ export async function GET() {
         },
       }),
 
-      // Active pregnancies (simulated - could be based on pregnancy records)
-      prisma.patient.count({
-        where: {
-          gender: 'FEMALE',
-          dateOfBirth: {
-            lte: new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000), // 18+ years old
-          },
-        }
-      }),
-
-      // Active alerts (could be based on critical vitals, missed appointments, etc.)
-      prisma.appointment.count({
-        where: {
-          startTime: {
-            lt: new Date(),
-            gt: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
-          },
-          status: {
-            in: ['NO_SHOW', 'CANCELLED'],
-          },
-        },
-      }),
+      // Active pregnancies
+      prisma.pregnancyEpisode.count({ where: { status: 'ACTIVE' } }),
 
       // Total patients
       prisma.patient.count(),
@@ -102,21 +86,38 @@ export async function GET() {
     };
 
     const metrics = {
+      mothersRegistered: {
+        count: mothersRegisteredResult,
+        change: calculatePercentageChange(mothersRegisteredResult, previousPeriodPatients),
+      },
+      ancVisitsRecorded: {
+        count: ancVisitsRecordedResult,
+        change: 0,
+      },
+      followUpsScheduled: {
+        count: followUpsScheduledResult,
+        change: 0,
+      },
+      activePregnancies: {
+        count: activePregnanciesResult,
+        change: 0,
+      },
+      // Legacy aliases retained for older dashboard clients.
       activePatients: {
-        count: activePatientsResult,
-        change: calculatePercentageChange(activePatientsResult, previousPeriodPatients),
+        count: mothersRegisteredResult,
+        change: calculatePercentageChange(mothersRegisteredResult, previousPeriodPatients),
       },
       upcomingAppointments: {
-        count: upcomingAppointmentsResult,
-        change: calculatePercentageChange(upcomingAppointmentsResult, previousPeriodAppointments),
+        count: ancVisitsRecordedResult,
+        change: calculatePercentageChange(ancVisitsRecordedResult, previousPeriodAppointments),
       },
       activePregnancy: {
-        count: activePregnancyResult,
-        change: 0, // Placeholder
+        count: activePregnanciesResult,
+        change: 0,
       },
       alerts: {
-        count: alertsResult,
-        change: 0, // Placeholder
+        count: followUpsScheduledResult,
+        change: 0,
       },
       totalPatients: totalPatientsResult,
       recentAppointments: recentAppointmentsResult,

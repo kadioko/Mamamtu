@@ -59,10 +59,10 @@ interface QuickAction {
 
 interface DashboardData {
   metrics: {
-    activePatients: number;
-    upcomingAppointments: number;
+    mothersRegistered: number;
+    ancVisitsRecorded: number;
+    followUpsScheduled: number;
     activePregnancies: number;
-    alerts: number;
   };
   recentAppointments: Appointment[];
 }
@@ -72,6 +72,10 @@ interface MetricResponseItem {
 }
 
 interface DashboardMetricsResponse {
+  mothersRegistered?: MetricResponseItem;
+  ancVisitsRecorded?: MetricResponseItem;
+  followUpsScheduled?: MetricResponseItem;
+  activePregnancies?: MetricResponseItem;
   activePatients?: MetricResponseItem;
   upcomingAppointments?: MetricResponseItem;
   activePregnancy?: MetricResponseItem;
@@ -310,10 +314,10 @@ export default function DashboardPage() {
 
         const demoData: DashboardData = {
           metrics: {
-            activePatients: getMetricCount(metrics.activePatients),
-            upcomingAppointments: getMetricCount(metrics.upcomingAppointments),
-            activePregnancies: getMetricCount(metrics.activePregnancy),
-            alerts: getMetricCount(metrics.alerts),
+            mothersRegistered: getMetricCount(metrics.mothersRegistered ?? metrics.activePatients),
+            ancVisitsRecorded: getMetricCount(metrics.ancVisitsRecorded ?? metrics.upcomingAppointments),
+            followUpsScheduled: getMetricCount(metrics.followUpsScheduled ?? metrics.alerts),
+            activePregnancies: getMetricCount(metrics.activePregnancies ?? metrics.activePregnancy),
           },
           recentAppointments: (appointmentsData.data || []).map((apt: AppointmentResponse) => ({
             id: apt.id,
@@ -336,10 +340,10 @@ export default function DashboardPage() {
         // Fallback to simulated data for demo
         const fallbackData: DashboardData = {
           metrics: {
-            activePatients: 142,
-            upcomingAppointments: 12,
-            activePregnancies: 23,
-            alerts: 5,
+            mothersRegistered: 48,
+            ancVisitsRecorded: 124,
+            followUpsScheduled: 31,
+            activePregnancies: 22,
           },
           recentAppointments: [
             {
@@ -460,31 +464,31 @@ export default function DashboardPage() {
         aria-label={t('dashboard.healthMetrics')}
       >
         <MetricCard
-          title={t('dashboard.metric.activePatients')}
-          value={dashboardData?.metrics.activePatients ?? 0}
-          description={t('dashboard.metric.activePatientsTrend')}
+          title={t('dashboard.metric.mothersRegistered')}
+          value={dashboardData?.metrics.mothersRegistered ?? 0}
+          description={t('dashboard.metric.demoEnvironmentData')}
           icon={<Users className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
         <MetricCard
-          title={t('dashboard.metric.upcomingAppointments')}
-          value={dashboardData?.metrics.upcomingAppointments ?? 0}
-          description={t('dashboard.metric.appointmentsToday')}
+          title={t('dashboard.metric.ancVisitsRecorded')}
+          value={dashboardData?.metrics.ancVisitsRecorded ?? 0}
+          description={t('dashboard.metric.demoEnvironmentData')}
           icon={<Calendar className="h-4 w-4 sm:h-5 sm:w-5" />}
+          isLoading={isLoading}
+        />
+        <MetricCard
+          title={t('dashboard.metric.followUpsScheduled')}
+          value={dashboardData?.metrics.followUpsScheduled ?? 0}
+          description={t('dashboard.metric.demoEnvironmentData')}
+          icon={<CalendarPlus className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
         <MetricCard
           title={t('dashboard.metric.activePregnancies')}
           value={dashboardData?.metrics.activePregnancies ?? 0}
-          description={t('dashboard.metric.pregnanciesTrimester')}
+          description={t('dashboard.metric.demoEnvironmentData')}
           icon={<Baby className="h-4 w-4 sm:h-5 sm:w-5" />}
-          isLoading={isLoading}
-        />
-        <MetricCard
-          title={t('dashboard.metric.alerts')}
-          value={dashboardData?.metrics.alerts ?? 0}
-          description={t('dashboard.metric.alertsDesc')}
-          icon={<Bell className="h-4 w-4 sm:h-5 sm:w-5" />}
           isLoading={isLoading}
         />
       </div>
