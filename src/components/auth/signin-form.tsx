@@ -5,8 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import type { Route } from 'next';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,7 +36,6 @@ function getSafeCallbackUrl(rawCallbackUrl: string | null) {
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = getSafeCallbackUrl(searchParams?.get('callbackUrl') ?? null);
   const { t } = useTranslation();
@@ -92,8 +90,7 @@ export function SignInForm() {
         throw new Error(result.error);
       }
 
-      router.replace(callbackUrl as Route);
-      router.refresh();
+      window.location.assign(callbackUrl);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'email-not-verified') {

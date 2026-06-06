@@ -12,6 +12,26 @@ export async function proxy(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  if (token && pathname === '/auth/signin') {
+    const rawCallbackUrl = req.nextUrl.searchParams.get('callbackUrl');
+    const fallbackUrl = new URL('/dashboard', req.url);
+
+    if (rawCallbackUrl) {
+      try {
+        const callbackUrl = new URL(rawCallbackUrl, req.url);
+        if (callbackUrl.origin === req.nextUrl.origin && !callbackUrl.pathname.startsWith('/auth/signin')) {
+          return NextResponse.redirect(callbackUrl);
+        }
+      } catch {
+        if (rawCallbackUrl.startsWith('/') && !rawCallbackUrl.startsWith('/auth/signin')) {
+          return NextResponse.redirect(new URL(rawCallbackUrl, req.url));
+        }
+      }
+    }
+
+    return NextResponse.redirect(fallbackUrl);
+  }
+
   const routeConfig = getRouteConfig(pathname);
 
   if (!routeConfig) {
