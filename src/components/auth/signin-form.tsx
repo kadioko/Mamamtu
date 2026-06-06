@@ -14,11 +14,32 @@ import { toast } from '@/components/ui/use-toast';
 import { Icons } from '@/components/ui/icons';
 import { useTranslation } from '@/lib/i18n';
 
+function getSafeCallbackUrl(rawCallbackUrl: string | null) {
+  const fallback = '/dashboard';
+
+  if (!rawCallbackUrl) return fallback;
+
+  try {
+    const parsed = new URL(rawCallbackUrl, window.location.origin);
+
+    if (parsed.origin !== window.location.origin) {
+      return fallback;
+    }
+
+    const nextPath = `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    return nextPath.startsWith('/auth/signin') ? fallback : nextPath;
+  } catch {
+    return rawCallbackUrl.startsWith('/') && !rawCallbackUrl.startsWith('/auth/signin')
+      ? rawCallbackUrl
+      : fallback;
+  }
+}
+
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard';
+  const callbackUrl = getSafeCallbackUrl(searchParams?.get('callbackUrl') ?? null);
   const { t } = useTranslation();
 
   const signInSchema = z.object({
@@ -59,7 +80,7 @@ export function SignInForm() {
 
       const result = await signIn('credentials', {
         redirect: false,
-        email: values.email,
+        email: values.email.trim().toLowerCase(),
         password: values.password,
         callbackUrl,
       });
@@ -71,9 +92,8 @@ export function SignInForm() {
         throw new Error(result.error);
       }
 
-      if (result?.url) {
-        router.push(callbackUrl as Route);
-      }
+      router.replace(callbackUrl as Route);
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'email-not-verified') {

@@ -12,8 +12,10 @@ export async function authorizeCredentials(credentials: Credentials) {
     throw new Error('Missing credentials');
   }
 
+  const email = credentials.email.trim().toLowerCase();
+
   const user = await prisma.user.findUnique({
-    where: { email: credentials.email },
+    where: { email },
   });
 
   if (!user || !user.hashedPassword) {

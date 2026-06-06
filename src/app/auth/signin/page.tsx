@@ -2,6 +2,8 @@
 
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { SignInForm } from '@/components/auth/signin-form';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from '@/lib/i18n';
@@ -18,8 +20,11 @@ export default function SignInPage() {
 
 function SignInContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { status } = useSession();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
   // Handle verification success message
   useEffect(() => {
@@ -30,6 +35,22 @@ function SignInContent() {
       });
     }
   }, [searchParams, toast, t]);
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+
+    try {
+      const parsed = new URL(callbackUrl, window.location.origin);
+      const safeUrl = parsed.origin === window.location.origin && !parsed.pathname.startsWith('/auth/signin')
+        ? `${parsed.pathname}${parsed.search}${parsed.hash}`
+        : '/dashboard';
+      router.replace(safeUrl as any);
+      router.refresh();
+    } catch {
+      router.replace(callbackUrl.startsWith('/') && !callbackUrl.startsWith('/auth/signin') ? callbackUrl as any : '/dashboard');
+      router.refresh();
+    }
+  }, [callbackUrl, router, status]);
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
