@@ -1,20 +1,41 @@
 import Link from 'next/link';
+import type { Prisma } from '@prisma/client';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ImmunizationsPage() {
+type ImmunizationSearchParams = {
+  due?: string;
+};
+
+type Props = {
+  searchParams?: Promise<ImmunizationSearchParams>;
+};
+
+export default async function ImmunizationsPage({ searchParams }: Props) {
   const session = await auth();
   if (!session?.user || !['ADMIN', 'HEALTHCARE_PROVIDER'].includes(session.user.role)) {
     return <div className="p-6 text-muted-foreground">You do not have access to immunizations.</div>;
   }
 
+  const resolvedSearchParams = await searchParams;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const nextMonth = new Date(today);
+  nextMonth.setDate(today.getDate() + 30);
+  const dueSoon = resolvedSearchParams?.due === 'soon';
+  const where: Prisma.ImmunizationWhereInput = dueSoon
+    ? { nextDueAt: { gte: today, lte: nextMonth } }
+    : {};
+
   const immunizations = await prisma.immunization.findMany({
     take: 50,
-    orderBy: { administeredAt: 'desc' },
+    where,
+    orderBy: dueSoon ? { nextDueAt: 'asc' } : { administeredAt: 'desc' },
     include: { newbornRecord: { select: { name: true, dateOfBirth: true } } },
   });
 
@@ -24,6 +45,11 @@ export default async function ImmunizationsPage() {
         <div>
           <h1 className="text-3xl font-bold">Immunizations</h1>
           <p className="text-muted-foreground">Review newborn vaccines, doses, batches, and next due dates.</p>
+          {dueSoon ? (
+            <div className="mt-3">
+              <Badge variant="secondary">Due in the next 30 days</Badge>
+            </div>
+          ) : null}
         </div>
         <Button asChild><Link href="/dashboard/immunizations/new">New Immunization</Link></Button>
       </div>

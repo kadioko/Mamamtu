@@ -54,6 +54,7 @@ export default async function ReportsPage() {
   }
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const nextMonth = new Date(today);
   nextMonth.setDate(today.getDate() + 30);
 
@@ -138,13 +139,13 @@ export default async function ReportsPage() {
 
   const metrics = [
     { label: 'Active Patients', value: reportData.patientCount, href: '/dashboard/patients' },
-    { label: 'Active Pregnancies', value: reportData.activePregnancies, href: '/dashboard/pregnancies' },
-    { label: 'High-Risk Pregnancies', value: reportData.highRiskPregnancies, href: '/dashboard/pregnancies' },
-    { label: 'Missed ANC Follow-up', value: reportData.missedAncPregnancies, href: '/dashboard/pregnancies' },
-    { label: 'Upcoming Appointments', value: reportData.upcomingAppointments, href: '/dashboard/appointments' },
-    { label: 'Completed Appointments', value: reportData.completedAppointments, href: '/dashboard/appointments' },
+    { label: 'Active Pregnancies', value: reportData.activePregnancies, href: '/dashboard/pregnancies?status=ACTIVE' },
+    { label: 'High-Risk Pregnancies', value: reportData.highRiskPregnancies, href: '/dashboard/pregnancies?risk=high' },
+    { label: 'Missed ANC Follow-up', value: reportData.missedAncPregnancies, href: '/dashboard/pregnancies?status=LOST_TO_FOLLOW_UP' },
+    { label: 'Upcoming Appointments', value: reportData.upcomingAppointments, href: '/dashboard/appointments?view=upcoming' },
+    { label: 'Completed Appointments', value: reportData.completedAppointments, href: '/dashboard/appointments?status=COMPLETED' },
     { label: 'Newborn Records', value: reportData.newbornCount, href: '/dashboard/newborns' },
-    { label: 'Immunizations Due Soon', value: reportData.dueImmunizations, href: '/dashboard/immunizations' },
+    { label: 'Immunizations Due Soon', value: reportData.dueImmunizations, href: '/dashboard/immunizations?due=soon' },
   ];
 
   return (
@@ -163,13 +164,19 @@ export default async function ReportsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
-          <Link key={metric.label} href={metric.href as any} className="block">
-            <Card className="h-full transition-colors hover:bg-muted/40">
+          <Link
+            key={metric.label}
+            href={metric.href as any}
+            className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={`Open ${metric.label} report details`}
+          >
+            <Card className="h-full cursor-pointer transition-colors hover:bg-muted/40">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{metric.label}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">{metric.value}</p>
+                <p className="mt-2 text-xs font-medium text-primary">View details</p>
               </CardContent>
             </Card>
           </Link>

@@ -1,18 +1,48 @@
 import Link from 'next/link';
+import type { AppointmentStatus, Prisma } from '@prisma/client';
 import { Calendar as CalendarIcon, Clock, MapPin, Plus } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AppointmentsPage() {
+type AppointmentSearchParams = {
+  status?: AppointmentStatus;
+  view?: string;
+};
+
+type Props = {
+  searchParams?: Promise<AppointmentSearchParams>;
+};
+
+export default async function AppointmentsPage({ searchParams }: Props) {
+  const resolvedSearchParams = await searchParams;
+  const validStatuses: AppointmentStatus[] = ['SCHEDULED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW'];
+  const statusFilter = resolvedSearchParams?.status;
+  const isUpcomingView = resolvedSearchParams?.view === 'upcoming';
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const where: Prisma.AppointmentWhereInput = {};
+  const activeFilters: string[] = [];
+
+  if (isUpcomingView) {
+    where.startTime = { gte: today };
+    where.status = { in: ['SCHEDULED', 'CONFIRMED'] };
+    activeFilters.push('Upcoming scheduled and confirmed');
+  } else if (statusFilter && validStatuses.includes(statusFilter)) {
+    where.status = statusFilter;
+    activeFilters.push(statusFilter.replace(/_/g, ' '));
+  } else {
+    where.startTime = { gte: today };
+    activeFilters.push('Upcoming');
+  }
+
   const appointments = await prisma.appointment.findMany({
-    take: 20,
-    orderBy: { startTime: 'asc' },
-    where: {
-      endTime: { gte: new Date() },
-    },
+    take: 50,
+    orderBy: statusFilter === 'COMPLETED' ? { startTime: 'desc' } : { startTime: 'asc' },
+    where,
     include: {
       patient: { select: { firstName: true, lastName: true, patientId: true } },
     },
@@ -24,6 +54,13 @@ export default async function AppointmentsPage() {
         <div>
           <h1 className="text-3xl font-bold">Appointments</h1>
           <p className="text-muted-foreground">Manage upcoming patient visits and follow-ups.</p>
+          {activeFilters.length > 0 ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {activeFilters.map((filter) => (
+                <Badge key={filter} variant="secondary">{filter}</Badge>
+              ))}
+            </div>
+          ) : null}
         </div>
         <Button asChild>
           <Link href="/dashboard/appointments/new">
