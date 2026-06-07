@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AuditAction } from '@prisma/client';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { writeAuditLog } from '@/lib/audit';
 
 const updateUserSchema = z.object({
   name: z.string().trim().min(1),
@@ -95,6 +97,21 @@ export async function PATCH(
       select: { id: true, name: true, email: true, role: true, isActive: true, emailVerified: true, lastLogin: true },
     });
 
+    await writeAuditLog({
+      request,
+      userId: session?.user?.id,
+      action: AuditAction.AUTH_EVENT,
+      resource: 'StaffUser',
+      resourceId: id,
+      metadata: {
+        adminAction: 'update-staff-account',
+        targetEmail: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        passwordChanged: Boolean(data.password),
+      },
+    });
+
     return NextResponse.json(user);
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
@@ -141,6 +158,15 @@ export async function DELETE(
     where: { id },
     data: { isActive: false },
     select: { id: true, name: true, email: true, role: true, isActive: true },
+  });
+
+  await writeAuditLog({
+    request,
+    userId: session?.user?.id,
+    action: AuditAction.AUTH_EVENT,
+    resource: 'StaffUser',
+    resourceId: id,
+    metadata: { adminAction: 'deactivate-staff-account', targetEmail: user.email, role: user.role },
   });
 
   return NextResponse.json(user);

@@ -23,6 +23,9 @@ export default async function UsersPage() {
       isActive: true,
       emailVerified: true,
       lastLogin: true,
+      accountLockedUntil: true,
+      failedLoginAttempts: true,
+      passwordResetExpires: true,
       createdAt: true,
     },
   });
@@ -31,6 +34,8 @@ export default async function UsersPage() {
     role: user.role as StaffUser['role'],
     emailVerified: user.emailVerified?.toISOString() ?? null,
     lastLogin: user.lastLogin?.toISOString() ?? null,
+    accountLockedUntil: user.accountLockedUntil?.toISOString() ?? null,
+    passwordResetExpires: user.passwordResetExpires?.toISOString() ?? null,
     createdAt: user.createdAt.toISOString(),
   }));
 

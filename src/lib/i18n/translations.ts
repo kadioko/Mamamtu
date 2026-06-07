@@ -179,6 +179,7 @@ export const translations = {
     },
     sidebar: {
       overview: 'Overview',
+      adminControl: 'Admin Control',
       patients: 'Patients',
       appointments: 'Appointments',
       medicalRecords: 'Medical Records',
@@ -575,6 +576,7 @@ export const translations = {
     },
     sidebar: {
       overview: 'Muhtasari',
+      adminControl: 'Udhibiti wa Admin',
       patients: 'Wagonjwa',
       appointments: 'Miadi',
       medicalRecords: 'Rekodi za Matibabu',

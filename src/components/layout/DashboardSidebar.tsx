@@ -48,6 +48,14 @@ const sidebarItems: SidebarItem[] = [
     iconColor: 'text-blue-500',
   },
   {
+    titleKey: 'sidebar.adminControl',
+    href: '/dashboard/admin',
+    icon: ShieldCheck,
+    gradient: 'radial-gradient(circle, rgba(20,184,166,0.22) 0%, rgba(13,148,136,0.08) 55%, rgba(15,118,110,0) 100%)',
+    iconColor: 'text-teal-500',
+    allowedRoles: ['ADMIN'],
+  },
+  {
     titleKey: 'sidebar.patients',
     href: '/dashboard/patients',
     icon: Users,

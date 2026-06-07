@@ -10,8 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export function AdminUserForm() {
   const [role, setRole] = useState('HEALTHCARE_PROVIDER');
+  const [temporaryPassword, setTemporaryPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
+
+  function generateTemporaryPassword() {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    const random = Array.from({ length: 10 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+    setTemporaryPassword(`Mama${random}7`);
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,6 +41,7 @@ export function AdminUserForm() {
       }
       toast.success('Staff account saved');
       event.currentTarget.reset();
+      setTemporaryPassword('');
       setRole('HEALTHCARE_PROVIDER');
       router.refresh();
     } catch (error) {
@@ -44,10 +52,20 @@ export function AdminUserForm() {
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-4 md:grid-cols-5 md:items-end">
+    <form onSubmit={submit} className="space-y-4">
+      <div className="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+        Invite staff by creating their account with a temporary password. They can sign in immediately, and admins can force a reset later from the staff list.
+      </div>
+      <div className="grid gap-4 md:grid-cols-5 md:items-end">
       <div className="space-y-2"><Label htmlFor="name">Name</Label><Input id="name" name="name" required /></div>
       <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" required /></div>
-      <div className="space-y-2"><Label htmlFor="password">Password</Label><Input id="password" name="password" type="password" minLength={8} required /></div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Temporary password</Label>
+        <div className="flex gap-2">
+          <Input id="password" name="password" type="text" minLength={8} value={temporaryPassword} onChange={(event) => setTemporaryPassword(event.target.value)} required />
+          <Button type="button" variant="outline" onClick={generateTemporaryPassword}>Generate</Button>
+        </div>
+      </div>
       <div className="space-y-2">
         <Label>Role</Label>
         <Select value={role} onValueChange={setRole}>
@@ -60,6 +78,7 @@ export function AdminUserForm() {
         </Select>
       </div>
       <Button type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : 'Create Staff'}</Button>
+      </div>
     </form>
   );
 }
