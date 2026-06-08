@@ -1,4 +1,8 @@
-require('dotenv/config');
+try {
+  require('dotenv/config');
+} catch {
+  // Vercel provides environment variables at runtime; dotenv is only needed locally.
+}
 
 const {
   AppointmentStatus,
