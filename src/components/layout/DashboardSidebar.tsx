@@ -198,7 +198,7 @@ export function DashboardSidebar() {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] border-r border-border/60 bg-gradient-to-b from-background/95 via-background/85 to-background/70 backdrop-blur-xl transition-all duration-300',
+        'fixed left-0 top-16 z-30 hidden h-[calc(100vh-4rem)] border-r border-border/60 bg-gradient-to-b from-background/95 via-background/85 to-background/70 backdrop-blur-xl transition-all duration-300 lg:block',
         isCollapsed ? 'w-16' : 'w-64'
       )}
     >

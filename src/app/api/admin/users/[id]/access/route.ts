@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AuditAction } from '@prisma/client';
 import { z } from 'zod';
 import { auth } from '@/auth';
+import { getLatestFacilityAssignments, isSuperAdmin } from '@/lib/admin-scope';
 import { prisma } from '@/lib/prisma';
 import { generateSecureToken, hashToken } from '@/lib/security';
 import { writeAuditLog } from '@/lib/audit';
@@ -38,6 +39,16 @@ async function isLastActiveAdmin(userId: string) {
   return activeAdmins === 0;
 }
 
+async function canManageTarget(session: NonNullable<Awaited<ReturnType<typeof auth>>>, targetUserId: string) {
+  if (isSuperAdmin(session)) return true;
+
+  const assignments = await getLatestFacilityAssignments();
+  const adminFacility = assignments.get(session.user.id)?.facilityName;
+  const targetFacility = assignments.get(targetUserId)?.facilityName;
+
+  return Boolean(adminFacility && targetFacility && adminFacility === targetFacility);
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -60,6 +71,10 @@ export async function POST(
 
   if (!target || !['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'].includes(target.role)) {
     return NextResponse.json({ error: 'Staff account not found' }, { status: 404 });
+  }
+
+  if (!await canManageTarget(session, id)) {
+    return NextResponse.json({ error: 'You can only manage staff assigned to your clinic' }, { status: 403 });
   }
 
   if (session?.user?.id === id) {

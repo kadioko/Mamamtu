@@ -34,12 +34,14 @@ export interface StaffUser {
   accountLockedUntil: Date | string | null;
   failedLoginAttempts: number;
   passwordResetExpires: Date | string | null;
+  facilityName?: string | null;
   createdAt: Date | string;
 }
 
 interface StaffUserManagerProps {
   users: StaffUser[];
   currentUserId: string;
+  canEditRoles?: boolean;
 }
 
 const roleLabels: Record<StaffRole, string> = {
@@ -58,7 +60,7 @@ function isFutureDate(value: Date | string | null) {
   return new Date(value).getTime() > Date.now();
 }
 
-export function StaffUserManager({ users, currentUserId }: StaffUserManagerProps) {
+export function StaffUserManager({ users, currentUserId, canEditRoles = true }: StaffUserManagerProps) {
   const router = useRouter();
   const [editingUser, setEditingUser] = useState<StaffUser | null>(null);
   const [deactivatingUser, setDeactivatingUser] = useState<StaffUser | null>(null);
@@ -93,7 +95,7 @@ export function StaffUserManager({ users, currentUserId }: StaffUserManagerProps
         body: JSON.stringify({
           name: form.get('name'),
           email: form.get('email'),
-          role: form.get('role'),
+          role: canEditRoles ? form.get('role') : editingUser.role,
           isActive: form.get('isActive') === 'on',
           password: form.get('password') || '',
         }),
@@ -227,7 +229,7 @@ export function StaffUserManager({ users, currentUserId }: StaffUserManagerProps
           return (
             <div
               key={user.id}
-              className="grid gap-3 rounded-lg border p-4 text-sm xl:grid-cols-[1.3fr_0.9fr_1fr_0.8fr_1.7fr]"
+              className="grid gap-3 rounded-lg border p-4 text-sm xl:grid-cols-[1.3fr_0.8fr_0.9fr_1fr_0.8fr_1.7fr]"
             >
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -245,6 +247,11 @@ export function StaffUserManager({ users, currentUserId }: StaffUserManagerProps
               <div>
                 <span className="text-muted-foreground">Role</span>
                 <p>{roleLabels[user.role]}</p>
+              </div>
+
+              <div>
+                <span className="text-muted-foreground">Clinic</span>
+                <p>{user.facilityName || 'Unassigned'}</p>
               </div>
 
               <div>
@@ -325,7 +332,7 @@ export function StaffUserManager({ users, currentUserId }: StaffUserManagerProps
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Role</Label>
-                  <Select name="role" defaultValue={editingUser.role}>
+                  <Select name="role" defaultValue={editingUser.role} disabled={!canEditRoles}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="HEALTHCARE_PROVIDER">Provider</SelectItem>

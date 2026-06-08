@@ -2,10 +2,18 @@ import Link from 'next/link';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { getProductionHealthReport } from '@/lib/productionHealth';
+import {
+  getFacilityNames,
+  getHospitalIntegrations,
+  getLatestFacilityAssignments,
+  isSuperAdmin,
+} from '@/lib/admin-scope';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DemoDataManager } from '@/components/dashboard/DemoDataManager';
+import { FacilityAssignmentManager } from '@/components/dashboard/FacilityAssignmentManager';
+import { HospitalIntegrationManager } from '@/components/dashboard/HospitalIntegrationManager';
 import {
   Activity,
   AlertTriangle,
@@ -34,6 +42,7 @@ export default async function AdminControlCenterPage() {
   if (session?.user?.role !== 'ADMIN') {
     return <div className="p-6 text-muted-foreground">Only admins can view the control center.</div>;
   }
+  const superAdmin = isSuperAdmin(session);
 
   const now = new Date();
   const today = new Date(now);
@@ -67,6 +76,10 @@ export default async function AdminControlCenterPage() {
     medicalRecordFacilities,
     newbornFacilities,
     immunizationFacilities,
+    staffUsers,
+    facilityNames,
+    facilityAssignments,
+    hospitalIntegrations,
     healthReport,
     recentAuditEvents,
   ] = await Promise.all([
@@ -112,6 +125,14 @@ export default async function AdminControlCenterPage() {
       take: 100,
       select: { facility: true },
     }),
+    prisma.user.findMany({
+      where: { role: { in: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'] } },
+      orderBy: [{ role: 'asc' }, { name: 'asc' }],
+      select: { id: true, name: true, email: true, role: true },
+    }),
+    getFacilityNames(),
+    getLatestFacilityAssignments(),
+    getHospitalIntegrations(),
     getProductionHealthReport(),
     prisma.auditLog.findMany({
       take: 5,
@@ -139,6 +160,12 @@ export default async function AdminControlCenterPage() {
   const facilities = [...facilityCounts.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
+  const staffWithAssignments = staffUsers.map((user) => ({
+    ...user,
+    role: user.role.replace(/_/g, ' '),
+    facilityName: facilityAssignments.get(user.id)?.facilityName ?? null,
+  }));
+  const currentAdminFacility = session.user.id ? facilityAssignments.get(session.user.id)?.facilityName : null;
   const dataQualityItems = [
     { label: 'Missing patient phone numbers', value: missingPhonePatients, href: '/dashboard/patients' },
     { label: 'Active pregnancies without ANC visits', value: pregnanciesWithoutAnc, href: '/dashboard/pregnancies?status=ACTIVE' },
@@ -171,8 +198,15 @@ export default async function AdminControlCenterPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Admin Control Center</h1>
-          <p className="text-muted-foreground">System oversight for staff access, demo data quality, audit activity, and clinical operations.</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-3xl font-bold">Admin Control Center</h1>
+            <Badge variant={superAdmin ? 'default' : 'secondary'}>{superAdmin ? 'Super admin' : 'Clinic admin'}</Badge>
+          </div>
+          <p className="text-muted-foreground">
+            {superAdmin
+              ? 'System-wide oversight for all admins, clinics, integrations, demo data, and clinical operations.'
+              : `Clinic-level oversight${currentAdminFacility ? ` for ${currentAdminFacility}` : ''}.`}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline"><Link href="/dashboard/users"><UserCog className="mr-2 h-4 w-4" />Staff Users</Link></Button>
@@ -268,6 +302,51 @@ export default async function AdminControlCenterPage() {
                 <p><span className="text-muted-foreground">Audit</span><br />{role.audit}</p>
               </div>
             ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>{superAdmin ? 'Clinic Admin Assignments' : 'Clinic Admin Scope'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {superAdmin ? (
+              <FacilityAssignmentManager staff={staffWithAssignments} facilities={facilityNames} />
+            ) : (
+              <div className="space-y-3 text-sm">
+                <p className="text-muted-foreground">Your admin view is associated with one clinic or hospital. Super admins manage assignment changes.</p>
+                <div className="rounded-lg border p-4">
+                  <p className="text-xs text-muted-foreground">Assigned clinic / hospital</p>
+                  <p className="text-lg font-semibold">{currentAdminFacility || 'Not assigned yet'}</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Hospital System Integrations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {superAdmin ? (
+              <HospitalIntegrationManager facilities={facilityNames} integrations={hospitalIntegrations} />
+            ) : (
+              <div className="space-y-3">
+                {hospitalIntegrations.filter((integration) => !currentAdminFacility || integration.facilityName === currentAdminFacility).length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No integrations registered for this clinic yet.</p>
+                ) : hospitalIntegrations
+                    .filter((integration) => !currentAdminFacility || integration.facilityName === currentAdminFacility)
+                    .map((integration) => (
+                      <div key={integration.id} className="rounded-lg border p-3 text-sm">
+                        <p className="font-medium">{integration.systemName}</p>
+                        <p className="text-muted-foreground">{integration.integrationType} / {integration.status.replace(/_/g, ' ')}</p>
+                      </div>
+                    ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

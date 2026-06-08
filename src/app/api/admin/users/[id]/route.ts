@@ -3,6 +3,7 @@ import { AuditAction } from '@prisma/client';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { auth } from '@/auth';
+import { getLatestFacilityAssignments, isSuperAdmin } from '@/lib/admin-scope';
 import { prisma } from '@/lib/prisma';
 import { writeAuditLog } from '@/lib/audit';
 
@@ -38,6 +39,16 @@ async function isLastActiveAdmin(userId: string) {
   return activeAdmins === 0;
 }
 
+async function canManageTarget(session: NonNullable<Awaited<ReturnType<typeof auth>>>, targetUserId: string) {
+  if (isSuperAdmin(session)) return true;
+
+  const assignments = await getLatestFacilityAssignments();
+  const adminFacility = assignments.get(session.user.id)?.facilityName;
+  const targetFacility = assignments.get(targetUserId)?.facilityName;
+
+  return Boolean(adminFacility && targetFacility && adminFacility === targetFacility);
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -54,6 +65,14 @@ export async function PATCH(
 
   if (!target) {
     return NextResponse.json({ error: 'Staff account not found' }, { status: 404 });
+  }
+
+  if (!await canManageTarget(session, id)) {
+    return NextResponse.json({ error: 'You can only manage staff assigned to your clinic' }, { status: 403 });
+  }
+
+  if (!isSuperAdmin(session) && data.role !== target.role) {
+    return NextResponse.json({ error: 'Only super admins can change staff roles' }, { status: 403 });
   }
 
   const isSelf = session?.user?.id === id;
@@ -138,6 +157,10 @@ export async function DELETE(
 
   if (!target) {
     return NextResponse.json({ error: 'Staff account not found' }, { status: 404 });
+  }
+
+  if (!await canManageTarget(session, id)) {
+    return NextResponse.json({ error: 'You can only manage staff assigned to your clinic' }, { status: 403 });
   }
 
   if (session?.user?.id === id) {

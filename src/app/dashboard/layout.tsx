@@ -10,9 +10,9 @@ export default function DashboardLayout({
       <DashboardSidebar />
       <div
         id="dashboard-main"
-        className="flex-1 transition-[margin] duration-300 ml-16 lg:ml-64"
+        className="min-w-0 flex-1 transition-[margin] duration-300 ml-0 lg:ml-64"
       >
-        <div className="container py-6">
+        <div className="container px-3 py-4 sm:px-4 sm:py-6">
           {children}
         </div>
       </div>

@@ -3,6 +3,7 @@ import { AuditAction } from '@prisma/client';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { auth } from '@/auth';
+import { isSuperAdmin } from '@/lib/admin-scope';
 import { prisma } from '@/lib/prisma';
 import { writeAuditLog } from '@/lib/audit';
 
@@ -15,8 +16,8 @@ const userSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (session?.user?.role !== 'ADMIN') {
-    return NextResponse.json({ error: 'Only admins can create staff accounts' }, { status: 403 });
+  if (!isSuperAdmin(session)) {
+    return NextResponse.json({ error: 'Only super admins can create staff accounts' }, { status: 403 });
   }
 
   const data = userSchema.parse(await request.json());
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
 
   await writeAuditLog({
     request,
-    userId: session.user.id,
+    userId: session!.user.id,
     action: AuditAction.AUTH_EVENT,
     resource: 'StaffUser',
     resourceId: user.id,

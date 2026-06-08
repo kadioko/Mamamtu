@@ -130,7 +130,7 @@ export function MainNav() {
             <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-b from-background/95 via-background/80 to-background/60 p-3 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.45)] backdrop-blur-xl">
               <div className="pointer-events-none absolute inset-x-4 top-0 h-24 rounded-full bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),rgba(168,85,247,0.12)_40%,rgba(244,63,94,0.08)_70%,transparent_85%)] blur-2xl" />
               <nav className="relative z-10 flex flex-col gap-2">
-            {navLinks.map((link) => (
+            {desktopMenuItems.map((link) => (
               <Link
                 key={link.href}
                 href={link.href as any}

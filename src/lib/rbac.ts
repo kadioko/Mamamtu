@@ -64,6 +64,11 @@ export const routeConfigs: RouteConfig[] = [
     roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'RECEPTIONIST'],
     requireEmailVerification: true
   },
+  {
+    pattern: /^\/profile(\/.*)?$/,
+    roles: ['ADMIN', 'HEALTHCARE_PROVIDER', 'PATIENT', 'RECEPTIONIST'],
+    requireEmailVerification: true
+  },
   
   // Dashboard routes
   { 
