@@ -35,6 +35,7 @@ const nextConfig = {
     '/api/admin/demo/reset': [
       './scripts/seed-deck-demo-metrics.js',
       './node_modules/@prisma/adapter-pg/**/*',
+      './node_modules/@prisma/debug/**/*',
       './node_modules/@prisma/driver-adapter-utils/**/*',
       './node_modules/pg/**/*',
       './node_modules/pg-*/**/*',
