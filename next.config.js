@@ -31,6 +31,9 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: true,
+  outputFileTracingIncludes: {
+    '/api/admin/demo/reset': ['./scripts/seed-deck-demo-metrics.js'],
+  },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }];
   },
