@@ -322,7 +322,7 @@ async function createNewbornsAndImmunizations(episodes) {
   const newbornCount = Math.min(10, episodes.length);
   const vaccineSchedule = [
     { vaccineName: 'BCG', doseLabel: 'Birth dose', nextOffset: 14 },
-    { vaccineName: 'OPV', doseLabel: 'OPV-0', nextOffset: 21 },
+    { vaccineName: 'OPV', doseLabel: 'OPV-0', nextOffset: 20 },
     { vaccineName: 'Hepatitis B', doseLabel: 'Birth dose', nextOffset: 42 },
   ];
 
