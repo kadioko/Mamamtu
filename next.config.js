@@ -32,7 +32,19 @@ const securityHeaders = [
 const nextConfig = {
   typedRoutes: true,
   outputFileTracingIncludes: {
-    '/api/admin/demo/reset': ['./scripts/seed-deck-demo-metrics.js'],
+    '/api/admin/demo/reset': [
+      './scripts/seed-deck-demo-metrics.js',
+      './node_modules/@prisma/adapter-pg/**/*',
+      './node_modules/@prisma/driver-adapter-utils/**/*',
+      './node_modules/pg/**/*',
+      './node_modules/pg-*/**/*',
+      './node_modules/postgres-array/**/*',
+      './node_modules/postgres-bytea/**/*',
+      './node_modules/postgres-date/**/*',
+      './node_modules/postgres-interval/**/*',
+      './node_modules/pgpass/**/*',
+      './node_modules/split2/**/*',
+    ],
   },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }];
